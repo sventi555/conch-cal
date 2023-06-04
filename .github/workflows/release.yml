@@ -1,0 +1,47 @@
+name: Publish docker images
+on:
+  release:
+    types: [published]
+jobs:
+  push_to_registry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Authenticate to GCP artifact registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: https://us-east4-docker.pkg.dev
+          username: _json_key_base64
+          password: ${{ secrets.GCP_CREDS }}
+
+      - name: Extract client metadata (tags, labels) for Docker
+        id: client_meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ vars.IMAGE_REGISTRY }}/client
+
+      - name: Build and push client Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          file: 'services/client.dockerfile'
+          push: true
+          tags: ${{ steps.client_meta.outputs.tags }}
+          labels: ${{ steps.client_meta.outputs.labels }}
+
+      - name: Extract server metadata (tags, labels) for Docker
+        id: server_meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ vars.IMAGE_REGISTRY }}/server
+
+      - name: Build and push server Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          file: 'services/server.dockerfile'
+          push: true
+          tags: ${{ steps.server_meta.outputs.tags }}
+          labels: ${{ steps.server_meta.outputs.labels }}
