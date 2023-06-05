@@ -1,5 +1,5 @@
 import { Calendar } from './components/Calendar';
-import { MS_PER_HOUR } from './spiral-utils';
+import { MS_PER_HOUR } from './utils/date';
 
 /**
  * TODO

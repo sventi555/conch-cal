@@ -21,11 +21,12 @@ export const Calendar = ({ events, zoom, focusedTime }: CalendarProps) => {
   const a = 6;
   const k = 0.1;
   const rotationsToFocus = 6;
+  const totalRotations = rotationsToFocus + 1;
 
   return (
     <svg width={width} height={height}>
-      <g transform={`translate(${width / 2} ${height / 2}) scale(1, -1)`}>
-        <Spiral rotations={rotationsToFocus + 1} a={a} k={k} />
+      <g transform={`translate(${width / 2}, ${height / 2}) scale(1, -1)`}>
+        <Spiral rotations={totalRotations} a={a} k={k} />
         <Markers
           focusedTime={focusedTime}
           rotationsToFocus={rotationsToFocus}

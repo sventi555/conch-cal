@@ -1,4 +1,5 @@
-import { Point, TWO_PI, polarToCart, spiralRad } from '../spiral-utils';
+import { Point, TWO_PI, polarToCart } from '../utils/math';
+import { spiralRadius } from '../utils/spiral';
 
 interface SpiralProps {
   rotations: number;
@@ -17,7 +18,7 @@ export const Spiral = ({
 
   const coords: Point[] = [];
   for (let theta = 0; theta <= TWO_PI * rotations; theta += sampleRate) {
-    coords.push(polarToCart(spiralRad(theta, a, k), theta));
+    coords.push(polarToCart(spiralRadius(theta, a, k), theta));
   }
 
   const coordString =

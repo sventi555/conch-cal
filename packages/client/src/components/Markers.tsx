@@ -1,11 +1,6 @@
-import {
-  MS_PER_DAY,
-  MS_PER_HOUR,
-  TWO_PI,
-  polarToCart,
-  spiralRad,
-  timeToAngle,
-} from '../spiral-utils';
+import { MS_PER_DAY, MS_PER_HOUR } from '../utils/date';
+import { TWO_PI, dist, lerp, polarToCart, radToDeg } from '../utils/math';
+import { spiralRadius, timeToAngle } from '../utils/spiral';
 
 interface MarkersProps {
   focusedTime: number;
@@ -24,10 +19,10 @@ export const Markers = ({
 }: MarkersProps) => {
   const lastHour = focusedTime - (focusedTime % MS_PER_HOUR);
   const centerTime =
-    focusedTime - (rotationsToFocus / rotationsPerDay) * MS_PER_DAY;
+    focusedTime + (rotationsToFocus / rotationsPerDay) * MS_PER_DAY;
 
   const markerTimes: number[] = [];
-  for (let time = lastHour; time > centerTime; time -= MS_PER_HOUR) {
+  for (let time = lastHour; time < centerTime; time += MS_PER_HOUR) {
     markerTimes.push(time);
   }
 
@@ -72,15 +67,30 @@ const Marker = ({
     rotationsPerDay,
   );
 
-  const outerPoint = polarToCart(spiralRad(theta, a, k), theta);
-  const innerPoint = polarToCart(spiralRad(theta - TWO_PI, a, k), theta);
+  const outerPoint = polarToCart(spiralRadius(theta, a, k), theta);
+  const innerPoint = polarToCart(spiralRadius(theta - TWO_PI, a, k), theta);
+
+  const textCoords = {
+    x: lerp(innerPoint.x, outerPoint.x, 0.1),
+    y: lerp(innerPoint.y, outerPoint.y, 0.1),
+  };
 
   return (
-    <path
-      fill="none"
-      stroke="black"
-      d={`M ${outerPoint.x} ${outerPoint.y} L ${innerPoint.x} ${innerPoint.y}`}
-    />
+    <>
+      <path
+        fill="none"
+        stroke="black"
+        d={`M ${outerPoint.x} ${outerPoint.y} L ${innerPoint.x} ${innerPoint.y}`}
+      />
+      <text
+        fontSize={(12 * dist(innerPoint, outerPoint)) / 80}
+        transform={`translate(${textCoords.x}, ${
+          textCoords.y
+        }) rotate(${radToDeg(theta)}) scale(1, -1)`}
+      >
+        {new Date(time).getHours()}
+      </text>
+    </>
   );
 };
 
@@ -92,7 +102,7 @@ interface FocusMarkerProps {
 
 export const FocusMarker = ({ rotationsToFocus, a, k }: FocusMarkerProps) => {
   const focusOuterPoint = polarToCart(
-    spiralRad(rotationsToFocus * TWO_PI + TWO_PI, a, k),
+    spiralRadius(rotationsToFocus * TWO_PI + TWO_PI, a, k),
     0,
   );
 

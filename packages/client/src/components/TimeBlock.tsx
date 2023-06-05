@@ -1,10 +1,5 @@
-import {
-  Point,
-  TWO_PI,
-  polarToCart,
-  spiralRad,
-  timeToAngle,
-} from '../spiral-utils';
+import { Point, TWO_PI, polarToCart } from '../utils/math';
+import { spiralRadius, timeToAngle } from '../utils/spiral';
 
 interface TimeBlockProps {
   start: number;
@@ -45,17 +40,17 @@ export const TimeBlock = ({
   const coords: Point[] = [];
   // outer arc
   for (let theta = startAngle; theta >= endAngle; theta -= sampleRate) {
-    coords.push(polarToCart(spiralRad(theta, a, k), theta));
+    coords.push(polarToCart(spiralRadius(theta, a, k), theta));
   }
   // make sure we hit the very edge (hide sampling errors)
-  coords.push(polarToCart(spiralRad(endAngle, a, k), endAngle));
+  coords.push(polarToCart(spiralRadius(endAngle, a, k), endAngle));
 
   // inner arc
   for (let theta = endAngle; theta <= startAngle; theta += sampleRate) {
-    coords.push(polarToCart(spiralRad(theta - TWO_PI, a, k), theta));
+    coords.push(polarToCart(spiralRadius(theta - TWO_PI, a, k), theta));
   }
   // make sure we hit the very edge (hide sampling errors)
-  coords.push(polarToCart(spiralRad(startAngle - TWO_PI, a, k), startAngle));
+  coords.push(polarToCart(spiralRadius(startAngle - TWO_PI, a, k), startAngle));
 
   const coordString =
     `M ${coords[0].x} ${coords[0].y}` +
