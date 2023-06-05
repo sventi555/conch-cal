@@ -1,5 +1,5 @@
 import { FocusMarker, Markers } from './Markers';
-import { Spiral } from './spiral';
+import { Spiral } from './Spiral';
 import { TimeBlock } from './TimeBlock';
 
 interface Event {
