@@ -1,6 +1,6 @@
 import {
+  MS_PER_DAY,
   MS_PER_HOUR,
-  Point,
   TWO_PI,
   polarToCart,
   spiralRad,
@@ -22,34 +22,65 @@ export const Markers = ({
   a,
   k,
 }: MarkersProps) => {
-  const hrAngle = (TWO_PI * rotationsPerDay) / 24;
   const lastHour = focusedTime - (focusedTime % MS_PER_HOUR);
-  const lastHourAngle = timeToAngle(
-    lastHour,
+  const centerTime =
+    focusedTime - (rotationsToFocus / rotationsPerDay) * MS_PER_DAY;
+
+  const markerTimes: number[] = [];
+  for (let time = lastHour; time > centerTime; time -= MS_PER_HOUR) {
+    markerTimes.push(time);
+  }
+
+  return (
+    <g>
+      {markerTimes.map((time) => (
+        <Marker
+          key={time}
+          time={time}
+          focusedTime={focusedTime}
+          rotationsToFocus={rotationsToFocus}
+          rotationsPerDay={rotationsPerDay}
+          a={a}
+          k={k}
+        />
+      ))}
+    </g>
+  );
+};
+
+interface MarkerProps {
+  time: number;
+  focusedTime: number;
+  rotationsToFocus: number;
+  rotationsPerDay: number;
+  a: number;
+  k: number;
+}
+
+const Marker = ({
+  time,
+  focusedTime,
+  rotationsToFocus,
+  rotationsPerDay,
+  a,
+  k,
+}: MarkerProps) => {
+  const theta = timeToAngle(
+    time,
     focusedTime,
     rotationsToFocus,
     rotationsPerDay,
   );
 
-  const coords: { outer: Point; inner: Point }[] = [];
-  for (let theta = lastHourAngle; theta >= TWO_PI; theta -= hrAngle) {
-    const outerPoint = polarToCart(spiralRad(theta, a, k), theta);
-    const innerPoint = polarToCart(spiralRad(theta - TWO_PI, a, k), theta);
-
-    coords.push({ outer: outerPoint, inner: innerPoint });
-  }
+  const outerPoint = polarToCart(spiralRad(theta, a, k), theta);
+  const innerPoint = polarToCart(spiralRad(theta - TWO_PI, a, k), theta);
 
   return (
-    <g>
-      {coords.map(({ outer, inner }, index) => (
-        <path
-          key={index}
-          fill="none"
-          stroke="black"
-          d={`M ${outer.x} ${outer.y} L ${inner.x} ${inner.y}`}
-        />
-      ))}
-    </g>
+    <path
+      fill="none"
+      stroke="black"
+      d={`M ${outerPoint.x} ${outerPoint.y} L ${innerPoint.x} ${innerPoint.y}`}
+    />
   );
 };
 
