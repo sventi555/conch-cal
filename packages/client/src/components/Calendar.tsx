@@ -1,6 +1,9 @@
-import { FocusMarker, Markers } from './Markers';
-import { Spiral } from './Spiral';
-import { TimeBlock } from './TimeBlock';
+import p5Types from 'p5';
+import { useState } from 'react';
+import Sketch from 'react-p5';
+import { drawFocusMarker, drawMarkers } from './Markers';
+import { drawSpiral } from './Spiral';
+import { drawTimeBlock } from './TimeBlock';
 
 interface Event {
   start: number;
@@ -10,11 +13,12 @@ interface Event {
 
 interface CalendarProps {
   events: Event[];
-  zoom: number;
-  focusedTime: number;
 }
 
-export const Calendar = ({ events, zoom, focusedTime }: CalendarProps) => {
+export const Calendar = ({ events }: CalendarProps) => {
+  const [zoom] = useState(1);
+  const [focusedTime] = useState(Date.now());
+
   const width = 600;
   const height = 600;
 
@@ -23,31 +27,41 @@ export const Calendar = ({ events, zoom, focusedTime }: CalendarProps) => {
   const rotationsToFocus = 6;
   const totalRotations = rotationsToFocus + 1;
 
+  const setup = (p5: p5Types, canvasParentRef: Element) => {
+    p5.createCanvas(width, height).parent(canvasParentRef);
+  };
+
+  const draw = (p5: p5Types) => {
+    p5.background(255);
+
+    p5.translate(p5.width / 2, p5.height / 2);
+    p5.scale(1, -1);
+
+    drawSpiral(p5, { rotations: totalRotations, a, k });
+    drawMarkers(p5, {
+      focusedTime,
+      rotationsToFocus,
+      rotationsPerDay: zoom,
+      a,
+      k,
+    });
+    events.forEach((event) => {
+      drawTimeBlock(p5, {
+        start: event.start,
+        end: event.end,
+        focusedTime,
+        rotationsToFocus,
+        rotationsPerDay: zoom,
+        a,
+        k,
+      });
+    });
+    drawFocusMarker(p5, { rotationsToFocus, a, k });
+  };
+
   return (
-    <svg width={width} height={height}>
-      <g transform={`translate(${width / 2}, ${height / 2}) scale(1, -1)`}>
-        <Spiral rotations={totalRotations} a={a} k={k} />
-        <Markers
-          focusedTime={focusedTime}
-          rotationsToFocus={rotationsToFocus}
-          rotationsPerDay={zoom}
-          a={a}
-          k={0.1}
-        />
-        {events.map((event) => (
-          <TimeBlock
-            start={event.start}
-            end={event.end}
-            focusedTime={focusedTime}
-            rotationsToFocus={rotationsToFocus}
-            rotationsPerDay={zoom}
-            a={a}
-            k={k}
-            key={event.start}
-          />
-        ))}
-        <FocusMarker rotationsToFocus={rotationsToFocus} a={a} k={k} />
-      </g>
-    </svg>
+    <>
+      <Sketch setup={setup} draw={draw} />;
+    </>
   );
 };

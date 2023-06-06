@@ -1,5 +1,6 @@
+import p5Types from 'p5';
 import { MS_PER_DAY, MS_PER_HOUR } from '../utils/date';
-import { TWO_PI, dist, lerp, polarToCart, radToDeg } from '../utils/math';
+import { TWO_PI, dist, lerp, polarToCart } from '../utils/math';
 import { spiralRadius, timeToAngle } from '../utils/spiral';
 
 interface MarkersProps {
@@ -10,13 +11,10 @@ interface MarkersProps {
   k: number;
 }
 
-export const Markers = ({
-  focusedTime,
-  rotationsToFocus,
-  rotationsPerDay,
-  a,
-  k,
-}: MarkersProps) => {
+export const drawMarkers = (
+  p5: p5Types,
+  { focusedTime, rotationsToFocus, rotationsPerDay, a, k }: MarkersProps,
+) => {
   const lastHour = focusedTime - (focusedTime % MS_PER_HOUR);
   const centerTime =
     focusedTime + (rotationsToFocus / rotationsPerDay) * MS_PER_DAY;
@@ -26,21 +24,16 @@ export const Markers = ({
     markerTimes.push(time);
   }
 
-  return (
-    <g>
-      {markerTimes.map((time) => (
-        <Marker
-          key={time}
-          time={time}
-          focusedTime={focusedTime}
-          rotationsToFocus={rotationsToFocus}
-          rotationsPerDay={rotationsPerDay}
-          a={a}
-          k={k}
-        />
-      ))}
-    </g>
-  );
+  markerTimes.forEach((time) => {
+    drawMarker(p5, {
+      time,
+      focusedTime,
+      rotationsToFocus,
+      rotationsPerDay,
+      a,
+      k,
+    });
+  });
 };
 
 interface MarkerProps {
@@ -52,14 +45,10 @@ interface MarkerProps {
   k: number;
 }
 
-const Marker = ({
-  time,
-  focusedTime,
-  rotationsToFocus,
-  rotationsPerDay,
-  a,
-  k,
-}: MarkerProps) => {
+const drawMarker = (
+  p5: p5Types,
+  { time, focusedTime, rotationsToFocus, rotationsPerDay, a, k }: MarkerProps,
+) => {
   const theta = timeToAngle(
     time,
     focusedTime,
@@ -75,23 +64,22 @@ const Marker = ({
     y: lerp(innerPoint.y, outerPoint.y, 0.1),
   };
 
-  return (
-    <>
-      <path
-        fill="none"
-        stroke="black"
-        d={`M ${outerPoint.x} ${outerPoint.y} L ${innerPoint.x} ${innerPoint.y}`}
-      />
-      <text
-        fontSize={(12 * dist(innerPoint, outerPoint)) / 80}
-        transform={`translate(${textCoords.x}, ${
-          textCoords.y
-        }) rotate(${radToDeg(theta)}) scale(1, -1)`}
-      >
-        {new Date(time).getHours()}
-      </text>
-    </>
-  );
+  p5.stroke(0);
+  p5.fill(0);
+
+  // marker line
+  p5.line(outerPoint.x, outerPoint.y, innerPoint.x, innerPoint.y);
+
+  p5.noStroke();
+
+  // hour text
+  p5.push();
+  p5.translate(textCoords.x, textCoords.y);
+  p5.scale(1, -1);
+  p5.rotate(-theta);
+  p5.textSize((12 * dist(innerPoint, outerPoint)) / 80);
+  p5.text(new Date(time).getHours(), 0, 0);
+  p5.pop();
 };
 
 interface FocusMarkerProps {
@@ -100,19 +88,15 @@ interface FocusMarkerProps {
   k: number;
 }
 
-export const FocusMarker = ({ rotationsToFocus, a, k }: FocusMarkerProps) => {
+export const drawFocusMarker = (
+  p5: p5Types,
+  { rotationsToFocus, a, k }: FocusMarkerProps,
+) => {
   const focusOuterPoint = polarToCart(
     spiralRadius(rotationsToFocus * TWO_PI + TWO_PI, a, k),
     0,
   );
 
-  return (
-    <g>
-      <path
-        fill="none"
-        stroke="red"
-        d={`M 0 0 L ${focusOuterPoint.x} ${focusOuterPoint.y}`}
-      />
-    </g>
-  );
+  p5.stroke(255, 0, 0);
+  p5.line(0, 0, focusOuterPoint.x, focusOuterPoint.y);
 };

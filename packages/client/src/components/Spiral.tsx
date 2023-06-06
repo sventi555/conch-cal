@@ -1,4 +1,5 @@
-import { Point, TWO_PI, polarToCart } from '../utils/math';
+import p5Types from 'p5';
+import { TWO_PI, polarToCart } from '../utils/math';
 import { spiralRadius } from '../utils/spiral';
 
 interface SpiralProps {
@@ -8,26 +9,19 @@ interface SpiralProps {
   samplesPerRotation?: number;
 }
 
-export const Spiral = ({
-  rotations,
-  a,
-  k,
-  samplesPerRotation = 360,
-}: SpiralProps) => {
+export const drawSpiral = (
+  p5: p5Types,
+  { rotations, a, k, samplesPerRotation = 360 }: SpiralProps,
+) => {
   const sampleRate = TWO_PI / samplesPerRotation;
 
-  const coords: Point[] = [];
+  p5.stroke(0);
+  p5.noFill();
+
+  p5.beginShape();
   for (let theta = 0; theta <= TWO_PI * rotations; theta += sampleRate) {
-    coords.push(polarToCart(spiralRadius(theta, a, k), theta));
+    const coord = polarToCart(spiralRadius(theta, a, k), theta);
+    p5.vertex(coord.x, coord.y);
   }
-
-  const coordString =
-    `M ${coords[0].x} ${coords[0].y}` +
-    coords.slice(1).map((coord) => ` L ${coord.x} ${coord.y}`);
-
-  return (
-    <g fill="none" stroke="black">
-      <path d={coordString} />
-    </g>
-  );
+  p5.endShape();
 };

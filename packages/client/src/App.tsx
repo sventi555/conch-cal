@@ -31,5 +31,5 @@ const events = [
 ];
 
 export const App = () => {
-  return <Calendar events={events} zoom={1} focusedTime={now} />;
+  return <Calendar events={events} />;
 };

@@ -1,3 +1,4 @@
+import p5Types from 'p5';
 import { Point, TWO_PI, polarToCart } from '../utils/math';
 import { spiralRadius, timeToAngle } from '../utils/spiral';
 
@@ -12,16 +13,19 @@ interface TimeBlockProps {
   samplesPerRotation?: number;
 }
 
-export const TimeBlock = ({
-  start,
-  end,
-  focusedTime,
-  rotationsToFocus,
-  rotationsPerDay,
-  a,
-  k,
-  samplesPerRotation = 360,
-}: TimeBlockProps) => {
+export const drawTimeBlock = (
+  p5: p5Types,
+  {
+    start,
+    end,
+    focusedTime,
+    rotationsToFocus,
+    rotationsPerDay,
+    a,
+    k,
+    samplesPerRotation = 360,
+  }: TimeBlockProps,
+) => {
   const sampleRate = TWO_PI / samplesPerRotation;
 
   const startAngle = timeToAngle(
@@ -37,29 +41,26 @@ export const TimeBlock = ({
     rotationsPerDay,
   );
 
-  const coords: Point[] = [];
-  // outer arc
+  p5.fill(0, 0, 255);
+  p5.beginShape();
+
+  let coord: Point;
   for (let theta = startAngle; theta >= endAngle; theta -= sampleRate) {
-    coords.push(polarToCart(spiralRadius(theta, a, k), theta));
+    coord = polarToCart(spiralRadius(theta, a, k), theta);
+    p5.vertex(coord.x, coord.y);
   }
   // make sure we hit the very edge (hide sampling errors)
-  coords.push(polarToCart(spiralRadius(endAngle, a, k), endAngle));
+  coord = polarToCart(spiralRadius(endAngle, a, k), endAngle);
+  p5.vertex(coord.x, coord.y);
 
   // inner arc
   for (let theta = endAngle; theta <= startAngle; theta += sampleRate) {
-    coords.push(polarToCart(spiralRadius(theta - TWO_PI, a, k), theta));
+    coord = polarToCart(spiralRadius(theta - TWO_PI, a, k), theta);
+    p5.vertex(coord.x, coord.y);
   }
   // make sure we hit the very edge (hide sampling errors)
-  coords.push(polarToCart(spiralRadius(startAngle - TWO_PI, a, k), startAngle));
+  coord = polarToCart(spiralRadius(startAngle - TWO_PI, a, k), startAngle);
+  p5.vertex(coord.x, coord.y);
 
-  const coordString =
-    `M ${coords[0].x} ${coords[0].y}` +
-    coords.slice(1).map((coord) => ` L ${coord.x} ${coord.y}`) +
-    ' Z';
-
-  return (
-    <g fill="blue">
-      <path d={coordString} />
-    </g>
-  );
+  p5.endShape();
 };
