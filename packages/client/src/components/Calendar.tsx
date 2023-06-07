@@ -1,9 +1,9 @@
 import p5Types from 'p5';
 import { useState } from 'react';
 import Sketch from 'react-p5';
+import { drawEvent } from './Event';
 import { drawFocusMarker, drawMarkers } from './Markers';
 import { drawSpiral } from './Spiral';
-import { drawTimeBlock } from './TimeBlock';
 
 interface Event {
   start: number;
@@ -46,9 +46,8 @@ export const Calendar = ({ events }: CalendarProps) => {
       k,
     });
     events.forEach((event) => {
-      drawTimeBlock(p5, {
-        start: event.start,
-        end: event.end,
+      drawEvent(p5, {
+        event,
         focusedTime,
         rotationsToFocus,
         rotationsPerDay: zoom,

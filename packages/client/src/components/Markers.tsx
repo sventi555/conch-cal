@@ -60,8 +60,8 @@ const drawMarker = (
   const innerPoint = polarToCart(spiralRadius(theta - TWO_PI, a, k), theta);
 
   const textCoords = {
-    x: lerp(innerPoint.x, outerPoint.x, 0.1),
-    y: lerp(innerPoint.y, outerPoint.y, 0.1),
+    x: lerp(innerPoint.x, outerPoint.x, 0.02),
+    y: lerp(innerPoint.y, outerPoint.y, 0.02),
   };
 
   p5.stroke(0);
@@ -77,7 +77,8 @@ const drawMarker = (
   p5.translate(textCoords.x, textCoords.y);
   p5.scale(1, -1);
   p5.rotate(-theta);
-  p5.textSize((12 * dist(innerPoint, outerPoint)) / 80);
+  p5.translate(0, -2);
+  p5.textSize(dist(innerPoint, outerPoint) / 6);
   p5.text(new Date(time).getHours(), 0, 0);
   p5.pop();
 };
