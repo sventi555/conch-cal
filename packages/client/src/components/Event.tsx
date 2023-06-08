@@ -1,6 +1,6 @@
 import p5Types from 'p5';
-import { Point, TWO_PI, dist, lerp, polarToCart } from '../utils/math';
-import { spiralRadius, timeToAngle } from '../utils/spiral';
+import { Point, TWO_PI, dist, lerp } from '../utils/math';
+import { spiralCoord, timeToAngle } from '../utils/spiral';
 
 interface Event {
   start: number;
@@ -65,20 +65,20 @@ const drawEventBlock = (
 
   let coord: Point;
   for (let theta = startAngle; theta >= endAngle; theta -= sampleRate) {
-    coord = polarToCart(spiralRadius(theta, a, k), theta);
+    coord = spiralCoord(theta, a, k);
     p5.vertex(coord.x, coord.y);
   }
   // make sure we hit the very edge (hide sampling errors)
-  coord = polarToCart(spiralRadius(endAngle, a, k), endAngle);
+  coord = spiralCoord(endAngle, a, k);
   p5.vertex(coord.x, coord.y);
 
   // inner arc
   for (let theta = endAngle; theta <= startAngle; theta += sampleRate) {
-    coord = polarToCart(spiralRadius(theta - TWO_PI, a, k), theta);
+    coord = spiralCoord(theta - TWO_PI, a, k);
     p5.vertex(coord.x, coord.y);
   }
   // make sure we hit the very edge (hide sampling errors)
-  coord = polarToCart(spiralRadius(startAngle - TWO_PI, a, k), startAngle);
+  coord = spiralCoord(startAngle - TWO_PI, a, k);
   p5.vertex(coord.x, coord.y);
 
   p5.endShape();
@@ -112,11 +112,8 @@ const drawEventLabel = (
   );
   const textAngle = startAngle - 0.08;
 
-  const outerPoint = polarToCart(spiralRadius(textAngle, a, k), textAngle);
-  const innerPoint = polarToCart(
-    spiralRadius(textAngle - TWO_PI, a, k),
-    textAngle,
-  );
+  const outerPoint = spiralCoord(textAngle, a, k);
+  const innerPoint = spiralCoord(textAngle - TWO_PI, a, k);
 
   const d = dist(innerPoint, outerPoint);
 

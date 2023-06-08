@@ -1,7 +1,7 @@
 import p5Types from 'p5';
 import { MS_PER_DAY, MS_PER_HOUR } from '../utils/date';
 import { TWO_PI, dist, lerp, polarToCart } from '../utils/math';
-import { spiralRadius, timeToAngle } from '../utils/spiral';
+import { spiralCoord, spiralRadius, timeToAngle } from '../utils/spiral';
 
 interface MarkersProps {
   focusedTime: number;
@@ -65,8 +65,8 @@ const drawMarker = (
     rotationsPerDay,
   );
 
-  const outerPoint = polarToCart(spiralRadius(theta, a, k), theta);
-  const innerPoint = polarToCart(spiralRadius(theta - TWO_PI, a, k), theta);
+  const outerPoint = spiralCoord(theta, a, k);
+  const innerPoint = spiralCoord(theta - TWO_PI, a, k);
 
   const textCoords = {
     x: lerp(innerPoint.x, outerPoint.x, 0.02),

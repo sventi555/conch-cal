@@ -1,6 +1,6 @@
 import p5Types from 'p5';
-import { TWO_PI, polarToCart } from '../utils/math';
-import { spiralRadius } from '../utils/spiral';
+import { TWO_PI } from '../utils/math';
+import { spiralCoord } from '../utils/spiral';
 
 interface SpiralProps {
   rotations: number;
@@ -20,7 +20,7 @@ export const drawSpiral = (
 
   p5.beginShape();
   for (let theta = 0; theta <= TWO_PI * rotations; theta += sampleRate) {
-    const coord = polarToCart(spiralRadius(theta, a, k), theta);
+    const coord = spiralCoord(theta, a, k);
     p5.vertex(coord.x, coord.y);
   }
   p5.endShape();

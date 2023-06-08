@@ -1,5 +1,9 @@
 import { MS_PER_DAY } from './date';
-import { TWO_PI } from './math';
+import { TWO_PI, polarToCart } from './math';
+
+export const spiralCoord = (theta: number, a: number, k: number) => {
+  return polarToCart(spiralRadius(theta, a, k), theta);
+};
 
 export const spiralRadius = (theta: number, a: number, k: number) => {
   return a * Math.pow(Math.E, k * theta);
