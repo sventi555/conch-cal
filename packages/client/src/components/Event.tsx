@@ -47,6 +47,7 @@ export const drawEvent = (
 
   p5.noStroke();
   p5.fill(0, 0, 255);
+
   p5.beginShape();
 
   let coord: Point;
@@ -88,15 +89,14 @@ const drawEventLabel = (
   const outerPoint = spiralCoord(textAngle, a, k);
   const innerPoint = spiralCoord(textAngle - TWO_PI, a, k);
 
-  const d = dist(innerPoint, outerPoint);
-
   const textCoords = {
     x: lerp(innerPoint.x, outerPoint.x, 0.05),
     y: lerp(innerPoint.y, outerPoint.y, 0.05),
   };
 
+  p5.noStroke();
   p5.fill(255);
-  p5.textSize(d / 8);
+  p5.textSize(dist(innerPoint, outerPoint) / 8);
 
   p5.push();
   p5.translate(textCoords.x, textCoords.y);

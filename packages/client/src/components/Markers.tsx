@@ -80,6 +80,7 @@ const drawMarker = (
   p5.line(outerPoint.x, outerPoint.y, innerPoint.x, innerPoint.y);
 
   p5.noStroke();
+  p5.textSize(dist(innerPoint, outerPoint) / 8);
 
   // hour text
   p5.push();
@@ -87,7 +88,6 @@ const drawMarker = (
   p5.scale(1, -1);
   p5.rotate(-theta);
   p5.translate(0, -2);
-  p5.textSize(dist(innerPoint, outerPoint) / 8);
   p5.text(`${new Date(time).getHours() % 12}:00`, 0, 0);
   p5.pop();
 };
