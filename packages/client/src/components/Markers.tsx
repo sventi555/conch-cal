@@ -19,8 +19,17 @@ export const drawMarkers = (
   const centerTime =
     focusedTime + (rotationsToFocus / rotationsPerDay) * MS_PER_DAY;
 
+  // tack on a couple days worth of markers before the focus time.
+  // adjust based on the canvas size and the size of the spiral
+  const numPaddingRotations = 2;
+  const hoursBeforeFocus = (numPaddingRotations * 24) / rotationsPerDay;
+
   const markerTimes: number[] = [];
-  for (let time = lastHour; time < centerTime; time += MS_PER_HOUR) {
+  for (
+    let time = lastHour - hoursBeforeFocus * MS_PER_HOUR;
+    time < centerTime;
+    time += MS_PER_HOUR
+  ) {
     markerTimes.push(time);
   }
 
@@ -78,8 +87,8 @@ const drawMarker = (
   p5.scale(1, -1);
   p5.rotate(-theta);
   p5.translate(0, -2);
-  p5.textSize(dist(innerPoint, outerPoint) / 6);
-  p5.text(new Date(time).getHours(), 0, 0);
+  p5.textSize(dist(innerPoint, outerPoint) / 8);
+  p5.text(`${new Date(time).getHours() % 12}:00`, 0, 0);
   p5.pop();
 };
 

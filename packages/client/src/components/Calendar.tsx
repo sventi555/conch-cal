@@ -1,6 +1,8 @@
 import p5Types from 'p5';
 import { useState } from 'react';
 import Sketch from 'react-p5';
+import { MS_PER_HOUR } from '../utils/date';
+import { clamp } from '../utils/math';
 import { drawEvent } from './Event';
 import { drawFocusMarker, drawMarkers } from './Markers';
 import { drawSpiral } from './Spiral';
@@ -16,16 +18,52 @@ interface CalendarProps {
 }
 
 export const Calendar = ({ events }: CalendarProps) => {
-  const [zoom] = useState(1);
-  const [focusedTime] = useState(Date.now());
+  const [zoom, setZoom] = useState(1);
+  const [focusedTime, setFocusedTime] = useState(Date.now());
 
   const width = 600;
   const height = 600;
 
-  const a = 6;
+  const a = 12;
   const k = 0.1;
-  const rotationsToFocus = 6;
+  const rotationsToFocus = 5;
   const totalRotations = rotationsToFocus + 1;
+
+  const mouseWheel = (p5: p5Types, event?: UIEvent) => {
+    if (event !== undefined) {
+      updateFocus(event as WheelEvent);
+    }
+  };
+
+  const updateFocus = (event: WheelEvent) => {
+    const scrollIncrement = MS_PER_HOUR / zoom;
+    if (event.deltaY > 0) {
+      setFocusedTime(focusedTime + scrollIncrement);
+    } else {
+      setFocusedTime(focusedTime - scrollIncrement);
+    }
+  };
+
+  const keyPressed = (p5: p5Types) => {
+    if (p5.key === ' ') {
+      setFocusedTime(Date.now());
+      return;
+    }
+
+    updateZoom(p5);
+  };
+
+  const updateZoom = (p5: p5Types) => {
+    let updatedVal: number;
+    if (p5.key === '=') {
+      updatedVal = zoom * 2;
+    } else if (p5.key === '-') {
+      updatedVal = zoom / 2;
+    } else {
+      return;
+    }
+    setZoom(clamp(updatedVal, 0.5, 4));
+  };
 
   const setup = (p5: p5Types, canvasParentRef: Element) => {
     p5.createCanvas(width, height).parent(canvasParentRef);
@@ -59,8 +97,11 @@ export const Calendar = ({ events }: CalendarProps) => {
   };
 
   return (
-    <>
-      <Sketch setup={setup} draw={draw} />;
-    </>
+    <Sketch
+      keyPressed={keyPressed}
+      mouseWheel={mouseWheel}
+      setup={setup}
+      draw={draw}
+    />
   );
 };

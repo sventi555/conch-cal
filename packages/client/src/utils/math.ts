@@ -20,3 +20,7 @@ export const lerp = (a: number, b: number, alpha: number) => {
 export const dist = (a: Point, b: Point) => {
   return Math.hypot(b.x - a.x, b.y - a.y);
 };
+
+export const clamp = (val: number, min: number, max: number) => {
+  return Math.min(Math.max(val, min), max);
+};
