@@ -3,18 +3,18 @@ import { useState } from 'react';
 import Sketch from 'react-p5';
 import { MS_PER_HOUR } from '../utils/date';
 import { clamp } from '../utils/math';
-import { drawEvent } from './Event';
+import { CalendarEvent, drawEvent } from './Event';
 import { drawFocusMarker, drawMarkers } from './Markers';
 import { drawSpiral } from './Spiral';
 
-interface Event {
-  start: number;
-  end: number;
-  name: string;
+export interface CalendarConfig {
+  focusedTime: number;
+  rotationsToFocus: number;
+  rotationsPerDay: number;
 }
 
 interface CalendarProps {
-  events: Event[];
+  events: CalendarEvent[];
 }
 
 export const Calendar = ({ events }: CalendarProps) => {
@@ -28,6 +28,12 @@ export const Calendar = ({ events }: CalendarProps) => {
   const k = 0.1;
   const rotationsToFocus = 5;
   const totalRotations = rotationsToFocus + 1;
+
+  const config = {
+    focusedTime,
+    rotationsToFocus,
+    rotationsPerDay: zoom,
+  };
 
   const mouseWheel = (p5: p5Types, event?: UIEvent) => {
     if (event !== undefined) {
@@ -77,18 +83,14 @@ export const Calendar = ({ events }: CalendarProps) => {
 
     drawSpiral(p5, { rotations: totalRotations, a, k });
     drawMarkers(p5, {
-      focusedTime,
-      rotationsToFocus,
-      rotationsPerDay: zoom,
+      config,
       a,
       k,
     });
     events.forEach((event) => {
       drawEvent(p5, {
         event,
-        focusedTime,
-        rotationsToFocus,
-        rotationsPerDay: zoom,
+        config,
         a,
         k,
       });

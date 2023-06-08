@@ -1,18 +1,17 @@
 import p5Types from 'p5';
 import { Point, TWO_PI, dist, lerp } from '../utils/math';
 import { spiralCoord, timeToAngle } from '../utils/spiral';
+import { CalendarConfig } from './Calendar';
 
-interface Event {
+export interface CalendarEvent {
   start: number;
   end: number;
   name: string;
 }
 
 interface EventProps {
-  event: Event;
-  focusedTime: number;
-  rotationsToFocus: number;
-  rotationsPerDay: number;
+  event: CalendarEvent;
+  config: CalendarConfig;
   a: number;
   k: number;
   samplesPerRotation?: number;
@@ -20,30 +19,12 @@ interface EventProps {
 
 export const drawEvent = (
   p5: p5Types,
-  {
-    event,
-    focusedTime,
-    rotationsToFocus,
-    rotationsPerDay,
-    a,
-    k,
-    samplesPerRotation = 360,
-  }: EventProps,
+  { event, config, a, k, samplesPerRotation = 360 }: EventProps,
 ) => {
   const sampleRate = TWO_PI / samplesPerRotation;
 
-  const startAngle = timeToAngle(
-    event.start,
-    focusedTime,
-    rotationsToFocus,
-    rotationsPerDay,
-  );
-  const endAngle = timeToAngle(
-    event.end,
-    focusedTime,
-    rotationsToFocus,
-    rotationsPerDay,
-  );
+  const startAngle = timeToAngle(event.start, config);
+  const endAngle = timeToAngle(event.end, config);
 
   p5.noStroke();
   p5.fill(0, 0, 255);
