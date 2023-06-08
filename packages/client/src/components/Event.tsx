@@ -15,24 +15,10 @@ interface EventProps {
   rotationsPerDay: number;
   a: number;
   k: number;
-}
-
-export const drawEvent = (p5: p5Types, props: EventProps) => {
-  drawEventBlock(p5, props);
-  drawEventLabel(p5, props);
-};
-
-interface EventBlockProps {
-  event: Event;
-  focusedTime: number;
-  rotationsToFocus: number;
-  rotationsPerDay: number;
-  a: number;
-  k: number;
   samplesPerRotation?: number;
 }
 
-const drawEventBlock = (
+export const drawEvent = (
   p5: p5Types,
   {
     event,
@@ -42,7 +28,7 @@ const drawEventBlock = (
     a,
     k,
     samplesPerRotation = 360,
-  }: EventBlockProps,
+  }: EventProps,
 ) => {
   const sampleRate = TWO_PI / samplesPerRotation;
 
@@ -82,34 +68,21 @@ const drawEventBlock = (
   p5.vertex(coord.x, coord.y);
 
   p5.endShape();
+
+  drawEventLabel(p5, { name: event.name, startAngle, a, k });
 };
 
 interface EventLabelProps {
-  event: Event;
-  focusedTime: number;
-  rotationsToFocus: number;
-  rotationsPerDay: number;
+  name: string;
+  startAngle: number;
   a: number;
   k: number;
 }
 
 const drawEventLabel = (
   p5: p5Types,
-  {
-    event,
-    focusedTime,
-    rotationsToFocus,
-    rotationsPerDay,
-    a,
-    k,
-  }: EventLabelProps,
+  { name, startAngle, a, k }: EventLabelProps,
 ) => {
-  const startAngle = timeToAngle(
-    event.start,
-    focusedTime,
-    rotationsToFocus,
-    rotationsPerDay,
-  );
   const textAngle = startAngle - 0.08;
 
   const outerPoint = spiralCoord(textAngle, a, k);
@@ -129,6 +102,6 @@ const drawEventLabel = (
   p5.translate(textCoords.x, textCoords.y);
   p5.scale(1, -1);
   p5.rotate(-textAngle);
-  p5.text(event.name, 0, 0);
+  p5.text(name, 0, 0);
   p5.pop();
 };
