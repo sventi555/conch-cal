@@ -5,10 +5,9 @@ import { EventModal } from './components/EventModal';
 
 /**
  * TODO
- * - event names
+ * - feed the times into the event modal
  * - day markers
- * - hour marker labels
- * - don't draw out of bounds events
+ * -
  */
 
 export const App = () => {

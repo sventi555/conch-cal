@@ -2,7 +2,8 @@ import p5Types from 'p5';
 import { useState } from 'react';
 import Sketch from 'react-p5';
 import { MS_PER_HOUR } from '../utils/date';
-import { clamp } from '../utils/math';
+import { canvasToCart, cartToPolar, clamp } from '../utils/math';
+import { angleToTime, closestSpiralAngle } from '../utils/spiral';
 import { CalendarEvent, drawEvent } from './Event';
 import { drawFocusMarker, drawMarkers } from './Markers';
 import { drawSpiral } from './Spiral';
@@ -59,6 +60,14 @@ export const Calendar = ({ events }: CalendarProps) => {
     updateZoom(p5);
   };
 
+  const mouseClicked = (p5: p5Types) => {
+    const { r, theta } = cartToPolar(
+      canvasToCart({ x: p5.mouseX, y: p5.mouseY }, p5.width, p5.height),
+    );
+    const spiralAngle = closestSpiralAngle(theta, r, a, k);
+    const time = angleToTime(spiralAngle, config);
+  };
+
   const updateZoom = (p5: p5Types) => {
     let updatedVal: number;
     if (p5.key === '=') {
@@ -102,6 +111,7 @@ export const Calendar = ({ events }: CalendarProps) => {
     <Sketch
       keyPressed={keyPressed}
       mouseWheel={mouseWheel}
+      mouseClicked={mouseClicked}
       setup={setup}
       draw={draw}
     />
