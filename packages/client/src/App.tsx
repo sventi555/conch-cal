@@ -1,4 +1,6 @@
+import { useRef } from 'react';
 import { Calendar } from './components/Calendar';
+import { EventModal } from './components/EventModal';
 import { MS_PER_HOUR } from './utils/date';
 
 /**
@@ -31,5 +33,15 @@ const events = [
 ];
 
 export const App = () => {
-  return <Calendar events={events} />;
+  const eventModalRef = useRef<HTMLDialogElement>(null);
+
+  return (
+    <>
+      <Calendar events={events} />
+      <EventModal dialogRef={eventModalRef} />
+      <button onClick={() => eventModalRef.current?.showModal()}>
+        Add Event
+      </button>
+    </>
+  );
 };
