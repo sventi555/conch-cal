@@ -1,16 +1,28 @@
-import { Ref, useState } from 'react';
+import { Ref } from 'react';
+import { TimeBlockState, dateFromDayAndTime } from '../utils/date';
 import { CalendarEvent } from './Event';
 
 interface EventModalProps {
   dialogRef: Ref<HTMLDialogElement>;
   onSubmit: (event: CalendarEvent) => void;
+  timeBlock: TimeBlockState;
 }
 
-export const EventModal = ({ dialogRef, onSubmit }: EventModalProps) => {
-  const [startDay, setStartDay] = useState('2023-06-08');
-  const [startTime, setStartTime] = useState('12:00');
-  const [endDay, setEndDay] = useState('2023-06-08');
-  const [endTime, setEndTime] = useState('13:00');
+export const EventModal = ({
+  dialogRef,
+  onSubmit,
+  timeBlock,
+}: EventModalProps) => {
+  const {
+    startDay,
+    startTime,
+    endDay,
+    endTime,
+    setStartDay,
+    setStartTime,
+    setEndDay,
+    setEndTime,
+  } = timeBlock;
 
   return (
     <dialog ref={dialogRef}>
@@ -18,8 +30,8 @@ export const EventModal = ({ dialogRef, onSubmit }: EventModalProps) => {
         onSubmit={(e) => {
           e.preventDefault();
           onSubmit({
-            start: new Date(`${startDay}T${startTime}`).getTime(),
-            end: new Date(`${endDay}T${endTime}`).getTime(),
+            start: dateFromDayAndTime(startDay, startTime).getTime(),
+            end: dateFromDayAndTime(endDay, endTime).getTime(),
             name: 'Biffus',
           });
         }}
@@ -28,7 +40,7 @@ export const EventModal = ({ dialogRef, onSubmit }: EventModalProps) => {
           <input
             type="date"
             id="start-date"
-            value={startDay}
+            value={timeBlock.startDay}
             min="1999-06-02"
             onChange={(e) => setStartDay(e.target.value)}
           />
