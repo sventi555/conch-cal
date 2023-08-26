@@ -1,6 +1,6 @@
-import { TWO_PI } from '../utils/math';
-import { spiralCoord } from '../utils/spiral';
-import { P5Component } from './p5-component';
+import { TWO_PI } from '../../utils/math';
+import { spiralCoord } from '../../utils/spiral';
+import { P5Component } from '../p5-component';
 
 interface SpiralProps {
   rotations: number;

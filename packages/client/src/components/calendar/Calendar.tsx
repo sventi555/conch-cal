@@ -1,12 +1,12 @@
 import p5Types from 'p5';
 import { useState } from 'react';
 import Sketch from 'react-p5';
-import { MS_PER_HOUR } from '../utils/date';
-import { canvasToCart, cartToPolar, clamp } from '../utils/math';
-import { angleToTime, closestSpiralAngle } from '../utils/spiral';
-import { CalendarEvent, drawEvent } from './Event';
-import { drawFocusMarker, drawMarkers } from './Markers';
-import { drawSpiral } from './Spiral';
+import { MS_PER_HOUR } from '../../utils/date';
+import { canvasToCart, cartToPolar, clamp } from '../../utils/math';
+import { angleToTime, closestSpiralAngle } from '../../utils/spiral';
+import { CalendarEvent, drawEvent } from './event';
+import { drawFocusMarker, drawMarkers } from './markers';
+import { drawSpiral } from './spiral';
 
 export interface CalendarConfig {
   focusedTime: number;

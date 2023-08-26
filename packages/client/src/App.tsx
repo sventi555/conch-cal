@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
-import { Calendar } from './components/Calendar';
-import { CalendarEvent } from './components/Event';
 import { EventModal } from './components/EventModal';
+import { Calendar } from './components/calendar/Calendar';
+import { CalendarEvent } from './components/calendar/event';
 import {
   MS_PER_HOUR,
   dayStringFromDate,
@@ -11,7 +11,6 @@ import {
 
 /**
  * TODO
- * - use React.FC
  * - day markers
  * - move config into zustand store, and maybe time block state?
  * - division lines?

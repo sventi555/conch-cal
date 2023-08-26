@@ -1,8 +1,8 @@
-import { MS_PER_DAY, MS_PER_HOUR } from '../utils/date';
-import { TWO_PI, dist, lerp, polarToCart } from '../utils/math';
-import { spiralCoord, spiralRadius, timeToAngle } from '../utils/spiral';
+import { MS_PER_DAY, MS_PER_HOUR } from '../../utils/date';
+import { TWO_PI, dist, lerp, polarToCart } from '../../utils/math';
+import { spiralCoord, spiralRadius, timeToAngle } from '../../utils/spiral';
+import { P5Component } from '../p5-component';
 import { CalendarConfig } from './Calendar';
-import { P5Component } from './p5-component';
 
 interface MarkersProps {
   config: CalendarConfig;

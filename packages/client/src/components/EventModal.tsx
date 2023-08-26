@@ -1,6 +1,6 @@
 import { Ref } from 'react';
 import { TimeBlockState, dateFromDayAndTime } from '../utils/date';
-import { CalendarEvent } from './Event';
+import { CalendarEvent } from './calendar/event';
 
 interface EventModalProps {
   dialogRef: Ref<HTMLDialogElement>;
