@@ -16,9 +16,10 @@ export interface CalendarConfig {
 
 interface CalendarProps {
   events: CalendarEvent[];
+  onClickTime: (time: number) => void;
 }
 
-export const Calendar = ({ events }: CalendarProps) => {
+export const Calendar = ({ events, onClickTime }: CalendarProps) => {
   const [zoom, setZoom] = useState(1);
   const [focusedTime, setFocusedTime] = useState(Date.now());
 
@@ -66,6 +67,7 @@ export const Calendar = ({ events }: CalendarProps) => {
     );
     const spiralAngle = closestSpiralAngle(theta, r, a, k);
     const time = angleToTime(spiralAngle, config);
+    onClickTime(time);
   };
 
   const updateZoom = (p5: p5Types) => {

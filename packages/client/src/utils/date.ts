@@ -3,12 +3,19 @@ import { useState } from 'react';
 export const MS_PER_HOUR = 60 * 60 * 1000;
 export const MS_PER_DAY = 24 * MS_PER_HOUR;
 
-export const dayFromDate = (d: Date) => {
-  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+export const dayStringFromDate = (d: Date) => {
+  const year = `${d.getFullYear()}`.padStart(4, '0');
+  const month = `${d.getMonth() + 1}`.padStart(2, '0');
+  const day = `${d.getDate()}`.padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
 };
 
-export const timeFromDate = (d: Date) => {
-  return `${d.getHours()}:${d.getMinutes()}`;
+export const timeStringFromDate = (d: Date) => {
+  const hours = `${d.getHours()}`.padStart(2, '0');
+  const mins = `${d.getMinutes()}`.padStart(2, '0');
+
+  return `${hours}:${mins}`;
 };
 
 export const dateFromDayAndTime = (day: string, time: string) => {

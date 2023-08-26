@@ -2,12 +2,20 @@ import { useRef, useState } from 'react';
 import { Calendar } from './components/Calendar';
 import { CalendarEvent } from './components/Event';
 import { EventModal } from './components/EventModal';
-import { dayFromDate, timeFromDate, useTimeBlock } from './utils/date';
+import {
+  MS_PER_HOUR,
+  dayStringFromDate,
+  timeStringFromDate,
+  useTimeBlock,
+} from './utils/date';
 
 /**
  * TODO
- * - feed the times into the event modal
+ * - use React.FC
  * - day markers
+ * - move config into zustand store, and maybe time block state?
+ * - division lines?
+ * - better handling of click events when modal is open v closed
  * -
  */
 
@@ -16,18 +24,35 @@ export const App = () => {
   const eventModalRef = useRef<HTMLDialogElement>(null);
 
   const now = new Date();
-  const hrLater = new Date(now.getTime() + 3600 * 1000);
+  const hrLater = new Date(now.getTime() + MS_PER_HOUR);
 
   const timeBlock = useTimeBlock({
-    startDay: dayFromDate(now),
-    startTime: timeFromDate(now),
-    endDay: dayFromDate(hrLater),
-    endTime: timeFromDate(hrLater),
+    startDay: dayStringFromDate(now),
+    startTime: timeStringFromDate(now),
+    endDay: dayStringFromDate(hrLater),
+    endTime: timeStringFromDate(hrLater),
   });
 
   return (
     <>
-      <Calendar events={events} />
+      <Calendar
+        events={events}
+        onClickTime={(time) => {
+          if (eventModalRef.current?.open) {
+            return;
+          }
+
+          const date = new Date(time);
+          const hrLater = new Date(time + MS_PER_HOUR);
+
+          timeBlock.setStartDay(dayStringFromDate(date));
+          timeBlock.setStartTime(timeStringFromDate(date));
+          timeBlock.setEndDay(dayStringFromDate(hrLater));
+          timeBlock.setEndTime(timeStringFromDate(hrLater));
+
+          eventModalRef.current?.showModal();
+        }}
+      />
       <EventModal
         timeBlock={timeBlock}
         dialogRef={eventModalRef}
