@@ -1,6 +1,6 @@
-import p5Types from 'p5';
 import { TWO_PI } from '../utils/math';
 import { spiralCoord } from '../utils/spiral';
+import { P5Component } from './p5-component';
 
 interface SpiralProps {
   rotations: number;
@@ -9,9 +9,9 @@ interface SpiralProps {
   samplesPerRotation?: number;
 }
 
-export const drawSpiral = (
-  p5: p5Types,
-  { rotations, a, k, samplesPerRotation = 360 }: SpiralProps,
+export const drawSpiral: P5Component<SpiralProps> = (
+  p5,
+  { rotations, a, k, samplesPerRotation = 360 },
 ) => {
   const sampleRate = TWO_PI / samplesPerRotation;
 

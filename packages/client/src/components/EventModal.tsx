@@ -8,11 +8,11 @@ interface EventModalProps {
   timeBlock: TimeBlockState;
 }
 
-export const EventModal = ({
+export const EventModal: React.FC<EventModalProps> = ({
   dialogRef,
   onSubmit,
   timeBlock,
-}: EventModalProps) => {
+}) => {
   const {
     startDay,
     startTime,

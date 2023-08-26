@@ -1,7 +1,7 @@
-import p5Types from 'p5';
 import { Point, TWO_PI, dist, lerp } from '../utils/math';
 import { spiralCoord, timeToAngle } from '../utils/spiral';
 import { CalendarConfig } from './Calendar';
+import { P5Component } from './p5-component';
 
 export interface CalendarEvent {
   start: number;
@@ -17,9 +17,9 @@ interface EventProps {
   samplesPerRotation?: number;
 }
 
-export const drawEvent = (
-  p5: p5Types,
-  { event, config, a, k, samplesPerRotation = 360 }: EventProps,
+export const drawEvent: P5Component<EventProps> = (
+  p5,
+  { event, config, a, k, samplesPerRotation = 360 },
 ) => {
   const sampleRate = TWO_PI / samplesPerRotation;
 
@@ -61,9 +61,9 @@ interface EventLabelProps {
   k: number;
 }
 
-const drawEventLabel = (
-  p5: p5Types,
-  { name, startAngle, a, k }: EventLabelProps,
+const drawEventLabel: P5Component<EventLabelProps> = (
+  p5,
+  { name, startAngle, a, k },
 ) => {
   const textAngle = startAngle - 0.08;
 

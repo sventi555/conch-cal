@@ -19,7 +19,7 @@ interface CalendarProps {
   onClickTime: (time: number) => void;
 }
 
-export const Calendar = ({ events, onClickTime }: CalendarProps) => {
+export const Calendar: React.FC<CalendarProps> = ({ events, onClickTime }) => {
   const [zoom, setZoom] = useState(1);
   const [focusedTime, setFocusedTime] = useState(Date.now());
 

@@ -1,8 +1,8 @@
-import p5Types from 'p5';
 import { MS_PER_DAY, MS_PER_HOUR } from '../utils/date';
 import { TWO_PI, dist, lerp, polarToCart } from '../utils/math';
 import { spiralCoord, spiralRadius, timeToAngle } from '../utils/spiral';
 import { CalendarConfig } from './Calendar';
+import { P5Component } from './p5-component';
 
 interface MarkersProps {
   config: CalendarConfig;
@@ -10,7 +10,10 @@ interface MarkersProps {
   k: number;
 }
 
-export const drawMarkers = (p5: p5Types, { config, a, k }: MarkersProps) => {
+export const drawMarkers: P5Component<MarkersProps> = (
+  p5,
+  { config, a, k },
+) => {
   const { focusedTime, rotationsToFocus, rotationsPerDay } = config;
   const lastHour = focusedTime - (focusedTime % MS_PER_HOUR);
   const centerTime =
@@ -47,7 +50,7 @@ interface MarkerProps {
   k: number;
 }
 
-const drawMarker = (p5: p5Types, { time, config, a, k }: MarkerProps) => {
+const drawMarker: P5Component<MarkerProps> = (p5, { time, config, a, k }) => {
   const theta = timeToAngle(time, config);
 
   const outerPoint = spiralCoord(theta, a, k);
@@ -83,9 +86,9 @@ interface FocusMarkerProps {
   k: number;
 }
 
-export const drawFocusMarker = (
-  p5: p5Types,
-  { rotationsToFocus, a, k }: FocusMarkerProps,
+export const drawFocusMarker: P5Component<FocusMarkerProps> = (
+  p5,
+  { rotationsToFocus, a, k },
 ) => {
   const focusOuterPoint = polarToCart(
     spiralRadius(rotationsToFocus * TWO_PI + TWO_PI, a, k),
