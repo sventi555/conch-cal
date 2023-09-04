@@ -7,10 +7,11 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "lerna run dev --parallel --stream",
+    "dev": "concurrently -n \"auth,app\" \"yarn emulate-auth\" \"lerna run dev --parallel --stream\"",
     "build": "lerna run build",
     "lint": "lerna run lint",
     "test": "lerna run test",
+    "emulate-auth": "firebase emulators:start --import .firebasedb --export-on-exit",
     "client": "yarn workspace client",
     "lib": "yarn workspace lib",
     "server": "yarn workspace server",
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^17.4.2",
+    "concurrently": "^8.2.1",
     "eslint": "^8.33.0",
     "husky": "^8.0.3",
     "lerna": "^6.4.1",

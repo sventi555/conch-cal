@@ -3,3 +3,5 @@ dist/
 node_modules/
 .env
 yarn-error.log
+.firebasedb
+ui-debug.log

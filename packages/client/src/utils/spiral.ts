@@ -1,4 +1,4 @@
-import { CalendarConfig } from '../components/Calendar';
+import { CalendarConfig } from '../components/calendar/Calendar';
 import { MS_PER_DAY } from './date';
 import { TWO_PI, polarToCart } from './math';
 
