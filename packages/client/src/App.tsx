@@ -1,68 +1,21 @@
-import { useRef, useState } from 'react';
-import { EventModal } from './components/EventModal';
-import { Calendar } from './components/calendar/Calendar';
-import { CalendarEvent } from './components/calendar/event';
-import {
-  MS_PER_HOUR,
-  dayStringFromDate,
-  timeStringFromDate,
-  useTimeBlock,
-} from './utils/date';
+import { Route, Routes } from 'react-router-dom';
+import { Home } from './pages/Home';
+import { Login } from './pages/Login';
+import { Signup } from './pages/Signup';
 
 /**
- * TODO
- * - day markers
- * - move config into zustand store, and maybe time block state?
- * - division lines?
- * - better handling of click events when modal is open v closed
- * -
+ * TODO for minimum viable app
+ * - create server
+ * - send events to the server
+ * - update and delete calendar events through modal
  */
 
 export const App = () => {
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const eventModalRef = useRef<HTMLDialogElement>(null);
-
-  const now = new Date();
-  const hrLater = new Date(now.getTime() + MS_PER_HOUR);
-
-  const timeBlock = useTimeBlock({
-    startDay: dayStringFromDate(now),
-    startTime: timeStringFromDate(now),
-    endDay: dayStringFromDate(hrLater),
-    endTime: timeStringFromDate(hrLater),
-  });
-
   return (
-    <>
-      <Calendar
-        events={events}
-        onClickTime={(time) => {
-          if (eventModalRef.current?.open) {
-            return;
-          }
-
-          const date = new Date(time);
-          const hrLater = new Date(time + MS_PER_HOUR);
-
-          timeBlock.setStartDay(dayStringFromDate(date));
-          timeBlock.setStartTime(timeStringFromDate(date));
-          timeBlock.setEndDay(dayStringFromDate(hrLater));
-          timeBlock.setEndTime(timeStringFromDate(hrLater));
-
-          eventModalRef.current?.showModal();
-        }}
-      />
-      <EventModal
-        timeBlock={timeBlock}
-        dialogRef={eventModalRef}
-        onSubmit={(event: CalendarEvent) => {
-          setEvents([...events, event]);
-          eventModalRef.current?.close();
-        }}
-      />
-      <button onClick={() => eventModalRef.current?.showModal()}>
-        Add Event
-      </button>
-    </>
+    <Routes>
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Home />} />
+    </Routes>
   );
 };

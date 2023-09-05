@@ -1,6 +1,7 @@
 import {
   User,
   browserLocalPersistence,
+  createUserWithEmailAndPassword,
   onAuthStateChanged,
   setPersistence,
   signInWithEmailAndPassword,
@@ -13,12 +14,9 @@ interface AuthState {
   user?: User;
   loading: boolean;
   error?: string;
-  login: (
-    email: string,
-    password: string,
-    callback: CallableFunction,
-  ) => Promise<void>;
-  logout: (callback: CallableFunction) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const useProvideAuth = (): AuthState => {
@@ -42,44 +40,50 @@ const useProvideAuth = (): AuthState => {
     return unsubscribe;
   }, []);
 
-  const login = async (
-    email: string,
-    password: string,
-    callback: CallableFunction,
-  ) => {
+  // The errors in these functions should actually be derived from
+  // the error thrown by firebase. Just guessing now.
+
+  const login = async (email: string, password: string) => {
     setLoading(true);
     setError(undefined);
     const auth = getAuth();
     try {
       setPersistence(auth, browserLocalPersistence);
-      const { user } = await signInWithEmailAndPassword(auth, email, password);
-
-      // these might not be needed because the useEffect may catch it
-      setUser(user);
-      setLoading(false);
-
-      callback();
+      await signInWithEmailAndPassword(auth, email, password);
     } catch {
-      setError('Incorrect email and password');
+      const error = 'Incorrect email and password';
+      setError(error);
       setLoading(false);
+      throw new Error(error);
     }
   };
 
-  const logout = async (callback: CallableFunction) => {
+  const signup = async (email: string, password: string) => {
+    setLoading(true);
+    setError(undefined);
+    const auth = getAuth();
+    try {
+      setPersistence(auth, browserLocalPersistence);
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch {
+      const error = 'Unable to create user';
+      setError(error);
+      setLoading(false);
+      throw new Error(error);
+    }
+  };
+
+  const logout = async () => {
     setLoading(true);
     setError(undefined);
     const auth = getAuth();
     try {
       await signOut(auth);
-
-      // these might not be needed, cause the useEffect may catch it
-      setUser(undefined);
-      setLoading(false);
-
-      callback();
     } catch {
-      setError('Unable to log out');
+      const error = 'Unable to log out';
+      setError(error);
       setLoading(false);
+      throw new Error(error);
     }
   };
 
@@ -89,6 +93,7 @@ const useProvideAuth = (): AuthState => {
     error,
     login,
     logout,
+    signup,
   };
 };
 
@@ -96,6 +101,7 @@ const AuthContext = createContext<AuthState>({
   loading: true,
   login: async () => {},
   logout: async () => {},
+  signup: async () => {},
 });
 
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({

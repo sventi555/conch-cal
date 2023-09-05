@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Sketch from 'react-p5';
 import { MS_PER_HOUR } from '../../utils/date';
 import { canvasToCart, cartToPolar, clamp } from '../../utils/math';
+import { mouseInCanvas } from '../../utils/p5';
 import { angleToTime, closestSpiralAngle } from '../../utils/spiral';
 import { CalendarEvent, drawEvent } from './event';
 import { drawFocusMarker, drawMarkers } from './markers';
@@ -62,6 +63,8 @@ export const Calendar: React.FC<CalendarProps> = ({ events, onClickTime }) => {
   };
 
   const mouseClicked = (p5: p5Types) => {
+    if (!mouseInCanvas(p5)) return;
+
     const { r, theta } = cartToPolar(
       canvasToCart({ x: p5.mouseX, y: p5.mouseY }, p5.width, p5.height),
     );
