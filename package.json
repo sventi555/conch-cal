@@ -7,11 +7,10 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently -n \"auth,app\" \"yarn emulate-auth\" \"lerna run dev --parallel --stream\"",
+    "dev": "lerna run dev --stream",
     "build": "lerna run build",
     "lint": "lerna run lint",
     "test": "lerna run test",
-    "emulate-auth": "firebase emulators:start --import .firebasedb --export-on-exit",
     "client": "yarn workspace client",
     "lib": "yarn workspace lib",
     "server": "yarn workspace server",
