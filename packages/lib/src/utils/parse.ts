@@ -8,3 +8,7 @@ export const toInt = (str: string | undefined) => {
   }
   return num;
 };
+
+export const toBool = (str: string | undefined) => {
+  return str === 'true';
+};

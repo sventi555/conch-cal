@@ -16,6 +16,8 @@ export const Home = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const eventModalRef = useRef<HTMLDialogElement>(null);
 
+  console.log(user);
+
   const now = new Date();
   const hrLater = new Date(now.getTime() + MS_PER_HOUR);
 
