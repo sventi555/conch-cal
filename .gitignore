@@ -4,3 +4,4 @@ node_modules/
 .env
 .firebasedb
 *.log
+*creds.json

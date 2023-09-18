@@ -1,29 +1,12 @@
 import 'dotenv/config';
 
-import cors from '@fastify/cors';
-import Fastify from 'fastify';
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
 import { toInt } from 'lib';
-import { exampleRoutes } from './routes';
+import { eventRoutes } from './routes/event';
 
-const fastify = Fastify({ logger: true });
+const app = new Hono();
 
-fastify.setErrorHandler((error, request, reply) => {
-  fastify.log.error(error);
-  reply.status(500).send();
-});
+eventRoutes(app);
 
-fastify.register(cors);
-
-fastify.register(exampleRoutes);
-
-(async () => {
-  try {
-    await fastify.listen({
-      host: '0.0.0.0',
-      port: toInt(process.env.PORT) || 3001,
-    });
-  } catch (err) {
-    fastify.log.error(err);
-    process.exit(1);
-  }
-})();
+serve({ fetch: app.fetch, port: toInt(process.env.PORT) });
