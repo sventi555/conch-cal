@@ -15,6 +15,7 @@
   "nodemonConfig": {
     "watch": [
       ".",
+      ".env",
       "../lib/dist"
     ]
   },
