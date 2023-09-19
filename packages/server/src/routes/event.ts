@@ -25,8 +25,8 @@ export const eventRoutes = (app: Hono) => {
 
   const postEventsSchema = z.object({
     name: z.string(),
-    startTime: z.number(),
-    endTime: z.number(),
+    start: z.number(),
+    end: z.number(),
     description: z.string().optional(),
   });
   app.post(

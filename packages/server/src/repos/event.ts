@@ -3,8 +3,8 @@ import { db } from '../db/ index';
 interface Event {
   owner: string;
   name: string;
-  startTime: number;
-  endTime: number;
+  start: number;
+  end: number;
   description?: string;
 }
 

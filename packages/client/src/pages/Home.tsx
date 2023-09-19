@@ -23,16 +23,7 @@ export const Home = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
           .then((res) => res.json())
-          .then((data) => {
-            setEvents(
-              data.map((event) => ({
-                name: event.name,
-                start: event.startTime,
-                end: event.endTime,
-                description: event.description,
-              })),
-            );
-          });
+          .then((data) => setEvents(data));
       });
     }
   }, [user]);
@@ -83,12 +74,7 @@ export const Home = () => {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({
-                name: event.name,
-                startTime: event.start,
-                endTime: event.end,
-                description: event.description,
-              }),
+              body: JSON.stringify(event),
             }).then(() => {
               setEvents([...events, event]);
             });
