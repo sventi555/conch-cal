@@ -12,6 +12,12 @@
     "test": "jest",
     "test:watch": "jest --watch"
   },
+  "nodemonConfig": {
+    "watch": [
+      ".",
+      "../lib/dist"
+    ]
+  },
   "dependencies": {
     "@google-cloud/firestore": "^6.7.0",
     "@hono/node-server": "^1.1.1",
@@ -20,8 +26,7 @@
     "dotenv": "^16.0.3",
     "firebase-admin": "^11.10.1",
     "hono": "^3.6.3",
-    "lib": "*",
-    "zod": "^3.22.2"
+    "lib": "*"
   },
   "devDependencies": {
     "@types/jest": "^29.4.0",

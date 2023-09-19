@@ -1,4 +1,4 @@
-import { CalendarEvent } from 'lib';
+import { Event } from 'lib';
 import p5Types from 'p5';
 import { useState } from 'react';
 import Sketch from 'react-p5';
@@ -17,7 +17,7 @@ export interface CalendarConfig {
 }
 
 interface CalendarProps {
-  events: CalendarEvent[];
+  events: Event[];
   onClickTime: (time: number) => void;
 }
 

@@ -1,4 +1,9 @@
-import { CalendarEvent } from 'lib';
+import {
+  Event,
+  GetEventsQueryType,
+  GetEventsReturnType,
+  PostEventsReturnType,
+} from 'lib';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth';
@@ -13,17 +18,19 @@ import {
 
 export const Home = () => {
   const { user, logout } = useAuth();
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const eventModalRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     if (user) {
       user.getIdToken().then((token) => {
-        fetch(`${import.meta.env.VITE_API_HOST}/events?userId=${user.uid}`, {
+        const query: GetEventsQueryType = { userId: user.uid };
+        const queryString = new URLSearchParams(query);
+        fetch(`${import.meta.env.VITE_API_HOST}/events?${queryString}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
           .then((res) => res.json())
-          .then((data) => setEvents(data));
+          .then((data: GetEventsReturnType) => setEvents(data));
       });
     }
   }, [user]);
@@ -66,7 +73,7 @@ export const Home = () => {
       <EventModal
         timeBlock={timeBlock}
         dialogRef={eventModalRef}
-        onSubmit={(event: CalendarEvent) => {
+        onSubmit={(event) => {
           user?.getIdToken().then((token) => {
             fetch(`${import.meta.env.VITE_API_HOST}/events`, {
               method: 'POST',
@@ -75,9 +82,11 @@ export const Home = () => {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify(event),
-            }).then(() => {
-              setEvents([...events, event]);
-            });
+            })
+              .then((res) => res.json())
+              .then((event: PostEventsReturnType) => {
+                setEvents([...events, event]);
+              });
           });
 
           eventModalRef.current?.close();

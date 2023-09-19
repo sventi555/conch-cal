@@ -1,10 +1,10 @@
+import { PostEventsBodyType } from 'lib';
 import { Ref } from 'react';
 import { TimeBlockState, dateFromDayAndTime } from '../utils/date';
-import { CalendarEvent } from './calendar/event';
 
 interface EventModalProps {
   dialogRef: Ref<HTMLDialogElement>;
-  onSubmit: (event: CalendarEvent) => void;
+  onSubmit: (event: PostEventsBodyType) => void;
   timeBlock: TimeBlockState;
 }
 
