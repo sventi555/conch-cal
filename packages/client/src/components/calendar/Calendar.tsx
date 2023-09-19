@@ -1,3 +1,4 @@
+import { CalendarEvent } from 'lib';
 import p5Types from 'p5';
 import { useState } from 'react';
 import Sketch from 'react-p5';
@@ -5,7 +6,7 @@ import { MS_PER_HOUR } from '../../utils/date';
 import { canvasToCart, cartToPolar, clamp } from '../../utils/math';
 import { mouseInCanvas } from '../../utils/p5';
 import { angleToTime, closestSpiralAngle } from '../../utils/spiral';
-import { CalendarEvent, drawEvent } from './event';
+import { drawEvent } from './event';
 import { drawFocusMarker, drawMarkers } from './markers';
 import { drawSpiral } from './spiral';
 

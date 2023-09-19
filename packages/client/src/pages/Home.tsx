@@ -1,9 +1,9 @@
+import { CalendarEvent } from 'lib';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth';
 import { EventModal } from '../components/EventModal';
 import { Calendar } from '../components/calendar/Calendar';
-import { CalendarEvent } from '../components/calendar/event';
 import {
   MS_PER_HOUR,
   dayStringFromDate,
