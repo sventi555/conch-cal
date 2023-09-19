@@ -1,5 +1,6 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import { z } from 'zod';
 import { verifyToken } from '../middlewares/auth';
 import { EventRepo } from '../repos';
@@ -12,6 +13,10 @@ export const eventRoutes = (app: Hono) => {
     zValidator('query', getEventsSchema),
     async (c) => {
       const { userId } = c.req.valid('query');
+      if (userId !== c.var.userId) {
+        throw new HTTPException(400);
+      }
+
       const events = await EventRepo.getAllByUser(userId);
 
       return c.json(events);

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth';
 import { EventModal } from '../components/EventModal';
@@ -16,7 +16,26 @@ export const Home = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const eventModalRef = useRef<HTMLDialogElement>(null);
 
-  console.log(user);
+  useEffect(() => {
+    if (user) {
+      user.getIdToken().then((token) => {
+        fetch(`${import.meta.env.VITE_API_HOST}/events?userId=${user.uid}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            setEvents(
+              data.map((event) => ({
+                name: event.name,
+                start: event.startTime,
+                end: event.endTime,
+                description: event.description,
+              })),
+            );
+          });
+      });
+    }
+  }, [user]);
 
   const now = new Date();
   const hrLater = new Date(now.getTime() + MS_PER_HOUR);
@@ -57,7 +76,24 @@ export const Home = () => {
         timeBlock={timeBlock}
         dialogRef={eventModalRef}
         onSubmit={(event: CalendarEvent) => {
-          setEvents([...events, event]);
+          user?.getIdToken().then((token) => {
+            fetch(`${import.meta.env.VITE_API_HOST}/events`, {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                name: event.name,
+                startTime: event.start,
+                endTime: event.end,
+                description: event.description,
+              }),
+            }).then(() => {
+              setEvents([...events, event]);
+            });
+          });
+
           eventModalRef.current?.close();
         }}
       />
