@@ -10,7 +10,7 @@ declare global {
 /**
  * Extracts config values from process in dev and from the environment.js file in production.
  * Note: Vite will only include variables that are prefixed with VITE_ in the built application.
- * Please add any updates to `./server/entrypoint.sh`, `./.env.example`, and here.
+ * Please add any updates to `.env.example`, `server/entrypoint.sh`, and here.
  */
 const config =
   globalThis.ENV ||

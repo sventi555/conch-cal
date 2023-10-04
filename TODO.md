@@ -1,4 +1,0 @@
-- Loading states for login and signup
-- Require auth on main page
-- Division lines
-- Better handling of click events when modal is open

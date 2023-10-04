@@ -5,3 +5,4 @@ node_modules/
 .firebasedb
 *.log
 *creds.json
+yarn-error.log

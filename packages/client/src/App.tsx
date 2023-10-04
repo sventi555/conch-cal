@@ -10,7 +10,7 @@ import { Signup } from './pages/Signup';
  * - update and delete calendar events through modal
  */
 
-export const App = () => {
+export const App: React.FC = () => {
   return (
     <Routes>
       <Route path="/signup" element={<Signup />} />

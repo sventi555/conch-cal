@@ -1,11 +1,11 @@
-import { CalendarEvent } from 'lib';
+import { Event } from 'lib';
 import { Point, TWO_PI, dist, lerp } from '../../utils/math';
 import { spiralCoord, timeToAngle } from '../../utils/spiral';
 import { P5Component } from '../p5-component';
 import { CalendarConfig } from './Calendar';
 
 interface EventProps {
-  event: CalendarEvent;
+  event: Event;
   config: CalendarConfig;
   a: number;
   k: number;
