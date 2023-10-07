@@ -5,8 +5,6 @@ import { Signup } from './pages/Signup';
 
 /**
  * TODO for minimum viable app
- * - create server
- * - send events to the server
  * - update and delete calendar events through modal
  */
 
