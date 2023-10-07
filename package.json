@@ -11,6 +11,7 @@
     "build": "lerna run build",
     "lint": "lerna run lint",
     "test": "lerna run test",
+    "clean": "lerna run clean",
     "client": "yarn workspace client",
     "lib": "yarn workspace lib",
     "server": "yarn workspace server",
