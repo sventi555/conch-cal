@@ -1,10 +1,10 @@
 import { Event } from 'lib';
 import p5Types from 'p5';
 import { useState } from 'react';
-import Sketch from 'react-p5';
+import Sketch, { SketchProps } from 'react-p5';
 import { MS_PER_HOUR } from '../../utils/date';
 import { canvasToCart, cartToPolar, clamp } from '../../utils/math';
-import { mouseInCanvas } from '../../utils/p5';
+import { eventInCanvas } from '../../utils/p5';
 import { angleToTime, closestSpiralAngle } from '../../utils/spiral';
 import { drawEvent } from './event';
 import { drawFocusMarker, drawMarkers } from './markers';
@@ -19,9 +19,14 @@ export interface CalendarConfig {
 interface CalendarProps {
   events: Event[];
   onClickTime: (time: number) => void;
+  onClickEvent: (event: Event) => void;
 }
 
-export const Calendar: React.FC<CalendarProps> = ({ events, onClickTime }) => {
+export const Calendar: React.FC<CalendarProps> = ({
+  events,
+  onClickTime,
+  onClickEvent,
+}) => {
   const [zoom, setZoom] = useState(1);
   const [focusedTime, setFocusedTime] = useState(Date.now());
 
@@ -39,7 +44,7 @@ export const Calendar: React.FC<CalendarProps> = ({ events, onClickTime }) => {
     rotationsPerDay: zoom,
   };
 
-  const mouseWheel = (p5: p5Types, event?: UIEvent) => {
+  const mouseWheel: SketchProps['mouseWheel'] = (p5, event) => {
     if (event !== undefined) {
       updateFocus(event as WheelEvent);
     }
@@ -54,7 +59,7 @@ export const Calendar: React.FC<CalendarProps> = ({ events, onClickTime }) => {
     }
   };
 
-  const keyPressed = (p5: p5Types) => {
+  const keyPressed: SketchProps['keyPressed'] = (p5) => {
     if (p5.key === ' ') {
       setFocusedTime(Date.now());
       return;
@@ -63,15 +68,24 @@ export const Calendar: React.FC<CalendarProps> = ({ events, onClickTime }) => {
     updateZoom(p5);
   };
 
-  const mouseClicked = (p5: p5Types) => {
-    if (!mouseInCanvas(p5)) return;
+  const mouseClicked: SketchProps['mouseClicked'] = (p5, event) => {
+    if (!eventInCanvas(event)) return;
 
     const { r, theta } = cartToPolar(
       canvasToCart({ x: p5.mouseX, y: p5.mouseY }, p5.width, p5.height),
     );
     const spiralAngle = closestSpiralAngle(theta, r, a, k);
     const time = angleToTime(spiralAngle, config);
-    onClickTime(time);
+
+    const clickedEvent = events.find(
+      (event) => time >= event.start && time <= event.end,
+    );
+
+    if (clickedEvent) {
+      onClickEvent(clickedEvent);
+    } else {
+      onClickTime(time);
+    }
   };
 
   const updateZoom = (p5: p5Types) => {
@@ -86,11 +100,11 @@ export const Calendar: React.FC<CalendarProps> = ({ events, onClickTime }) => {
     setZoom(clamp(updatedVal, 0.5, 4));
   };
 
-  const setup = (p5: p5Types, canvasParentRef: Element) => {
+  const setup: SketchProps['setup'] = (p5, canvasParentRef) => {
     p5.createCanvas(width, height).parent(canvasParentRef);
   };
 
-  const draw = (p5: p5Types) => {
+  const draw: SketchProps['draw'] = (p5) => {
     p5.background(255);
 
     p5.translate(p5.width / 2, p5.height / 2);

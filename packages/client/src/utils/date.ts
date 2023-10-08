@@ -55,3 +55,14 @@ export const useTimeBlock = (initialTimeBlock: TimeBlock): TimeBlockState => {
     setEndTime,
   };
 };
+
+export const setTimeBlockState = (
+  timeBlock: TimeBlockState,
+  startDate: Date,
+  endDate: Date,
+) => {
+  timeBlock.setStartDay(dayStringFromDate(startDate));
+  timeBlock.setStartTime(timeStringFromDate(startDate));
+  timeBlock.setEndDay(dayStringFromDate(endDate));
+  timeBlock.setEndTime(timeStringFromDate(endDate));
+};

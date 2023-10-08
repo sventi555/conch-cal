@@ -38,3 +38,4 @@ export type PutEventsBodyType = z.infer<typeof putEventsBodySchema>;
 export type PutEventsReturnType = Event;
 
 export const deleteEventsParamSchema = idSchema;
+export type DeleteEventsParamType = z.infer<typeof deleteEventsParamSchema>;

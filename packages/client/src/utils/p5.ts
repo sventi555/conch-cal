@@ -8,3 +8,11 @@ export const mouseInCanvas = (p5: p5Types) => {
     p5.mouseY < p5.height
   );
 };
+
+export const eventInCanvas = (event?: UIEvent) => {
+  const target = event?.target;
+  const inCanvas =
+    target && target instanceof Element && target.className === 'p5Canvas';
+
+  return inCanvas;
+};

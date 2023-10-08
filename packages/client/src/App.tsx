@@ -6,6 +6,7 @@ import { Signup } from './pages/Signup';
 /**
  * TODO for minimum viable app
  * - update and delete calendar events through modal
+ * - move modal data to context (or some kind of global state)
  */
 
 export const App: React.FC = () => {
