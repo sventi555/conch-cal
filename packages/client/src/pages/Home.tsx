@@ -1,41 +1,28 @@
-import {
-  Event,
-  EventData,
-  GetEventsQueryType,
-  GetEventsReturnType,
-  PostEventsReturnType,
-} from 'lib';
-import { useEffect, useRef, useState } from 'react';
+import { EventData } from 'lib';
+import { useRef, useState } from 'react';
 import { useAuth } from '../auth';
 import { Calendar } from '../components/calendar/Calendar';
 import {
   CreateEventModal,
   ModifyEventModal,
 } from '../components/event-modals/EventModal';
+import { useEvents } from '../hooks/use-events';
+import { ConchAPI } from '../networking/conch-api';
 import { MS_PER_HOUR } from '../utils/date';
 
 export const Home = () => {
   const { user, logout } = useAuth();
-  const [events, setEvents] = useState<Event[]>([]);
+  const { events, setEvents } = useEvents(user);
   const createEventModalRef = useRef<HTMLDialogElement>(null);
   const modifyEventModalRef = useRef<HTMLDialogElement>(null);
 
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
-
-  useEffect(() => {
-    if (user) {
-      user.getIdToken().then((token) => {
-        const query: GetEventsQueryType = { userId: user.uid };
-        const queryString = new URLSearchParams(query);
-        fetch(`${import.meta.env.VITE_API_HOST}/events?${queryString}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-          .then((res) => res.json())
-          .then((data: GetEventsReturnType) => setEvents(data));
-      });
-    }
-  }, [user]);
+  const [selectedId, setSelectedId] = useState<string>('');
+  const [selectedEvent, setSelectedEvent] = useState<EventData>({
+    owner: '',
+    name: '',
+    start: 0,
+    end: 0,
+  });
 
   if (!user) {
     return;
@@ -63,68 +50,35 @@ export const Home = () => {
           modifyEventModalRef.current?.showModal();
         }}
       />
-      {selectedEvent && (
-        <CreateEventModal
-          dialogRef={createEventModalRef}
-          event={selectedEvent}
-          setEvent={setSelectedEvent}
-          onSubmit={(event) => {
-            user?.getIdToken().then((token) => {
-              fetch(`${import.meta.env.VITE_API_HOST}/events`, {
-                method: 'POST',
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(event),
-              })
-                .then((res) => res.json())
-                .then((event: PostEventsReturnType) => {
-                  setEvents([...events, event]);
-                });
-            });
-            createEventModalRef.current?.close();
-          }}
-        />
-      )}
-      {selectedEvent && selectedId && (
-        <ModifyEventModal
-          id={selectedId}
-          event={selectedEvent}
-          setEvent={setSelectedEvent}
-          dialogRef={modifyEventModalRef}
-          onSubmit={(id, event) => {
-            user?.getIdToken().then((token) => {
-              fetch(`${import.meta.env.VITE_API_HOST}/events/${id}`, {
-                method: 'PUT',
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(event),
-              })
-                .then((res) => res.json())
-                .then((event: PostEventsReturnType) => {
-                  setEvents([...events, event]);
-                });
-            });
-            modifyEventModalRef.current?.close();
-          }}
-          onDelete={(id) => {
-            user?.getIdToken().then((token) => {
-              fetch(`${import.meta.env.VITE_API_HOST}/events/${id}`, {
-                method: 'DELETE',
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }).then(() => {
-                setEvents([...events.filter((event) => event.id !== id)]);
-              });
-            });
-            modifyEventModalRef.current?.close();
-          }}
-        />
-      )}
+      <CreateEventModal
+        dialogRef={createEventModalRef}
+        event={selectedEvent}
+        setEvent={setSelectedEvent}
+        onSubmit={(event) => {
+          ConchAPI.postEvent(event, user).then((event) => {
+            setEvents([...events, event]);
+          });
+          createEventModalRef.current?.close();
+        }}
+      />
+      <ModifyEventModal
+        id={selectedId}
+        event={selectedEvent}
+        setEvent={setSelectedEvent}
+        dialogRef={modifyEventModalRef}
+        onSubmit={(id, event) => {
+          ConchAPI.putEvent(id, event, user).then((event) =>
+            setEvents([...events, event]),
+          );
+          modifyEventModalRef.current?.close();
+        }}
+        onDelete={(id) => {
+          ConchAPI.deleteEvent(id, user).then(() => {
+            setEvents([...events.filter((event) => event.id !== id)]);
+          });
+          modifyEventModalRef.current?.close();
+        }}
+      />
     </>
   );
 };
