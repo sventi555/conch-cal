@@ -1,30 +1,27 @@
 import {
   Event,
+  EventData,
   GetEventsQueryType,
   GetEventsReturnType,
   PostEventsReturnType,
 } from 'lib';
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useAuth } from '../auth';
 import { Calendar } from '../components/calendar/Calendar';
 import {
   CreateEventModal,
   ModifyEventModal,
 } from '../components/event-modals/EventModal';
-import {
-  MS_PER_HOUR,
-  dayStringFromDate,
-  setTimeBlockState,
-  timeStringFromDate,
-  useTimeBlock,
-} from '../utils/date';
+import { MS_PER_HOUR } from '../utils/date';
 
 export const Home = () => {
   const { user, logout } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
   const createEventModalRef = useRef<HTMLDialogElement>(null);
   const modifyEventModalRef = useRef<HTMLDialogElement>(null);
+
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -40,108 +37,94 @@ export const Home = () => {
     }
   }, [user]);
 
-  const now = new Date();
-  const hrLater = new Date(now.getTime() + MS_PER_HOUR);
-
-  const timeBlock = useTimeBlock({
-    startDay: dayStringFromDate(now),
-    startTime: timeStringFromDate(now),
-    endDay: dayStringFromDate(hrLater),
-    endTime: timeStringFromDate(hrLater),
-  });
-
-  const [title, setTitle] = useState('');
-  const [id, setId] = useState('');
+  if (!user) {
+    return;
+  }
 
   return (
     <>
-      {user ? (
-        <button onClick={() => logout()}>logout</button>
-      ) : (
-        <Link to="/login">login</Link>
-      )}
+      <button onClick={() => logout()}>logout</button>
       <Calendar
         events={events}
         onClickTime={(time) => {
-          const date = new Date(time);
-          const hrLater = new Date(time + MS_PER_HOUR);
-          setTimeBlockState(timeBlock, date, hrLater);
-          setTitle('New Event');
+          setSelectedEvent({
+            name: 'New Event',
+            start: new Date(time).getTime(),
+            end: new Date(time + MS_PER_HOUR).getTime(),
+            owner: user.uid,
+          });
 
           createEventModalRef.current?.showModal();
         }}
         onClickEvent={(event) => {
-          setTimeBlockState(
-            timeBlock,
-            new Date(event.start),
-            new Date(event.end),
-          );
-          setTitle(event.name);
-          setId(event.id);
+          setSelectedEvent({ ...event });
+          setSelectedId(event.id);
 
           modifyEventModalRef.current?.showModal();
         }}
       />
-      <CreateEventModal
-        dialogRef={createEventModalRef}
-        title={title}
-        setTitle={setTitle}
-        timeBlock={timeBlock}
-        onSubmit={(event) => {
-          user?.getIdToken().then((token) => {
-            fetch(`${import.meta.env.VITE_API_HOST}/events`, {
-              method: 'POST',
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(event),
-            })
-              .then((res) => res.json())
-              .then((event: PostEventsReturnType) => {
-                setEvents([...events, event]);
-              });
-          });
-          createEventModalRef.current?.close();
-        }}
-      />
-      <ModifyEventModal
-        id={id}
-        timeBlock={timeBlock}
-        title={title}
-        setTitle={setTitle}
-        dialogRef={modifyEventModalRef}
-        onSubmit={(id, event) => {
-          user?.getIdToken().then((token) => {
-            fetch(`${import.meta.env.VITE_API_HOST}/events/${id}`, {
-              method: 'PUT',
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(event),
-            })
-              .then((res) => res.json())
-              .then((event: PostEventsReturnType) => {
-                setEvents([...events, event]);
-              });
-          });
-          modifyEventModalRef.current?.close();
-        }}
-        onDelete={(id) => {
-          user?.getIdToken().then((token) => {
-            fetch(`${import.meta.env.VITE_API_HOST}/events/${id}`, {
-              method: 'DELETE',
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }).then(() => {
-              setEvents([...events.filter((event) => event.id !== id)]);
+      {selectedEvent && (
+        <CreateEventModal
+          dialogRef={createEventModalRef}
+          event={selectedEvent}
+          setEvent={setSelectedEvent}
+          onSubmit={(event) => {
+            user?.getIdToken().then((token) => {
+              fetch(`${import.meta.env.VITE_API_HOST}/events`, {
+                method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(event),
+              })
+                .then((res) => res.json())
+                .then((event: PostEventsReturnType) => {
+                  setEvents([...events, event]);
+                });
             });
-          });
-          modifyEventModalRef.current?.close();
-        }}
-      />
+            createEventModalRef.current?.close();
+          }}
+        />
+      )}
+      {selectedEvent && selectedId && (
+        <ModifyEventModal
+          id={selectedId}
+          event={selectedEvent}
+          setEvent={setSelectedEvent}
+          dialogRef={modifyEventModalRef}
+          onSubmit={(id, event) => {
+            user?.getIdToken().then((token) => {
+              fetch(`${import.meta.env.VITE_API_HOST}/events/${id}`, {
+                method: 'PUT',
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(event),
+              })
+                .then((res) => res.json())
+                .then((event: PostEventsReturnType) => {
+                  setEvents([...events, event]);
+                });
+            });
+            modifyEventModalRef.current?.close();
+          }}
+          onDelete={(id) => {
+            user?.getIdToken().then((token) => {
+              fetch(`${import.meta.env.VITE_API_HOST}/events/${id}`, {
+                method: 'DELETE',
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }).then(() => {
+                setEvents([...events.filter((event) => event.id !== id)]);
+              });
+            });
+            modifyEventModalRef.current?.close();
+          }}
+        />
+      )}
     </>
   );
 };

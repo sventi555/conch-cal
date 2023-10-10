@@ -1,47 +1,77 @@
-import { PostEventsBodyType, PutEventsBodyType } from 'lib';
-import { TimeBlockState, dateFromDayAndTime } from '../../utils/date';
+import { EventData, PostEventsBodyType, PutEventsBodyType } from 'lib';
+import {
+  dateFromDayAndTime,
+  dayStringFromDate,
+  timeStringFromDate,
+} from '../../utils/date';
 
 interface EventModalFormProps {
-  title: string;
-  setTitle: (title: string) => void;
-  timeBlock: TimeBlockState;
+  event: EventData;
+  setEvent: (event: EventData) => void;
 }
 
 const EventModalForm: React.FC<EventModalFormProps> = (props) => {
+  const startDate = new Date(props.event.start);
+  const startDay = dayStringFromDate(startDate);
+  const startTime = timeStringFromDate(startDate);
+
+  const endDate = new Date(props.event.end);
+  const endDay = dayStringFromDate(endDate);
+  const endTime = timeStringFromDate(endDate);
   return (
     <div>
       <div>
         <input
-          value={props.title}
-          onChange={(event) => {
-            props.setTitle(event.target.value);
+          value={props.event.name}
+          onChange={(e) => {
+            props.setEvent({ ...props.event, name: e.target.value });
           }}
         />
       </div>
       <div>
         <input
           type="date"
-          value={props.timeBlock.startDay}
+          value={startDay}
           min="1999-06-02"
-          onChange={(e) => props.timeBlock.setStartDay(e.target.value)}
+          onChange={(e) =>
+            props.setEvent({
+              ...props.event,
+              start: dateFromDayAndTime(e.target.value, startTime).getTime(),
+            })
+          }
         />
         <input
           type="time"
-          value={props.timeBlock.startTime}
-          onChange={(e) => props.timeBlock.setStartTime(e.target.value)}
+          value={startTime}
+          onChange={(e) =>
+            props.setEvent({
+              ...props.event,
+              start: dateFromDayAndTime(startDay, e.target.value).getTime(),
+            })
+          }
         />
       </div>
       <div>
         <input
           type="date"
-          value={props.timeBlock.endDay}
+          value={endDay}
           min="1999-06-02"
-          onChange={(e) => props.timeBlock.setEndDay(e.target.value)}
+          onChange={(e) =>
+            props.setEvent({
+              ...props.event,
+              end: dateFromDayAndTime(e.target.value, endTime).getTime(),
+            })
+          }
         />
         <input
           type="time"
-          value={props.timeBlock.endTime}
-          onChange={(e) => props.timeBlock.setEndTime(e.target.value)}
+          value={endTime}
+          onChange={(e) =>
+            props.setEvent({
+              ...props.event,
+              end: dateFromDayAndTime(endDay, e.target.value).getTime(),
+            })
+          }
         />
       </div>
     </div>
@@ -61,23 +91,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = (props) => {
     <dialog ref={props.dialogRef}>
       <EventModalForm {...props} />
       <div>
-        <button
-          onClick={() =>
-            props.onSubmit({
-              start: dateFromDayAndTime(
-                props.timeBlock.startDay,
-                props.timeBlock.startTime,
-              ).getTime(),
-              end: dateFromDayAndTime(
-                props.timeBlock.endDay,
-                props.timeBlock.endTime,
-              ).getTime(),
-              name: props.title,
-            })
-          }
-        >
-          Submit
-        </button>
+        <button onClick={() => props.onSubmit(props.event)}>Submit</button>
       </div>
     </dialog>
   );
@@ -95,21 +109,7 @@ export const ModifyEventModal: React.FC<ModifyEventModalProps> = (props) => {
       <EventModalForm {...props} />
       <div>
         <button onClick={() => props.onDelete(props.id)}>Delete</button>
-        <button
-          onClick={() =>
-            props.onSubmit(props.id, {
-              start: dateFromDayAndTime(
-                props.timeBlock.startDay,
-                props.timeBlock.startTime,
-              ).getTime(),
-              end: dateFromDayAndTime(
-                props.timeBlock.endDay,
-                props.timeBlock.endTime,
-              ).getTime(),
-              name: props.title,
-            })
-          }
-        >
+        <button onClick={() => props.onSubmit(props.id, props.event)}>
           Submit
         </button>
       </div>
