@@ -1,11 +1,8 @@
 import { EventData } from 'lib';
 import { useRef, useState } from 'react';
 import { useAuth } from '../auth';
+import { CreateEventModal, ModifyEventModal } from '../components/EventModal';
 import { Calendar } from '../components/calendar/Calendar';
-import {
-  CreateEventModal,
-  ModifyEventModal,
-} from '../components/event-modals/EventModal';
 import { useEvents } from '../hooks/use-events';
 import { ConchAPI } from '../networking/conch-api';
 import { MS_PER_HOUR } from '../utils/date';

@@ -3,7 +3,7 @@ import {
   dateFromDayAndTime,
   dayStringFromDate,
   timeStringFromDate,
-} from '../../utils/date';
+} from '../utils/date';
 
 interface EventModalFormProps {
   event: EventData;
