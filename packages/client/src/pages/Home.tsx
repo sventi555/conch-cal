@@ -1,6 +1,10 @@
 import { useRef } from 'react';
 import { useAuth } from '../auth';
-import { EventModals, useEventModalContext } from '../components/EventModal';
+import {
+  CreateEventModal,
+  ModifyEventModal,
+  useEventModalContext,
+} from '../components/EventModal';
 import { Calendar } from '../components/calendar/Calendar';
 import { EventsAPI } from '../networking/apis/events';
 import { useLoadEvents } from '../networking/load-events';
@@ -43,16 +47,18 @@ export const Home = () => {
           modifyEventModalRef.current?.showModal();
         }}
       />
-      <EventModals
-        createModalDialogRef={createEventModalRef}
-        modifyModalDialogRef={modifyEventModalRef}
-        onCreate={(event) => {
+      <CreateEventModal
+        dialogRef={createEventModalRef}
+        onSubmit={(event) => {
           EventsAPI.postEvent(event, user).then((event) => {
             dispatch({ type: 'added', event });
           });
           createEventModalRef.current?.close();
         }}
-        onModify={(id, event) => {
+      />
+      <ModifyEventModal
+        dialogRef={modifyEventModalRef}
+        onSubmit={(id, event) => {
           EventsAPI.putEvent(id, event, user).then((event) =>
             dispatch({ type: 'modified', id, updatedEvent: event }),
           );

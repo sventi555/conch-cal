@@ -139,27 +139,3 @@ export const ModifyEventModal: React.FC<ModifyEventModalProps> = (props) => {
     </dialog>
   );
 };
-
-interface EventModalsProps {
-  createModalDialogRef: React.Ref<HTMLDialogElement>;
-  modifyModalDialogRef: React.Ref<HTMLDialogElement>;
-  onCreate: CreateEventModalProps['onSubmit'];
-  onModify: ModifyEventModalProps['onSubmit'];
-  onDelete: ModifyEventModalProps['onDelete'];
-}
-
-export const EventModals: React.FC<EventModalsProps> = (props) => {
-  return (
-    <>
-      <CreateEventModal
-        dialogRef={props.createModalDialogRef}
-        onSubmit={props.onCreate}
-      />
-      <ModifyEventModal
-        dialogRef={props.modifyModalDialogRef}
-        onSubmit={props.onModify}
-        onDelete={props.onDelete}
-      />
-    </>
-  );
-};
