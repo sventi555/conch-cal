@@ -8,7 +8,7 @@ import {
   PutEventsReturnType,
 } from 'lib';
 
-export class ConchAPI {
+export class EventsAPI {
   static async getEvents(user: User): Promise<GetEventsReturnType> {
     const token = await user.getIdToken();
 

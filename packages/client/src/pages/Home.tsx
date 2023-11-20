@@ -1,25 +1,21 @@
-import { EventData } from 'lib';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useAuth } from '../auth';
-import { CreateEventModal, ModifyEventModal } from '../components/EventModal';
+import { EventModals, useEventModalContext } from '../components/EventModal';
 import { Calendar } from '../components/calendar/Calendar';
-import { useEvents } from '../hooks/use-events';
-import { ConchAPI } from '../networking/conch-api';
+import { EventsAPI } from '../networking/apis/events';
+import { useLoadEvents } from '../networking/load-events';
+import { useEvents, useEventsDispatch } from '../state/events';
 import { MS_PER_HOUR } from '../utils/date';
 
 export const Home = () => {
   const { user, logout } = useAuth();
-  const { events, setEvents } = useEvents(user);
+  useLoadEvents();
+  const events = useEvents();
+  const dispatch = useEventsDispatch();
+
+  const { setEvent } = useEventModalContext();
   const createEventModalRef = useRef<HTMLDialogElement>(null);
   const modifyEventModalRef = useRef<HTMLDialogElement>(null);
-
-  const [selectedId, setSelectedId] = useState<string>('');
-  const [selectedEvent, setSelectedEvent] = useState<EventData>({
-    owner: '',
-    name: '',
-    start: 0,
-    end: 0,
-  });
 
   if (!user) {
     return;
@@ -31,47 +27,40 @@ export const Home = () => {
       <Calendar
         events={events}
         onClickTime={(time) => {
-          setSelectedEvent({
+          setEvent({
+            id: '',
+            owner: user.uid,
             name: 'New Event',
             start: new Date(time).getTime(),
             end: new Date(time + MS_PER_HOUR).getTime(),
-            owner: user.uid,
           });
 
           createEventModalRef.current?.showModal();
         }}
         onClickEvent={(event) => {
-          setSelectedEvent({ ...event });
-          setSelectedId(event.id);
+          setEvent(event);
 
           modifyEventModalRef.current?.showModal();
         }}
       />
-      <CreateEventModal
-        dialogRef={createEventModalRef}
-        event={selectedEvent}
-        setEvent={setSelectedEvent}
-        onSubmit={(event) => {
-          ConchAPI.postEvent(event, user).then((event) => {
-            setEvents([...events, event]);
+      <EventModals
+        createModalDialogRef={createEventModalRef}
+        modifyModalDialogRef={modifyEventModalRef}
+        onCreate={(event) => {
+          EventsAPI.postEvent(event, user).then((event) => {
+            dispatch({ type: 'added', event });
           });
           createEventModalRef.current?.close();
         }}
-      />
-      <ModifyEventModal
-        id={selectedId}
-        event={selectedEvent}
-        setEvent={setSelectedEvent}
-        dialogRef={modifyEventModalRef}
-        onSubmit={(id, event) => {
-          ConchAPI.putEvent(id, event, user).then((event) =>
-            setEvents([...events, event]),
+        onModify={(id, event) => {
+          EventsAPI.putEvent(id, event, user).then((event) =>
+            dispatch({ type: 'modified', id, updatedEvent: event }),
           );
           modifyEventModalRef.current?.close();
         }}
         onDelete={(id) => {
-          ConchAPI.deleteEvent(id, user).then(() => {
-            setEvents([...events.filter((event) => event.id !== id)]);
+          EventsAPI.deleteEvent(id, user).then(() => {
+            dispatch({ type: 'deleted', id });
           });
           modifyEventModalRef.current?.close();
         }}
