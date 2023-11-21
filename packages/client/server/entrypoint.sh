@@ -4,7 +4,14 @@
 # Note: Vite will only include variables that are prefixed with VITE_ in the built application.
 # Please add any updates to `.env.example`, `src/config.ts`, and here.
 echo "window.ENV = {
-  \"apiHost\": \"$VITE_API_HOST\",
+  \"hosts\": {
+    \"api\": \"$VITE_API_HOST\",
+  },
+  \"firebase\": {
+    \"apiKey\": \"$VITE_FIREBASE_API_KEY\",
+    \"projectId\": \"$VITE_FIREBASE_PROJECT_ID\",
+    \"appId\": \"$VITE_FIREBASE_APP_ID\",
+  },
 };" > /usr/share/nginx/html/environment.js;
 
 # Add environment script tag to index.html
