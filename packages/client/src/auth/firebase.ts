@@ -1,14 +1,15 @@
 import { FirebaseOptions, initializeApp } from 'firebase/app';
 import { getAuth as firebaseGetAuth } from 'firebase/auth';
+import config from '../config';
 
-const config: FirebaseOptions = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+const firebaseConfig: FirebaseOptions = {
+  apiKey: config.firebase.apiKey,
+  authDomain: `${config.firebase.projectId}.firebaseapp.com`,
+  appId: config.firebase.appId,
+  projectId: config.firebase.projectId,
 };
 
-const app = initializeApp(config);
+const app = initializeApp(firebaseConfig);
 
 export const getAuth = () => {
   const auth = firebaseGetAuth(app);

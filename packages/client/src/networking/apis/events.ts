@@ -7,6 +7,9 @@ import {
   PutEventsBodyType,
   PutEventsReturnType,
 } from 'lib';
+import config from '../../config';
+
+const BASE_URI = `${config.hosts.api}/events`;
 
 export class EventsAPI {
   static async getEvents(user: User): Promise<GetEventsReturnType> {
@@ -14,12 +17,9 @@ export class EventsAPI {
 
     const query: GetEventsQueryType = { userId: user.uid };
     const queryString = new URLSearchParams(query);
-    const res = await fetch(
-      `${import.meta.env.VITE_API_HOST}/events?${queryString}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
+    const res = await fetch(`${BASE_URI}?${queryString}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     const body = await res.json();
 
     return body;
@@ -31,7 +31,7 @@ export class EventsAPI {
   ): Promise<PostEventsReturnType> {
     const token = await user.getIdToken();
 
-    const res = await fetch(`${import.meta.env.VITE_API_HOST}/events`, {
+    const res = await fetch(`${BASE_URI}`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -50,7 +50,7 @@ export class EventsAPI {
     user: User,
   ): Promise<PutEventsReturnType> {
     const token = await user.getIdToken();
-    const res = await fetch(`${import.meta.env.VITE_API_HOST}/events/${id}`, {
+    const res = await fetch(`${BASE_URI}/${id}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -65,7 +65,7 @@ export class EventsAPI {
 
   static async deleteEvent(id: string, user: User) {
     const token = await user.getIdToken();
-    await fetch(`${import.meta.env.VITE_API_HOST}/events/${id}`, {
+    await fetch(`${BASE_URI}/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
