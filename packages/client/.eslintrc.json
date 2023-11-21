@@ -3,8 +3,5 @@
     "browser": true,
     "es2020": true
   },
-  "extends": ["plugin:react-hooks/recommended"],
-  "rules": {
-    // "react/react-in-jsx-scope": "off"
-  }
+  "extends": ["plugin:react-hooks/recommended"]
 }
