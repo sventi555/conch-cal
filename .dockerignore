@@ -1,19 +1,38 @@
-**/dist/
+# Dependencies
 **/node_modules/
-**/.turbo/
+
+# Build files
+**/dist/
+
+# Environment
 **/.env
 **/.env.example
+packages/server/creds.json
+
+# Testing
+**/*.test.ts
+**/*.test.tsx
+**/jest.config.js
+
+# Turbo
+**/.turbo/
+
+# Code style
 **/.eslintignore
 **/.eslintrc.json
 **/.lintstagedrc.json
 **/.prettierignore
-**/creds.json
-**/jest.config.js
-**/README.md
-.git/
 .husky/
-services/
-.dockerignore
-.gitignore
 .prettierrc.json
 commitlint.config.js
+
+# Info
+**/README.md
+
+# Git
+.git/
+.gitignore
+
+# Docker
+services/
+.dockerignore

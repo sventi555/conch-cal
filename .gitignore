@@ -1,7 +1,18 @@
-.turbo/
-coverage/
-dist/
-node_modules/
-.env
-creds.json
-yarn-error.log
+# Dependencies
+**/node_modules/
+
+# Build files
+**/dist/
+
+# Environment
+**/.env
+packages/server/creds.json
+
+# Testing
+**/coverage/
+
+# Turbo
+**/.turbo/
+
+# Logging
+*.log
