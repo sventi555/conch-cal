@@ -1,8 +1,7 @@
+.turbo/
 coverage/
 dist/
 node_modules/
 .env
-.firebasedb
-*.log
-*creds.json
+creds.json
 yarn-error.log

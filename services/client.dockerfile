@@ -2,24 +2,14 @@ FROM node:20-alpine AS builder
 
 WORKDIR /usr/src/app
 
-# Install python3
-RUN apk add --no-cache python3 make g++
+# Copy files
+COPY . .
 
 # Install dependencies
-COPY yarn.lock ./
-COPY package.json ./
-COPY ./packages/lib/package.json ./packages/lib/package.json
-COPY ./packages/client/package.json ./packages/client/package.json
+RUN yarn --no-progress --frozen-lockfile --ignore-engines --ignore-scripts
 
-RUN yarn --no-progress --frozen-lockfile --ignore-engines
-
-# Copy source code
-COPY ./packages/lib ./packages/lib
-COPY ./packages/client ./packages/client
-
-# Build lib and client
-RUN yarn lib build
-RUN yarn client build
+# Build packages
+RUN yarn build --scope client
 
 
 FROM nginx:alpine AS runner
