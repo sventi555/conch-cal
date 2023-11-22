@@ -1,18 +1,30 @@
-FROM node:20-alpine AS builder
+FROM node:20-alpine as base
 
-WORKDIR /usr/src/app
 
-# Copy files
+FROM base AS pruner
+
+WORKDIR /app
+RUN yarn global add turbo
 COPY . .
+RUN turbo prune server --docker
 
-# Install dependencies
-RUN yarn --no-progress --frozen-lockfile --ignore-engines --ignore-scripts
 
-# Build packages
-RUN yarn build --scope server
+FROM base as builder
 
-# Remove dev dependencies
+WORKDIR /app
+COPY --from=pruner /app/out/json/ .
+COPY --from=pruner /app/out/yarn.lock ./yarn.lock
+RUN yarn install --no-progress --frozen-lockfile --ignore-engines --ignore-scripts
+
+COPY --from=pruner /app/out/full/ .
+RUN yarn build
+
 RUN yarn --no-progress --frozen-lockfile --ignore-engines --ignore-scripts --production
 
-# Begin serving server
-CMD ["yarn", "server", "start"]
+
+FROM base as runner
+
+WORKDIR /app
+COPY --from=builder /app .
+
+CMD ["node", "/app/packages/server/dist/index.js"]
