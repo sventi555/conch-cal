@@ -1,5 +1,5 @@
 import { Event, PostEventsBodyType, PutEventsBodyType } from 'lib';
-import { createContext, useContext } from 'react';
+import { useEventModalContext } from '../state/modal';
 import {
   dateFromDayAndTime,
   dayStringFromDate,
@@ -12,23 +12,6 @@ export const EMPTY_EVENT: Event = {
   name: '',
   start: 0,
   end: 0,
-};
-
-export const EventModalContext = createContext<
-  | {
-      event: Event;
-      setEvent: (event: Event) => void;
-    }
-  | undefined
->(undefined);
-
-export const useEventModalContext = () => {
-  const context = useContext(EventModalContext);
-  if (context === undefined) {
-    throw new Error('Using event modal context without a provider');
-  }
-
-  return context;
 };
 
 const EventModalForm: React.FC = () => {

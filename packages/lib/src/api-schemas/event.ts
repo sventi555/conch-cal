@@ -1,23 +1,17 @@
 import { z } from 'zod';
 
-export interface EventData {
-  owner: string;
-  name: string;
-  start: number;
-  end: number;
-  description?: string;
-}
-
-export interface Event extends EventData {
-  id: string;
-}
-
 const eventDataSchema = z.object({
   name: z.string(),
   start: z.number(),
   end: z.number(),
   description: z.string().optional(),
 });
+
+export type EventData = z.infer<typeof eventDataSchema> & { owner: string };
+
+export interface Event extends EventData {
+  id: string;
+}
 
 const idSchema = z.object({
   id: z.string(),

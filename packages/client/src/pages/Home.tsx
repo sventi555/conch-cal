@@ -1,14 +1,11 @@
 import { useRef } from 'react';
 import { useAuth } from '../auth';
-import {
-  CreateEventModal,
-  ModifyEventModal,
-  useEventModalContext,
-} from '../components/EventModal';
+import { CreateEventModal, ModifyEventModal } from '../components/EventModal';
 import { Calendar } from '../components/calendar/Calendar';
 import { EventsAPI } from '../networking/apis/events';
 import { useLoadEvents } from '../networking/load-events';
 import { useEvents, useEventsDispatch } from '../state/events';
+import { useEventModalContext } from '../state/modal';
 import { MS_PER_HOUR } from '../utils/date';
 
 export const Home = () => {
