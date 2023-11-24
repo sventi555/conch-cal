@@ -33,8 +33,6 @@ export const Calendar: React.FC<CalendarProps> = ({
   const width = 600;
   const height = 600;
 
-  const a = 12;
-  const k = 0.1;
   const rotationsToFocus = 5;
   const totalRotations = rotationsToFocus + 1;
 
@@ -74,7 +72,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     const { r, theta } = cartToPolar(
       canvasToCart({ x: p5.mouseX, y: p5.mouseY }, p5.width, p5.height),
     );
-    const spiralAngle = closestSpiralAngle(theta, r, a, k);
+    const spiralAngle = closestSpiralAngle(theta, r);
     const time = angleToTime(spiralAngle, config);
 
     const clickedEvent = events.find(
@@ -110,21 +108,17 @@ export const Calendar: React.FC<CalendarProps> = ({
     p5.translate(p5.width / 2, p5.height / 2);
     p5.scale(1, -1);
 
-    drawSpiral(p5, { rotations: totalRotations, a, k });
+    drawSpiral(p5, { rotations: totalRotations });
     drawMarkers(p5, {
       config,
-      a,
-      k,
     });
     events.forEach((event) => {
       drawEvent(p5, {
         event,
         config,
-        a,
-        k,
       });
     });
-    drawFocusMarker(p5, { rotationsToFocus, a, k });
+    drawFocusMarker(p5, { rotationsToFocus });
   };
 
   return (

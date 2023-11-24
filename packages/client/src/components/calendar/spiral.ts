@@ -4,14 +4,12 @@ import { P5Component } from '../p5-component';
 
 interface SpiralProps {
   rotations: number;
-  a: number;
-  k: number;
   samplesPerRotation?: number;
 }
 
 export const drawSpiral: P5Component<SpiralProps> = (
   p5,
-  { rotations, a, k, samplesPerRotation = 360 },
+  { rotations, samplesPerRotation = 360 },
 ) => {
   const sampleRate = TWO_PI / samplesPerRotation;
 
@@ -20,7 +18,7 @@ export const drawSpiral: P5Component<SpiralProps> = (
 
   p5.beginShape();
   for (let theta = 0; theta <= TWO_PI * rotations; theta += sampleRate) {
-    const coord = spiralCoord(theta, a, k);
+    const coord = spiralCoord(theta);
     p5.vertex(coord.x, coord.y);
   }
   p5.endShape();

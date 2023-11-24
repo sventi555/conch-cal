@@ -7,14 +7,12 @@ import { CalendarConfig } from './Calendar';
 interface EventProps {
   event: Event;
   config: CalendarConfig;
-  a: number;
-  k: number;
   samplesPerRotation?: number;
 }
 
 export const drawEvent: P5Component<EventProps> = (
   p5,
-  { event, config, a, k, samplesPerRotation = 360 },
+  { event, config, samplesPerRotation = 360 },
 ) => {
   const sampleRate = TWO_PI / samplesPerRotation;
 
@@ -28,42 +26,40 @@ export const drawEvent: P5Component<EventProps> = (
 
   let coord: Point;
   for (let theta = startAngle; theta >= endAngle; theta -= sampleRate) {
-    coord = spiralCoord(theta, a, k);
+    coord = spiralCoord(theta);
     p5.vertex(coord.x, coord.y);
   }
   // make sure we hit the very edge (hide sampling errors)
-  coord = spiralCoord(endAngle, a, k);
+  coord = spiralCoord(endAngle);
   p5.vertex(coord.x, coord.y);
 
   // inner arc
   for (let theta = endAngle; theta <= startAngle; theta += sampleRate) {
-    coord = spiralCoord(theta - TWO_PI, a, k);
+    coord = spiralCoord(theta - TWO_PI);
     p5.vertex(coord.x, coord.y);
   }
   // make sure we hit the very edge (hide sampling errors)
-  coord = spiralCoord(startAngle - TWO_PI, a, k);
+  coord = spiralCoord(startAngle - TWO_PI);
   p5.vertex(coord.x, coord.y);
 
   p5.endShape();
 
-  drawEventLabel(p5, { name: event.name, startAngle, a, k });
+  drawEventLabel(p5, { name: event.name, startAngle });
 };
 
 interface EventLabelProps {
   name: string;
   startAngle: number;
-  a: number;
-  k: number;
 }
 
 const drawEventLabel: P5Component<EventLabelProps> = (
   p5,
-  { name, startAngle, a, k },
+  { name, startAngle },
 ) => {
   const textAngle = startAngle - 0.08;
 
-  const outerPoint = spiralCoord(textAngle, a, k);
-  const innerPoint = spiralCoord(textAngle - TWO_PI, a, k);
+  const outerPoint = spiralCoord(textAngle);
+  const innerPoint = spiralCoord(textAngle - TWO_PI);
 
   const textCoords = {
     x: lerp(innerPoint.x, outerPoint.x, 0.05),

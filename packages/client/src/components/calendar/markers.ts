@@ -6,14 +6,9 @@ import { CalendarConfig } from './Calendar';
 
 interface MarkersProps {
   config: CalendarConfig;
-  a: number;
-  k: number;
 }
 
-export const drawMarkers: P5Component<MarkersProps> = (
-  p5,
-  { config, a, k },
-) => {
+export const drawMarkers: P5Component<MarkersProps> = (p5, { config }) => {
   const { focusedTime, rotationsToFocus, rotationsPerDay } = config;
   const lastHour = focusedTime - (focusedTime % MS_PER_HOUR);
   const centerTime =
@@ -34,21 +29,16 @@ export const drawMarkers: P5Component<MarkersProps> = (
   }
 
   markerTimes.forEach((time) => {
-    drawMarkerLine(p5, { time, config, a, k });
-    drawMarkerTime(p5, { time, config, a, k });
+    drawMarkerLine(p5, { time, config });
+    drawMarkerTime(p5, { time, config });
   });
 };
 
-const markerCoords = (
-  time: number,
-  config: CalendarConfig,
-  a: number,
-  k: number,
-) => {
+const markerCoords = (time: number, config: CalendarConfig) => {
   const theta = timeToAngle(time, config);
 
-  const outer = spiralCoord(theta, a, k);
-  const inner = spiralCoord(theta - TWO_PI, a, k);
+  const outer = spiralCoord(theta);
+  const inner = spiralCoord(theta - TWO_PI);
 
   return { inner, outer, theta };
 };
@@ -56,15 +46,10 @@ const markerCoords = (
 interface MarkerLineProps {
   time: number;
   config: CalendarConfig;
-  a: number;
-  k: number;
 }
 
-const drawMarkerLine: P5Component<MarkerLineProps> = (
-  p5,
-  { time, config, a, k },
-) => {
-  const { inner, outer } = markerCoords(time, config, a, k);
+const drawMarkerLine: P5Component<MarkerLineProps> = (p5, { time, config }) => {
+  const { inner, outer } = markerCoords(time, config);
 
   p5.stroke(0);
   p5.fill(0);
@@ -76,15 +61,10 @@ const drawMarkerLine: P5Component<MarkerLineProps> = (
 interface MarkerTimeProps {
   time: number;
   config: CalendarConfig;
-  a: number;
-  k: number;
 }
 
-const drawMarkerTime: P5Component<MarkerTimeProps> = (
-  p5,
-  { time, config, a, k },
-) => {
-  const { inner, outer, theta } = markerCoords(time, config, a, k);
+const drawMarkerTime: P5Component<MarkerTimeProps> = (p5, { time, config }) => {
+  const { inner, outer, theta } = markerCoords(time, config);
 
   const textCoords = {
     x: lerp(inner.x, outer.x, 0.02),
@@ -106,16 +86,14 @@ const drawMarkerTime: P5Component<MarkerTimeProps> = (
 
 interface FocusMarkerProps {
   rotationsToFocus: number;
-  a: number;
-  k: number;
 }
 
 export const drawFocusMarker: P5Component<FocusMarkerProps> = (
   p5,
-  { rotationsToFocus, a, k },
+  { rotationsToFocus },
 ) => {
   const focusOuterPoint = polarToCart(
-    spiralRadius(rotationsToFocus * TWO_PI + TWO_PI, a, k),
+    spiralRadius(rotationsToFocus * TWO_PI + TWO_PI),
     0,
   );
 

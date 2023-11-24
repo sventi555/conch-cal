@@ -2,28 +2,29 @@ import { CalendarConfig } from '../components/calendar/Calendar';
 import { MS_PER_DAY } from './date';
 import { TWO_PI, polarToCart } from './math';
 
-export const spiralCoord = (theta: number, a: number, k: number) => {
-  return polarToCart(spiralRadius(theta, a, k), theta);
+export const SPIRAL_PARAMS = {
+  a: 12,
+  k: 0.1,
 };
 
-export const spiralRadius = (theta: number, a: number, k: number) => {
+export const spiralCoord = (theta: number) => {
+  return polarToCart(spiralRadius(theta), theta);
+};
+
+export const spiralRadius = (theta: number) => {
+  const { a, k } = SPIRAL_PARAMS;
   return a * Math.pow(Math.E, k * theta);
 };
 
 // finds the angle on a spiral that gets closest to a radius of r at
 // trajectory theta without overshooting it.
 // The result will be theta + n*TWO_PI for some integer n.
-export const closestSpiralAngle = (
-  theta: number,
-  r: number,
-  a: number,
-  k: number,
-) => {
+export const closestSpiralAngle = (theta: number, r: number) => {
   let curAngle = theta;
-  let spiralRad = spiralRadius(curAngle, a, k);
+  let spiralRad = spiralRadius(curAngle);
   while (spiralRad < r) {
     curAngle += TWO_PI;
-    spiralRad = spiralRadius(curAngle, a, k);
+    spiralRad = spiralRadius(curAngle);
   }
 
   return curAngle;
