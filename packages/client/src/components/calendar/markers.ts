@@ -34,41 +34,65 @@ export const drawMarkers: P5Component<MarkersProps> = (
   }
 
   markerTimes.forEach((time) => {
-    drawMarker(p5, {
-      time,
-      config,
-      a,
-      k,
-    });
+    drawMarkerLine(p5, { time, config, a, k });
+    drawMarkerTime(p5, { time, config, a, k });
   });
 };
 
-interface MarkerProps {
+const markerCoords = (
+  time: number,
+  config: CalendarConfig,
+  a: number,
+  k: number,
+) => {
+  const theta = timeToAngle(time, config);
+
+  const outer = spiralCoord(theta, a, k);
+  const inner = spiralCoord(theta - TWO_PI, a, k);
+
+  return { inner, outer, theta };
+};
+
+interface MarkerLineProps {
   time: number;
   config: CalendarConfig;
   a: number;
   k: number;
 }
 
-const drawMarker: P5Component<MarkerProps> = (p5, { time, config, a, k }) => {
-  const theta = timeToAngle(time, config);
-
-  const outerPoint = spiralCoord(theta, a, k);
-  const innerPoint = spiralCoord(theta - TWO_PI, a, k);
-
-  const textCoords = {
-    x: lerp(innerPoint.x, outerPoint.x, 0.02),
-    y: lerp(innerPoint.y, outerPoint.y, 0.02),
-  };
+const drawMarkerLine: P5Component<MarkerLineProps> = (
+  p5,
+  { time, config, a, k },
+) => {
+  const { inner, outer } = markerCoords(time, config, a, k);
 
   p5.stroke(0);
   p5.fill(0);
 
   // marker line
-  p5.line(outerPoint.x, outerPoint.y, innerPoint.x, innerPoint.y);
+  p5.line(outer.x, outer.y, inner.x, inner.y);
+};
+
+interface MarkerTimeProps {
+  time: number;
+  config: CalendarConfig;
+  a: number;
+  k: number;
+}
+
+const drawMarkerTime: P5Component<MarkerTimeProps> = (
+  p5,
+  { time, config, a, k },
+) => {
+  const { inner, outer, theta } = markerCoords(time, config, a, k);
+
+  const textCoords = {
+    x: lerp(inner.x, outer.x, 0.02),
+    y: lerp(inner.y, outer.y, 0.02),
+  };
 
   p5.noStroke();
-  p5.textSize(dist(innerPoint, outerPoint) / 8);
+  p5.textSize(dist(inner, outer) / 8);
 
   // hour text
   p5.push();
