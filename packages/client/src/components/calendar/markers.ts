@@ -1,4 +1,4 @@
-import { MS_PER_DAY, MS_PER_HOUR } from '../../utils/date';
+import { MS_PER_DAY, MS_PER_HOUR, isMidnight } from '../../utils/date';
 import { TWO_PI, dist, lerp, polarToCart } from '../../utils/math';
 import { spiralCoord, spiralRadius, timeToAngle } from '../../utils/spiral';
 import { P5Component } from '../p5-component';
@@ -41,6 +41,7 @@ const drawTimeMarker: P5Component<TimeMarkerProps> = (p5, { time, config }) => {
   };
 
   p5.noStroke();
+  p5.fill(0, 160);
   p5.textSize(dist(inner, outer) / 8);
 
   const hour = new Date(time).getHours();
@@ -55,6 +56,40 @@ const drawTimeMarker: P5Component<TimeMarkerProps> = (p5, { time, config }) => {
   p5.rotate(-theta);
   p5.translate(0, -2);
   p5.text(displayText, 0, 0);
+  p5.pop();
+};
+
+interface DayMarkerProps {
+  time: number;
+  config: CalendarConfig;
+}
+
+/**
+ * `time` should be midnight on some day
+ */
+const drawDayMarker: P5Component<DayMarkerProps> = (p5, { time, config }) => {
+  const { inner, outer, theta } = lineMarkerCoords(
+    time - (25 / 60) * MS_PER_HOUR,
+    config,
+  );
+
+  const textCoords = {
+    x: lerp(inner.x, outer.x, 0.02),
+    y: lerp(inner.y, outer.y, 0.02),
+  };
+
+  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+  p5.noStroke();
+  p5.fill(255, 0, 0);
+  p5.textSize(dist(inner, outer) / 8);
+
+  p5.push();
+  p5.translate(textCoords.x, textCoords.y);
+  p5.scale(1, -1);
+  p5.rotate(-theta);
+  p5.translate(0, -2);
+  p5.text(days[new Date(time).getDay()], 0, 0);
   p5.pop();
 };
 
@@ -85,6 +120,9 @@ export const drawMarkers: P5Component<MarkersProps> = (p5, { config }) => {
   markerTimes.forEach((time) => {
     drawLineMarker(p5, { time, config });
     drawTimeMarker(p5, { time, config });
+    if (isMidnight(time)) {
+      drawDayMarker(p5, { time, config });
+    }
   });
 };
 

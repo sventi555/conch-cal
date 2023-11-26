@@ -19,3 +19,7 @@ export const timeStringFromDate = (d: Date) => {
 export const dateFromDayAndTime = (day: string, time: string) => {
   return new Date(`${day}T${time}`);
 };
+
+export const isMidnight = (time: number) => {
+  return new Date(time).getHours() === 0;
+};
