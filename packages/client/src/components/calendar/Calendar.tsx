@@ -108,7 +108,6 @@ export const Calendar: React.FC<CalendarProps> = ({
     p5.translate(p5.width / 2, p5.height / 2);
     p5.scale(1, -1);
 
-    drawSpiral(p5, { rotations: totalRotations });
     drawMarkers(p5, {
       config,
     });
@@ -118,6 +117,7 @@ export const Calendar: React.FC<CalendarProps> = ({
         config,
       });
     });
+    drawSpiral(p5, { rotations: totalRotations });
     drawFocusMarker(p5, { rotationsToFocus });
   };
 

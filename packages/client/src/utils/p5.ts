@@ -16,3 +16,5 @@ export const eventInCanvas = (event?: UIEvent) => {
 
   return inCanvas;
 };
+
+export type RGBA = [number, number, number, number?];

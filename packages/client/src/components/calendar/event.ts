@@ -1,8 +1,9 @@
 import { Event } from 'lib';
-import { Point, TWO_PI, dist, lerp } from '../../utils/math';
+import { TWO_PI, dist, lerp } from '../../utils/math';
 import { spiralCoord, timeToAngle } from '../../utils/spiral';
 import { P5Component } from '../p5-component';
 import { CalendarConfig } from './Calendar';
+import { drawBlock } from './block';
 
 interface EventProps {
   event: Event;
@@ -10,39 +11,15 @@ interface EventProps {
   samplesPerRotation?: number;
 }
 
-export const drawEvent: P5Component<EventProps> = (
-  p5,
-  { event, config, samplesPerRotation = 360 },
-) => {
-  const sampleRate = TWO_PI / samplesPerRotation;
-
+export const drawEvent: P5Component<EventProps> = (p5, { event, config }) => {
   const startAngle = timeToAngle(event.start, config);
   const endAngle = timeToAngle(event.end, config);
-
-  p5.noStroke();
-  p5.fill(0, 0, 255);
-
-  p5.beginShape();
-
-  let coord: Point;
-  for (let theta = startAngle; theta >= endAngle; theta -= sampleRate) {
-    coord = spiralCoord(theta);
-    p5.vertex(coord.x, coord.y);
-  }
-  // make sure we hit the very edge (hide sampling errors)
-  coord = spiralCoord(endAngle);
-  p5.vertex(coord.x, coord.y);
-
-  // inner arc
-  for (let theta = endAngle; theta <= startAngle; theta += sampleRate) {
-    coord = spiralCoord(theta - TWO_PI);
-    p5.vertex(coord.x, coord.y);
-  }
-  // make sure we hit the very edge (hide sampling errors)
-  coord = spiralCoord(startAngle - TWO_PI);
-  p5.vertex(coord.x, coord.y);
-
-  p5.endShape();
+  drawBlock(p5, {
+    startAngle,
+    endAngle,
+    color: [0, 0, 255],
+    config,
+  });
 
   drawEventLabel(p5, { name: event.name, startAngle });
 };

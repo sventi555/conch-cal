@@ -30,20 +30,16 @@ export const closestSpiralAngle = (theta: number, r: number) => {
   return curAngle;
 };
 
-export const timeToAngle = (
-  time: number,
-  { focusedTime, rotationsToFocus, rotationsPerDay }: CalendarConfig,
-) => {
+export const timeToAngle = (time: number, config: CalendarConfig) => {
+  const { focusedTime, rotationsToFocus, rotationsPerDay } = config;
   const offsetFromFocus =
     ((time - focusedTime) / MS_PER_DAY) * rotationsPerDay * TWO_PI;
 
   return rotationsToFocus * TWO_PI - offsetFromFocus;
 };
 
-export const angleToTime = (
-  theta: number,
-  { focusedTime, rotationsToFocus, rotationsPerDay }: CalendarConfig,
-) => {
+export const angleToTime = (theta: number, config: CalendarConfig) => {
+  const { focusedTime, rotationsToFocus, rotationsPerDay } = config;
   return (
     focusedTime -
     (MS_PER_DAY * (theta - TWO_PI * rotationsToFocus)) /
