@@ -18,19 +18,19 @@ export const drawDayMarker: P5Component<DayMarkerProps> = (
   p5,
   { time, config },
 ) => {
-  const { inner, outer, theta } = lineMarkerCoords(
-    time - (25 / 60) * MS_PER_HOUR,
-    config,
-  );
-
   const daysSinceEpoch = Math.floor(time / MS_PER_DAY);
   const light = 255 - 20 * (daysSinceEpoch % 2);
   drawBlock(p5, {
-    startAngle: theta,
+    startAngle: timeToAngle(time, config),
     endAngle: timeToAngle(time + MS_PER_DAY, config),
     color: [light, light, light],
     config,
   });
+
+  const { inner, outer, theta } = lineMarkerCoords(
+    time - (25 / 60) * MS_PER_HOUR,
+    config,
+  );
 
   const textCoords = {
     x: lerp(inner.x, outer.x, 0.02),
