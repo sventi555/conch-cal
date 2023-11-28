@@ -18,17 +18,14 @@ export interface CalendarConfig {
 
 interface CalendarProps {
   events: Event[];
+  focusedTime: number;
+  setFocusedTime: (time: number) => void;
   onClickTime: (time: number) => void;
   onClickEvent: (event: Event) => void;
 }
 
-export const Calendar: React.FC<CalendarProps> = ({
-  events,
-  onClickTime,
-  onClickEvent,
-}) => {
+export const Calendar: React.FC<CalendarProps> = (props) => {
   const [zoom, setZoom] = useState(1);
-  const [focusedTime, setFocusedTime] = useState(Date.now());
 
   const width = 600;
   const height = 600;
@@ -37,7 +34,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   const totalRotations = rotationsToFocus + 1;
 
   const config = {
-    focusedTime,
+    focusedTime: props.focusedTime,
     rotationsToFocus,
     rotationsPerDay: zoom,
   };
@@ -51,15 +48,15 @@ export const Calendar: React.FC<CalendarProps> = ({
   const updateFocus = (event: WheelEvent) => {
     const scrollIncrement = MS_PER_HOUR / zoom;
     if (event.deltaY > 0) {
-      setFocusedTime(focusedTime + scrollIncrement);
+      props.setFocusedTime(props.focusedTime + scrollIncrement);
     } else {
-      setFocusedTime(focusedTime - scrollIncrement);
+      props.setFocusedTime(props.focusedTime - scrollIncrement);
     }
   };
 
   const keyPressed: SketchProps['keyPressed'] = (p5) => {
     if (p5.key === ' ') {
-      setFocusedTime(Date.now());
+      props.setFocusedTime(Date.now());
       return;
     }
 
@@ -75,14 +72,14 @@ export const Calendar: React.FC<CalendarProps> = ({
     const spiralAngle = closestSpiralAngle(theta, r);
     const time = angleToTime(spiralAngle, config);
 
-    const clickedEvent = events.find(
+    const clickedEvent = props.events.find(
       (event) => time >= event.start && time <= event.end,
     );
 
     if (clickedEvent) {
-      onClickEvent(clickedEvent);
+      props.onClickEvent(clickedEvent);
     } else {
-      onClickTime(time);
+      props.onClickTime(time);
     }
   };
 
@@ -111,7 +108,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     drawMarkers(p5, {
       config,
     });
-    events.forEach((event) => {
+    props.events.forEach((event) => {
       drawEvent(p5, {
         event,
         config,

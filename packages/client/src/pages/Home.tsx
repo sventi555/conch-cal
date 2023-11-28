@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Calendar as MiniCalendar } from 'react-calendar';
 import { useAuth } from '../auth';
 import { CreateEventModal, ModifyEventModal } from '../components/EventModal';
 import { Calendar } from '../components/calendar/Calendar';
@@ -10,6 +11,7 @@ import { MS_PER_HOUR, roundTo15Min } from '../utils/date';
 
 export const Home = () => {
   const { user, logout } = useAuth();
+
   useLoadEvents();
   const events = useEvents();
   const dispatch = useEventsDispatch();
@@ -18,33 +20,48 @@ export const Home = () => {
   const [isCreateEventModalOpen, setIsCreateEventModalOpen] = useState(false);
   const [isModifyEventModalOpen, setIsModifyEventModalOpen] = useState(false);
 
+  const [focusedTime, setFocusedTime] = useState(Date.now());
+
   if (!user) {
     return;
   }
 
   return (
     <>
-      <button onClick={() => logout()}>logout</button>
-      <Calendar
-        events={events}
-        onClickTime={(time) => {
-          const snappedTime = roundTo15Min(time);
-          setEvent({
-            id: '',
-            owner: user.uid,
-            name: '',
-            start: snappedTime,
-            end: snappedTime + MS_PER_HOUR,
-          });
+      <div className="flex">
+        <button className="ml-auto" onClick={() => logout()}>
+          logout
+        </button>
+      </div>
+      <div className="flex">
+        <MiniCalendar
+          onClickDay={(val) => {
+            setFocusedTime(val.getTime());
+          }}
+        />
+        <Calendar
+          focusedTime={focusedTime}
+          setFocusedTime={setFocusedTime}
+          events={events}
+          onClickTime={(time) => {
+            const snappedTime = roundTo15Min(time);
+            setEvent({
+              id: '',
+              owner: user.uid,
+              name: '',
+              start: snappedTime,
+              end: snappedTime + MS_PER_HOUR,
+            });
 
-          setIsCreateEventModalOpen(true);
-        }}
-        onClickEvent={(event) => {
-          setEvent(event);
+            setIsCreateEventModalOpen(true);
+          }}
+          onClickEvent={(event) => {
+            setEvent(event);
 
-          setIsModifyEventModalOpen(true);
-        }}
-      />
+            setIsModifyEventModalOpen(true);
+          }}
+        />
+      </div>
       <CreateEventModal
         isOpen={isCreateEventModalOpen}
         setIsOpen={setIsCreateEventModalOpen}
