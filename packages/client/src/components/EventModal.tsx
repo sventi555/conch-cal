@@ -2,9 +2,8 @@ import { Event, PostEventsBodyType, PutEventsBodyType } from 'lib';
 import Modal from 'react-modal';
 import { useEventModalContext } from '../state/modal';
 import {
-  dateFromDayAndTime,
-  dayStringFromDate,
-  timeStringFromDate,
+  dateFromDayAndTimeString,
+  dayAndTimeStringFromDate,
 } from '../utils/date';
 
 export const EMPTY_EVENT: Event = {
@@ -18,13 +17,10 @@ export const EMPTY_EVENT: Event = {
 const EventModalForm: React.FC = () => {
   const { event, setEvent } = useEventModalContext();
 
-  const startDate = new Date(event.start);
-  const startDay = dayStringFromDate(startDate);
-  const startTime = timeStringFromDate(startDate);
+  const { start, end } = event;
+  const { day: startDay, time: startTime } = dayAndTimeStringFromDate(start);
+  const { day: endDay, time: endTime } = dayAndTimeStringFromDate(end);
 
-  const endDate = new Date(event.end);
-  const endDay = dayStringFromDate(endDate);
-  const endTime = timeStringFromDate(endDate);
   return (
     <div>
       <div>
@@ -43,7 +39,7 @@ const EventModalForm: React.FC = () => {
           onChange={(e) =>
             setEvent({
               ...event,
-              start: dateFromDayAndTime(e.target.value, startTime).getTime(),
+              start: dateFromDayAndTimeString(e.target.value, startTime),
             })
           }
         />
@@ -53,7 +49,7 @@ const EventModalForm: React.FC = () => {
           onChange={(e) =>
             setEvent({
               ...event,
-              start: dateFromDayAndTime(startDay, e.target.value).getTime(),
+              start: dateFromDayAndTimeString(startDay, e.target.value),
             })
           }
         />
@@ -66,7 +62,7 @@ const EventModalForm: React.FC = () => {
           onChange={(e) =>
             setEvent({
               ...event,
-              end: dateFromDayAndTime(e.target.value, endTime).getTime(),
+              end: dateFromDayAndTimeString(e.target.value, endTime),
             })
           }
         />
@@ -76,7 +72,7 @@ const EventModalForm: React.FC = () => {
           onChange={(e) =>
             setEvent({
               ...event,
-              end: dateFromDayAndTime(endDay, e.target.value).getTime(),
+              end: dateFromDayAndTimeString(endDay, e.target.value),
             })
           }
         />
