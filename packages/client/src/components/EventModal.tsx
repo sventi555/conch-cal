@@ -14,7 +14,13 @@ export const EMPTY_EVENT: Event = {
   end: 0,
 };
 
-const EventModalForm: React.FC = () => {
+interface EventModalFormProps {
+  autoFocusNameInput?: boolean;
+}
+
+const EventModalForm: React.FC<EventModalFormProps> = ({
+  autoFocusNameInput,
+}) => {
   const { event, setEvent } = useEventModalContext();
 
   const { start, end } = event;
@@ -25,6 +31,8 @@ const EventModalForm: React.FC = () => {
     <div>
       <div>
         <input
+          autoFocus={autoFocusNameInput ?? false}
+          placeholder="Add title"
           value={event.name}
           onChange={(e) => {
             setEvent({ ...event, name: e.target.value });
@@ -95,7 +103,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = (props) => {
 
   return (
     <Modal isOpen={props.isOpen} onRequestClose={() => props.setIsOpen(false)}>
-      <EventModalForm />
+      <EventModalForm autoFocusNameInput />
       <div>
         <button onClick={() => props.onSubmit(event)}>Submit</button>
       </div>

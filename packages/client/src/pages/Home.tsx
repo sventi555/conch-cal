@@ -32,7 +32,7 @@ export const Home = () => {
           setEvent({
             id: '',
             owner: user.uid,
-            name: 'New Event',
+            name: '',
             start: snappedTime,
             end: snappedTime + MS_PER_HOUR,
           });
