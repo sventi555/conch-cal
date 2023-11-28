@@ -1,4 +1,5 @@
 import { Event, PostEventsBodyType, PutEventsBodyType } from 'lib';
+import Modal from 'react-modal';
 import { useEventModalContext } from '../state/modal';
 import {
   dateFromDayAndTime,
@@ -85,7 +86,8 @@ const EventModalForm: React.FC = () => {
 };
 
 interface EventModalProps {
-  dialogRef: React.Ref<HTMLDialogElement>;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
 interface CreateEventModalProps extends EventModalProps {
@@ -96,12 +98,12 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = (props) => {
   const { event } = useEventModalContext();
 
   return (
-    <dialog ref={props.dialogRef}>
+    <Modal isOpen={props.isOpen} onRequestClose={() => props.setIsOpen(false)}>
       <EventModalForm />
       <div>
         <button onClick={() => props.onSubmit(event)}>Submit</button>
       </div>
-    </dialog>
+    </Modal>
   );
 };
 
@@ -113,12 +115,12 @@ interface ModifyEventModalProps extends EventModalProps {
 export const ModifyEventModal: React.FC<ModifyEventModalProps> = (props) => {
   const { event } = useEventModalContext();
   return (
-    <dialog ref={props.dialogRef}>
+    <Modal isOpen={props.isOpen} onRequestClose={() => props.setIsOpen(false)}>
       <EventModalForm />
       <div>
         <button onClick={() => props.onDelete(event.id)}>Delete</button>
         <button onClick={() => props.onSubmit(event.id, event)}>Submit</button>
       </div>
-    </dialog>
+    </Modal>
   );
 };

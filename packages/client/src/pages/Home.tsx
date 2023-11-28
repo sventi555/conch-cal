@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../auth';
 import { CreateEventModal, ModifyEventModal } from '../components/EventModal';
 import { Calendar } from '../components/calendar/Calendar';
@@ -15,8 +15,8 @@ export const Home = () => {
   const dispatch = useEventsDispatch();
 
   const { setEvent } = useEventModalContext();
-  const createEventModalRef = useRef<HTMLDialogElement>(null);
-  const modifyEventModalRef = useRef<HTMLDialogElement>(null);
+  const [isCreateEventModalOpen, setIsCreateEventModalOpen] = useState(false);
+  const [isModifyEventModalOpen, setIsModifyEventModalOpen] = useState(false);
 
   if (!user) {
     return;
@@ -36,36 +36,38 @@ export const Home = () => {
             end: new Date(time + MS_PER_HOUR).getTime(),
           });
 
-          createEventModalRef.current?.showModal();
+          setIsCreateEventModalOpen(true);
         }}
         onClickEvent={(event) => {
           setEvent(event);
 
-          modifyEventModalRef.current?.showModal();
+          setIsModifyEventModalOpen(true);
         }}
       />
       <CreateEventModal
-        dialogRef={createEventModalRef}
+        isOpen={isCreateEventModalOpen}
+        setIsOpen={setIsCreateEventModalOpen}
         onSubmit={(event) => {
           EventsAPI.postEvent(event, user).then((event) => {
             dispatch({ type: 'added', event });
           });
-          createEventModalRef.current?.close();
+          setIsCreateEventModalOpen(false);
         }}
       />
       <ModifyEventModal
-        dialogRef={modifyEventModalRef}
+        isOpen={isModifyEventModalOpen}
+        setIsOpen={setIsModifyEventModalOpen}
         onSubmit={(id, event) => {
           EventsAPI.putEvent(id, event, user).then((event) =>
             dispatch({ type: 'modified', id, updatedEvent: event }),
           );
-          modifyEventModalRef.current?.close();
+          setIsModifyEventModalOpen(false);
         }}
         onDelete={(id) => {
           EventsAPI.deleteEvent(id, user).then(() => {
             dispatch({ type: 'deleted', id });
           });
-          modifyEventModalRef.current?.close();
+          setIsModifyEventModalOpen(false);
         }}
       />
     </>

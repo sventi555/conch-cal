@@ -43,9 +43,9 @@ export const Calendar: React.FC<CalendarProps> = ({
   };
 
   const mouseWheel: SketchProps['mouseWheel'] = (p5, event) => {
-    if (event !== undefined) {
-      updateFocus(event as WheelEvent);
-    }
+    if (!eventInCanvas(event)) return;
+
+    updateFocus(event as WheelEvent);
   };
 
   const updateFocus = (event: WheelEvent) => {

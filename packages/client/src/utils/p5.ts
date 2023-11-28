@@ -9,12 +9,12 @@ export const mouseInCanvas = (p5: p5Types) => {
   );
 };
 
-export const eventInCanvas = (event?: UIEvent) => {
+export const eventInCanvas = (event?: UIEvent): event is UIEvent => {
   const target = event?.target;
   const inCanvas =
     target && target instanceof Element && target.className === 'p5Canvas';
 
-  return inCanvas;
+  return !!inCanvas;
 };
 
 export type RGBA = [number, number, number, number?];
