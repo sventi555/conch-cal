@@ -24,28 +24,4 @@ export const drawDayMarker: P5Component<DayMarkerProps> = (
     color: [light, light, light],
     config,
   });
-
-  // const { inner, outer, theta } = lineMarkerCoords(
-  //   time - (25 / 60) * MS_PER_HOUR,
-  //   config,
-  // );
-
-  // const textCoords = {
-  //   x: lerp(inner.x, outer.x, 0.02),
-  //   y: lerp(inner.y, outer.y, 0.02),
-  // };
-
-  // const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-
-  // p5.noStroke();
-  // p5.fill(255, 0, 0);
-  // p5.textSize(dist(inner, outer) / 8);
-
-  // p5.push();
-  // p5.translate(textCoords.x, textCoords.y);
-  // p5.scale(1, -1);
-  // p5.rotate(-theta);
-  // p5.translate(0, -2);
-  // p5.text(days[new Date(time).getDay()], 0, 0);
-  // p5.pop();
 };
