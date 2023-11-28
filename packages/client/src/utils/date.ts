@@ -1,5 +1,6 @@
 export const MS_PER_HOUR = 60 * 60 * 1000;
 export const MS_PER_DAY = 24 * MS_PER_HOUR;
+const MS_PER_15_MIN = MS_PER_HOUR / 4;
 
 export const dayAndTimeStringFromDate = (time: number) => {
   const d = new Date(time);
@@ -22,4 +23,14 @@ export const dateFromDayAndTimeString = (day: string, time: string) => {
 
 export const isMidnight = (time: number) => {
   return new Date(time).getHours() === 0;
+};
+
+export const roundTo15Min = (time: number) => {
+  const msSinceLast15 = time % MS_PER_15_MIN;
+
+  if (msSinceLast15 >= MS_PER_15_MIN / 2) {
+    return time + (MS_PER_15_MIN - msSinceLast15);
+  } else {
+    return time - msSinceLast15;
+  }
 };

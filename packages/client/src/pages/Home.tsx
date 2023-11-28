@@ -6,7 +6,7 @@ import { EventsAPI } from '../networking/apis/events';
 import { useLoadEvents } from '../networking/load-events';
 import { useEvents, useEventsDispatch } from '../state/events';
 import { useEventModalContext } from '../state/modal';
-import { MS_PER_HOUR } from '../utils/date';
+import { MS_PER_HOUR, roundTo15Min } from '../utils/date';
 
 export const Home = () => {
   const { user, logout } = useAuth();
@@ -28,12 +28,13 @@ export const Home = () => {
       <Calendar
         events={events}
         onClickTime={(time) => {
+          const snappedTime = roundTo15Min(time);
           setEvent({
             id: '',
             owner: user.uid,
             name: 'New Event',
-            start: new Date(time).getTime(),
-            end: new Date(time + MS_PER_HOUR).getTime(),
+            start: snappedTime,
+            end: snappedTime + MS_PER_HOUR,
           });
 
           setIsCreateEventModalOpen(true);
