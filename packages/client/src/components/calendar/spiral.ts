@@ -17,7 +17,7 @@ export const drawSpiral: P5Component<SpiralProps> = (
   p5.noFill();
 
   p5.beginShape();
-  for (let theta = 0; theta <= TWO_PI * rotations; theta += sampleRate) {
+  for (let theta = -TWO_PI; theta <= TWO_PI * rotations; theta += sampleRate) {
     const coord = spiralCoord(theta);
     p5.vertex(coord.x, coord.y);
   }
