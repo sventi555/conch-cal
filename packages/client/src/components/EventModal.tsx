@@ -16,11 +16,11 @@ export const EMPTY_EVENT: Event = {
 
 interface EventModalFormProps {
   autoFocusNameInput?: boolean;
+  onSubmit: () => void;
+  actionButtons?: React.ReactNode;
 }
 
-const EventModalForm: React.FC<EventModalFormProps> = ({
-  autoFocusNameInput,
-}) => {
+const EventModalForm: React.FC<EventModalFormProps> = (props) => {
   const { event, setEvent } = useEventModalContext();
 
   const { start, end } = event;
@@ -28,10 +28,15 @@ const EventModalForm: React.FC<EventModalFormProps> = ({
   const { day: endDay, time: endTime } = dayAndTimeStringFromDate(end);
 
   return (
-    <div>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        props.onSubmit();
+      }}
+    >
       <div>
         <input
-          autoFocus={autoFocusNameInput ?? false}
+          autoFocus={props.autoFocusNameInput ?? false}
           placeholder="Add title"
           value={event.name}
           onChange={(e) => {
@@ -85,7 +90,8 @@ const EventModalForm: React.FC<EventModalFormProps> = ({
           }
         />
       </div>
-    </div>
+      {props.actionButtons}
+    </form>
   );
 };
 
@@ -103,10 +109,15 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = (props) => {
 
   return (
     <Modal isOpen={props.isOpen} onRequestClose={() => props.setIsOpen(false)}>
-      <EventModalForm autoFocusNameInput />
-      <div>
-        <button onClick={() => props.onSubmit(event)}>Submit</button>
-      </div>
+      <EventModalForm
+        onSubmit={() => props.onSubmit(event)}
+        actionButtons={
+          <div>
+            <button type="submit">Submit</button>
+          </div>
+        }
+        autoFocusNameInput
+      />
     </Modal>
   );
 };
@@ -120,11 +131,17 @@ export const ModifyEventModal: React.FC<ModifyEventModalProps> = (props) => {
   const { event } = useEventModalContext();
   return (
     <Modal isOpen={props.isOpen} onRequestClose={() => props.setIsOpen(false)}>
-      <EventModalForm />
-      <div>
-        <button onClick={() => props.onDelete(event.id)}>Delete</button>
-        <button onClick={() => props.onSubmit(event.id, event)}>Submit</button>
-      </div>
+      <EventModalForm
+        onSubmit={() => props.onSubmit(event.id, event)}
+        actionButtons={
+          <div>
+            <button type="button" onClick={() => props.onDelete(event.id)}>
+              Delete
+            </button>
+            <button type="submit">Submit</button>
+          </div>
+        }
+      />
     </Modal>
   );
 };
