@@ -34,33 +34,39 @@ export const Home = () => {
         </button>
       </div>
       <div className="flex">
-        <MiniCalendar
-          onClickDay={(val) => {
-            setFocusedTime(val.getTime());
-          }}
-        />
-        <Calendar
-          focusedTime={focusedTime}
-          setFocusedTime={setFocusedTime}
-          events={events}
-          onClickTime={(time) => {
-            const snappedTime = roundTo15Min(time);
-            setEvent({
-              id: '',
-              owner: user.uid,
-              name: '',
-              start: snappedTime,
-              end: snappedTime + MS_PER_HOUR,
-            });
+        <div>
+          <div className="w-52">
+            <MiniCalendar
+              onClickDay={(val) => {
+                setFocusedTime(val.getTime());
+              }}
+            />
+          </div>
+        </div>
+        <div>
+          <Calendar
+            focusedTime={focusedTime}
+            setFocusedTime={setFocusedTime}
+            events={events}
+            onClickTime={(time) => {
+              const snappedTime = roundTo15Min(time);
+              setEvent({
+                id: '',
+                owner: user.uid,
+                name: '',
+                start: snappedTime,
+                end: snappedTime + MS_PER_HOUR,
+              });
 
-            setIsCreateEventModalOpen(true);
-          }}
-          onClickEvent={(event) => {
-            setEvent(event);
+              setIsCreateEventModalOpen(true);
+            }}
+            onClickEvent={(event) => {
+              setEvent(event);
 
-            setIsModifyEventModalOpen(true);
-          }}
-        />
+              setIsModifyEventModalOpen(true);
+            }}
+          />
+        </div>
       </div>
       <CreateEventModal
         isOpen={isCreateEventModalOpen}
