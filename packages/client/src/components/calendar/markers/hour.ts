@@ -50,7 +50,6 @@ export const drawHourMarker: P5Component<HourMarkerProps> = (
   };
 
   p5.stroke(0);
-  p5.fill(0);
 
   p5.line(shiftedInner.x, shiftedInner.y, outer.x, outer.y);
 };

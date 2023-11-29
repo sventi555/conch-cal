@@ -48,20 +48,21 @@ export const drawDayMarker: P5Component<DayMarkerProps> = (
 ) => {
   const { inner, outer, theta } = lineMarkerCoords(time, config);
 
-  const text = DAYS[new Date(time).getDay()];
+  const date = new Date(time);
+  const text = `${date.getDate()}: ${DAYS[date.getDay()]}`;
 
   const lineLen = dist(inner, outer);
 
-  p5.textSize(lineLen / 7);
+  p5.textSize(lineLen / 9);
   const textWidth = p5.textWidth(text);
   const textHeight = p5.textAscent();
-  const textDistFromInner = lineLen * 0.55;
-  const textPadding = textWidth * 0.15;
+  const textDistFromInner = lineLen * 0.43;
+  const textPadding = lineLen * 0.04;
 
   p5.noStroke();
   p5.fill(...blockColour(time));
 
-  const tabRadii = [2, 2, 0, 0];
+  const tabRadii = [4, 4, 0, 0];
   p5.push();
   p5.translate(inner.x, inner.y);
   p5.scale(1, -1);
