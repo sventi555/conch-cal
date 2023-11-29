@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Calendar as MiniCalendar } from 'react-calendar';
 import { useAuth } from '../auth';
 import { CreateEventModal, ModifyEventModal } from '../components/EventModal';
 import { Calendar } from '../components/calendar/Calendar';
+import { MiniCal } from '../components/mini-cal';
 import { EventsAPI } from '../networking/apis/events';
 import { useLoadEvents } from '../networking/load-events';
 import { useEvents, useEventsDispatch } from '../state/events';
@@ -34,39 +34,29 @@ export const Home = () => {
         </button>
       </div>
       <div className="flex">
-        <div>
-          <div className="w-52">
-            <MiniCalendar
-              onClickDay={(val) => {
-                setFocusedTime(val.getTime());
-              }}
-            />
-          </div>
-        </div>
-        <div>
-          <Calendar
-            focusedTime={focusedTime}
-            setFocusedTime={setFocusedTime}
-            events={events}
-            onClickTime={(time) => {
-              const snappedTime = roundTo15Min(time);
-              setEvent({
-                id: '',
-                owner: user.uid,
-                name: '',
-                start: snappedTime,
-                end: snappedTime + MS_PER_HOUR,
-              });
+        <MiniCal setFocusedTime={setFocusedTime} />
+        <Calendar
+          focusedTime={focusedTime}
+          setFocusedTime={setFocusedTime}
+          events={events}
+          onClickTime={(time) => {
+            const snappedTime = roundTo15Min(time);
+            setEvent({
+              id: '',
+              owner: user.uid,
+              name: '',
+              start: snappedTime,
+              end: snappedTime + MS_PER_HOUR,
+            });
 
-              setIsCreateEventModalOpen(true);
-            }}
-            onClickEvent={(event) => {
-              setEvent(event);
+            setIsCreateEventModalOpen(true);
+          }}
+          onClickEvent={(event) => {
+            setEvent(event);
 
-              setIsModifyEventModalOpen(true);
-            }}
-          />
-        </div>
+            setIsModifyEventModalOpen(true);
+          }}
+        />
       </div>
       <CreateEventModal
         isOpen={isCreateEventModalOpen}
