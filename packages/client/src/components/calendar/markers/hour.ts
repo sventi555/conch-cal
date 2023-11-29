@@ -30,8 +30,8 @@ export const drawHourMarker: P5Component<HourMarkerProps> = (
   const textPadding = 0.02 * lineLen;
 
   p5.noStroke();
-  p5.fill(0, 160);
-  p5.textSize(lineLen / 8);
+  p5.fill(0);
+  p5.textSize(lineLen / 10);
   p5.textAlign(p5.LEFT, p5.CENTER);
 
   p5.push();

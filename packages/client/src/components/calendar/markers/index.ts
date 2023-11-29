@@ -3,7 +3,7 @@ import { TWO_PI, polarToCart } from '../../../utils/math';
 import { spiralRadius } from '../../../utils/spiral';
 import { P5Component } from '../../p5-component';
 import { CalendarConfig } from '../Calendar';
-import { drawDayMarker } from './day';
+import { drawDayBlock, drawDayMarker } from './day';
 import { drawHourMarker } from './hour';
 
 interface MarkersProps {
@@ -32,9 +32,12 @@ export const drawMarkers: P5Component<MarkersProps> = (p5, { config }) => {
 
   markerTimes.forEach((time) => {
     if (isMidnight(time)) {
-      drawDayMarker(p5, { time, config });
+      drawDayBlock(p5, { time, config });
     }
     drawHourMarker(p5, { time, config });
+    if (isMidnight(time)) {
+      drawDayMarker(p5, { time, config });
+    }
   });
 };
 
