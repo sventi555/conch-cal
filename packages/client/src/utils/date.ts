@@ -2,8 +2,6 @@ export const MS_PER_HOUR = 60 * 60 * 1000;
 export const MS_PER_DAY = 24 * MS_PER_HOUR;
 const MS_PER_15_MIN = MS_PER_HOUR / 4;
 
-export const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-
 export const dayAndTimeStringFromDate = (time: number) => {
   const d = new Date(time);
 

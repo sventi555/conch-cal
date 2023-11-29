@@ -1,4 +1,4 @@
-import { DAYS, MS_PER_DAY } from '../../../utils/date';
+import { MS_PER_DAY } from '../../../utils/date';
 import { dist } from '../../../utils/math';
 import { RGBA } from '../../../utils/p5';
 import { timeToAngle } from '../../../utils/spiral';
@@ -49,14 +49,17 @@ export const drawDayMarker: P5Component<DayMarkerProps> = (
   const { inner, outer, theta } = lineMarkerCoords(time, config);
 
   const date = new Date(time);
-  const text = `${date.getDate()}: ${DAYS[date.getDay()]}`;
+  const text = date.toLocaleDateString(undefined, {
+    weekday: 'short',
+    day: 'numeric',
+  });
 
   const lineLen = dist(inner, outer);
 
   p5.textSize(lineLen / 9);
   const textWidth = p5.textWidth(text);
   const textHeight = p5.textAscent();
-  const textDistFromInner = lineLen * 0.43;
+  const textDistFromInner = lineLen * 0.65 - textWidth / 2;
   const textPadding = lineLen * 0.04;
 
   p5.noStroke();

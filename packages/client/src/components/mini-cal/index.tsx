@@ -10,6 +10,10 @@ export const MiniCal: React.FC<MiniCalProps> = (props) => {
     <div>
       <div className="w-56">
         <Calendar
+          formatShortWeekday={(locale, date) =>
+            date.toLocaleDateString(undefined, { weekday: 'narrow' })
+          }
+          calendarType="gregory"
           onClickDay={(val) => {
             props.setFocusedTime(val.getTime());
           }}
