@@ -61,7 +61,7 @@ export const drawDayMarker: P5Component<DayMarkerProps> = (
   p5.noStroke();
   p5.fill(...blockColour(time));
 
-  const tabRadii = [4, 4, 0, 0];
+  const tabRadii = [2, 2, 0, 0];
   p5.push();
   p5.translate(inner.x, inner.y);
   p5.scale(1, -1);
