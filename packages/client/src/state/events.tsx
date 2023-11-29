@@ -49,7 +49,9 @@ const eventsReducer: Reducer<Event[], EventsAction> = (events, action) => {
   }
 };
 
-const EventsContext = createContext<Event[] | undefined>(undefined);
+type EventsContextState = Event[];
+
+const EventsContext = createContext<EventsContextState | undefined>(undefined);
 const EventsDispatchContext = createContext<Dispatch<EventsAction> | undefined>(
   undefined,
 );
