@@ -7,9 +7,9 @@ interface EventModalContextState {
   setEvent: (event: Event) => void;
 }
 
-export const EventModalContext = createContext<
-  EventModalContextState | undefined
->(undefined);
+const EventModalContext = createContext<EventModalContextState | undefined>(
+  undefined,
+);
 
 export const useEventModalContext = () => {
   const context = useContext(EventModalContext);

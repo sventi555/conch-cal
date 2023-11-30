@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
+import { useMiniCalContext } from '../../state/mini-cal';
 import './index.scss';
 
 interface MiniCalProps {
@@ -9,7 +10,7 @@ interface MiniCalProps {
 
 export const MiniCal: React.FC<MiniCalProps> = (props) => {
   const [activeDate, setActiveDate] = useState(new Date(props.focusedTime));
-  const [followFocusedTime, setFollowFocusedTime] = useState(true);
+  const { followFocusedTime, setFollowFocusedTime } = useMiniCalContext();
 
   useEffect(() => {
     if (followFocusedTime) {
@@ -30,13 +31,13 @@ export const MiniCal: React.FC<MiniCalProps> = (props) => {
         setFollowFocusedTime(true);
         props.setFocusedTime(val.getTime());
       }}
-      onClickMonth={(val) => {
+      onActiveStartDateChange={({ activeStartDate }) => {
+        if (activeStartDate == null) {
+          throw new Error('no start date for requested view');
+        }
+
         setFollowFocusedTime(false);
-        setActiveDate(val);
-      }}
-      onClickYear={(val) => {
-        setFollowFocusedTime(false);
-        setActiveDate(val);
+        setActiveDate(activeStartDate);
       }}
     />
   );
