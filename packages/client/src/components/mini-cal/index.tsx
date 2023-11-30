@@ -8,6 +8,7 @@ interface MiniCalProps {
 export const MiniCal: React.FC<MiniCalProps> = (props) => {
   return (
     <Calendar
+      minDetail="decade"
       formatShortWeekday={(locale, date) =>
         date.toLocaleDateString(undefined, { weekday: 'narrow' })
       }
