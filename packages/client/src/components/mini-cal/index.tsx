@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
-import { useMiniCalContext } from '../../state/mini-cal';
 import './index.scss';
 
 interface MiniCalProps {
+  followFocusedTime: boolean;
+  setFollowFocusedTime: (follow: boolean) => void;
   focusedTime: number;
   setFocusedTime: (time: number) => void;
 }
 
 export const MiniCal: React.FC<MiniCalProps> = (props) => {
   const [activeDate, setActiveDate] = useState(new Date(props.focusedTime));
-  const { followFocusedTime, setFollowFocusedTime } = useMiniCalContext();
 
   useEffect(() => {
-    if (followFocusedTime) {
+    if (props.followFocusedTime) {
       setActiveDate(new Date(props.focusedTime));
     }
-  }, [followFocusedTime, props.focusedTime]);
+  }, [props.followFocusedTime, props.focusedTime]);
 
   return (
     <Calendar
@@ -28,15 +28,18 @@ export const MiniCal: React.FC<MiniCalProps> = (props) => {
       }
       calendarType="gregory"
       onClickDay={(val) => {
-        setFollowFocusedTime(true);
+        props.setFollowFocusedTime(true);
         props.setFocusedTime(val.getTime());
       }}
-      onActiveStartDateChange={({ activeStartDate }) => {
+      onActiveStartDateChange={({ action, activeStartDate }) => {
+        // only run this for menu nav
+        if (action === 'onChange') return;
+
         if (activeStartDate == null) {
           throw new Error('no start date for requested view');
         }
 
-        setFollowFocusedTime(false);
+        props.setFollowFocusedTime(false);
         setActiveDate(activeStartDate);
       }}
     />

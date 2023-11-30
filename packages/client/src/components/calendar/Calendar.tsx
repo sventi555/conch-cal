@@ -55,11 +55,6 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   };
 
   const keyPressed: SketchProps['keyPressed'] = (p5) => {
-    if (p5.key === ' ') {
-      props.setFocusedTime(Date.now());
-      return;
-    }
-
     updateZoom(p5);
   };
 

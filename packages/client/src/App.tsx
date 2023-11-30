@@ -3,7 +3,6 @@ import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
 import { EventsProvider } from './state/events';
-import { MiniCalProvider } from './state/mini-cal';
 import { EventModalProvider } from './state/modal';
 
 export const App: React.FC = () => {
@@ -16,9 +15,7 @@ export const App: React.FC = () => {
         element={
           <EventsProvider>
             <EventModalProvider>
-              <MiniCalProvider>
-                <Home />
-              </MiniCalProvider>
+              <Home />
             </EventModalProvider>
           </EventsProvider>
         }

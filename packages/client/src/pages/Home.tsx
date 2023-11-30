@@ -6,7 +6,6 @@ import { MiniCal } from '../components/mini-cal';
 import { EventsAPI } from '../networking/apis/events';
 import { useLoadEvents } from '../networking/load-events';
 import { useEvents, useEventsDispatch } from '../state/events';
-import { useMiniCalContext } from '../state/mini-cal';
 import { useEventModalContext } from '../state/modal';
 import { MS_PER_HOUR, roundTo15Min } from '../utils/date';
 
@@ -21,7 +20,8 @@ export const Home = () => {
   const [isCreateEventModalOpen, setIsCreateEventModalOpen] = useState(false);
   const [isModifyEventModalOpen, setIsModifyEventModalOpen] = useState(false);
 
-  const { setFollowFocusedTime } = useMiniCalContext();
+  const [miniCalFollowFocusedTime, setMiniCalFollowFocusedTime] =
+    useState(true);
 
   const [focusedTime, setFocusedTime] = useState(Date.now());
 
@@ -38,10 +38,15 @@ export const Home = () => {
       </div>
       <div className="flex">
         <div>
-          <MiniCal focusedTime={focusedTime} setFocusedTime={setFocusedTime} />
+          <MiniCal
+            followFocusedTime={miniCalFollowFocusedTime}
+            setFollowFocusedTime={setMiniCalFollowFocusedTime}
+            focusedTime={focusedTime}
+            setFocusedTime={setFocusedTime}
+          />
           <button
             onClick={() => {
-              setFollowFocusedTime(true);
+              setMiniCalFollowFocusedTime(true);
               setFocusedTime(Date.now());
             }}
           >
