@@ -15,3 +15,13 @@
   display: flex;
   justify-content: center;
 }
+
+.react-calendar__tile--hasActive,
+.react-calendar__tile--active {
+  background-color: rgb(213, 226, 250) !important;
+}
+
+.react-calendar__tile--now {
+  color: white;
+  background-color: rgb(56, 113, 224) !important;
+}

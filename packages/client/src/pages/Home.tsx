@@ -34,7 +34,7 @@ export const Home = () => {
         </button>
       </div>
       <div className="flex">
-        <MiniCal setFocusedTime={setFocusedTime} />
+        <MiniCal focusedTime={focusedTime} setFocusedTime={setFocusedTime} />
         <Calendar
           focusedTime={focusedTime}
           setFocusedTime={setFocusedTime}
