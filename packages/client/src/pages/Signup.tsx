@@ -19,9 +19,26 @@ export const Signup = () => {
         signup(email, password).then(() => navigate('/'));
       }}
     >
-      <input type="text" onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" onChange={(e) => setPassword(e.target.value)} />
-      <input type="submit"></input>
+      <p className="text-xl">Sign up</p>
+      <div>
+        <label>Email:</label>
+        <input
+          className="border"
+          type="text"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Password:</label>
+        <input
+          className="border"
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+      <button className="border" type="submit">
+        Submit
+      </button>
     </form>
   );
 };

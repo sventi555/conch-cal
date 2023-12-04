@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
 
 export const Login = () => {
@@ -13,20 +13,43 @@ export const Login = () => {
   }
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        login(email, password)
-          .then(() => navigate('/'))
-          .catch((err) => {
-            // Will want to show the error eventually
-            console.log(err);
-          });
-      }}
-    >
-      <input type="text" onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" onChange={(e) => setPassword(e.target.value)} />
-      <input type="submit"></input>
-    </form>
+    <>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          login(email, password)
+            .then(() => navigate('/'))
+            .catch((err) => {
+              // Will want to show the error eventually
+              console.log(err);
+            });
+        }}
+      >
+        <p className="text-xl">Log in</p>
+        <div>
+          <label>Email:</label>
+          <input
+            className="border"
+            type="text"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input
+            className="border"
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+
+        <button className="border" type="submit">
+          Submit
+        </button>
+      </form>
+      <Link className="underline" to="/signup">
+        Create account
+      </Link>
+    </>
   );
 };
