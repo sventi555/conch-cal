@@ -16,3 +16,6 @@ packages/server/creds.json
 
 # Logging
 *.log
+
+# OS
+.DS_Store
