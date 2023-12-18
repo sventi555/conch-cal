@@ -2,9 +2,9 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import {
-  GetEventsReturnType,
-  PostEventsReturnType,
-  PutEventsReturnType,
+  GetEventsReturn,
+  PostEventsReturn,
+  PutEventsReturn,
   deleteEventsParamSchema,
   getEventsQuerySchema,
   postEventsBodySchema,
@@ -27,7 +27,7 @@ export const eventRoutes = (app: Hono) => {
 
       const events = await EventRepo.getAllByUser(userId);
 
-      return c.json<GetEventsReturnType>(events);
+      return c.json<GetEventsReturn>(events);
     },
   );
 
@@ -39,7 +39,7 @@ export const eventRoutes = (app: Hono) => {
       const event = c.req.valid('json');
       const res = await EventRepo.addOne({ ...event, owner: c.var.userId });
 
-      return c.json<PostEventsReturnType>(res);
+      return c.json<PostEventsReturn>(res);
     },
   );
 
@@ -56,7 +56,7 @@ export const eventRoutes = (app: Hono) => {
         owner: c.var.userId,
       });
 
-      return c.json<PutEventsReturnType>(res);
+      return c.json<PutEventsReturn>(res);
     },
   );
 

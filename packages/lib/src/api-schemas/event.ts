@@ -1,16 +1,11 @@
 import { z } from 'zod';
 
-const eventDataSchema = z.object({
-  name: z.string(),
-  start: z.number(),
-  end: z.number(),
-  description: z.string().optional(),
-});
-
-export type EventData = z.infer<typeof eventDataSchema> & { owner: string };
-
-export interface Event extends EventData {
+export interface Event {
   id: string;
+  owner: string;
+  name: string;
+  start: number;
+  end: number;
 }
 
 const idSchema = z.object({
@@ -18,18 +13,33 @@ const idSchema = z.object({
 });
 
 export const getEventsQuerySchema = z.object({ userId: z.string() });
-export type GetEventsQueryType = z.infer<typeof getEventsQuerySchema>;
-export type GetEventsReturnType = Event[];
+export type GetEventsQuery = z.infer<typeof getEventsQuerySchema>;
+export type GetEventsReturn = Event[];
 
-export const postEventsBodySchema = eventDataSchema;
-export type PostEventsBodyType = z.infer<typeof postEventsBodySchema>;
-export type PostEventsReturnType = Event;
+const createEventSchema = z.object({
+  name: z.string(),
+  start: z.number(),
+  end: z.number(),
+  description: z.string().optional(),
+});
+
+export const postEventsBodySchema = createEventSchema;
+export type PostEventsBody = z.infer<typeof postEventsBodySchema>;
+export type PostEventsReturn = Event;
+
+const updateEventSchema = z.object({
+  owner: z.string(),
+  name: z.string(),
+  start: z.number(),
+  end: z.number(),
+  description: z.string().optional(),
+});
 
 export const putEventsParamSchema = idSchema;
-export type PutEventsParamType = z.infer<typeof putEventsParamSchema>;
-export const putEventsBodySchema = eventDataSchema;
-export type PutEventsBodyType = z.infer<typeof putEventsBodySchema>;
-export type PutEventsReturnType = Event;
+export type PutEventsParam = z.infer<typeof putEventsParamSchema>;
+export const putEventsBodySchema = updateEventSchema;
+export type PutEventsBody = z.infer<typeof putEventsBodySchema>;
+export type PutEventsReturn = Event;
 
 export const deleteEventsParamSchema = idSchema;
-export type DeleteEventsParamType = z.infer<typeof deleteEventsParamSchema>;
+export type DeleteEventsParam = z.infer<typeof deleteEventsParamSchema>;
