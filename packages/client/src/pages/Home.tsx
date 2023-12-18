@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../auth';
 import { CreateEventModal, ModifyEventModal } from '../components/EventModal';
 import { Calendar } from '../components/calendar/Calendar';
@@ -26,7 +27,7 @@ export const Home = () => {
   const [focusedTime, setFocusedTime] = useState(Date.now());
 
   if (!user) {
-    return;
+    return <Navigate to="/login" />;
   }
 
   return (
