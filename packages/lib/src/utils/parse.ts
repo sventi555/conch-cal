@@ -1,4 +1,4 @@
-export const toInt = (str: string | undefined) => {
+export const toIntOrUndefined = (str: string | undefined) => {
   if (str === undefined) {
     return undefined;
   }
@@ -7,8 +7,4 @@ export const toInt = (str: string | undefined) => {
     return undefined;
   }
   return num;
-};
-
-export const toBool = (str: string | undefined) => {
-  return str === 'true';
 };
