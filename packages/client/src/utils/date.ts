@@ -2,16 +2,6 @@ export const MS_PER_HOUR = 60 * 60 * 1000;
 export const MS_PER_DAY = 24 * MS_PER_HOUR;
 const MS_PER_15_MIN = MS_PER_HOUR / 4;
 
-export type DateRange = [number, number];
-
-export const range = (middle: number, width: number): DateRange => {
-  return [middle - width / 2, middle + width / 2];
-};
-
-export const inRange = (n: number, r: DateRange) => {
-  return n >= r[0] || n <= r[1];
-};
-
 export const dayAndTimeStringFromDate = (time: number) => {
   const d = new Date(time);
 

@@ -20,12 +20,15 @@ export const eventRoutes = (app: Hono) => {
     verifyToken,
     zValidator('query', getEventsQuerySchema),
     async (c) => {
-      const { userId } = c.req.valid('query');
+      const { userId, rangeStart, rangeEnd } = c.req.valid('query');
       if (userId !== c.var.userId) {
         throw new HTTPException(400);
       }
 
-      const events = await EventRepo.getAllByUser(userId);
+      const events = await EventRepo.getAllByUser(userId, [
+        rangeStart,
+        rangeEnd,
+      ]);
 
       return c.json<GetEventsReturn>(events);
     },

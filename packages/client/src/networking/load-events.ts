@@ -1,7 +1,8 @@
+import { DateRange, inRange, range } from 'lib';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth';
 import { useEventsDispatch } from '../state/events';
-import { DateRange, MS_PER_DAY, inRange, range } from '../utils/date';
+import { MS_PER_DAY } from '../utils/date';
 import { EventsAPI } from './apis/events';
 
 export const useLoadEvents = (focusedTime: number) => {
