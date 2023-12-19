@@ -13,7 +13,6 @@ import { MS_PER_HOUR, roundTo15Min } from '../utils/date';
 export const Home = () => {
   const { user, logout } = useAuth();
 
-  useLoadEvents();
   const events = useEvents();
   const dispatch = useEventsDispatch();
 
@@ -25,6 +24,7 @@ export const Home = () => {
     useState(true);
 
   const [focusedTime, setFocusedTime] = useState(Date.now());
+  useLoadEvents(focusedTime);
 
   if (!user) {
     return <Navigate to="/login" />;

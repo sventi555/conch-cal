@@ -1,17 +1,28 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../auth';
 import { useEventsDispatch } from '../state/events';
+import { DateRange, MS_PER_DAY, inRange, range } from '../utils/date';
 import { EventsAPI } from './apis/events';
 
-export const useLoadEvents = () => {
+export const useLoadEvents = (focusedTime: number) => {
   const { user } = useAuth();
   const dispatch = useEventsDispatch();
 
+  const [loadedRange, setLoadedRange] = useState<DateRange | null>(null);
+
   useEffect(() => {
-    if (user) {
-      EventsAPI.getEvents(user).then((data) =>
+    if (!user) {
+      return;
+    }
+
+    if (loadedRange == null || !inRange(focusedTime, loadedRange)) {
+      // get 3 months on either side of focused time
+      const newRange = range(focusedTime, MS_PER_DAY * 31 * 6);
+      setLoadedRange(newRange);
+
+      EventsAPI.getEvents(user, newRange).then((data) =>
         dispatch({ type: 'set', events: data }),
       );
     }
-  }, [dispatch, user]);
+  }, [dispatch, user, focusedTime, loadedRange]);
 };

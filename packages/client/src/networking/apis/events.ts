@@ -8,16 +8,24 @@ import {
   PutEventsReturn,
 } from 'lib';
 import config from '../../config';
+import { DateRange } from '../../utils/date';
+import { toQueryString } from '../utils/query';
 
 const BASE_URI = `${config.hosts.api}/events`;
 
 export class EventsAPI {
-  static async getEvents(user: User): Promise<GetEventsReturn> {
+  static async getEvents(
+    user: User,
+    range: DateRange,
+  ): Promise<GetEventsReturn> {
     const token = await user.getIdToken();
 
-    const query: GetEventsQuery = { userId: user.uid };
-    const queryString = new URLSearchParams(query);
-    const res = await fetch(`${BASE_URI}?${queryString}`, {
+    const query: GetEventsQuery = {
+      userId: user.uid,
+      rangeStart: range[0],
+      rangeEnd: range[1],
+    };
+    const res = await fetch(`${BASE_URI}?${toQueryString(query)}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const body = await res.json();
