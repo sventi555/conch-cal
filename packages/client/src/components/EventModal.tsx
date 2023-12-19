@@ -1,4 +1,4 @@
-import { Event, PostEventsBodyType, PutEventsBodyType } from 'lib';
+import { Event, PostEventsBody, PutEventsBody } from 'lib';
 import Modal from 'react-modal';
 import { useEventModalContext } from '../state/modal';
 import {
@@ -101,7 +101,7 @@ interface EventModalProps {
 }
 
 interface CreateEventModalProps extends EventModalProps {
-  onSubmit: (event: PostEventsBodyType) => void;
+  onSubmit: (event: PostEventsBody) => void;
 }
 
 export const CreateEventModal: React.FC<CreateEventModalProps> = (props) => {
@@ -123,7 +123,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = (props) => {
 };
 
 interface ModifyEventModalProps extends EventModalProps {
-  onSubmit: (id: string, event: PutEventsBodyType) => void;
+  onSubmit: (id: string, event: PutEventsBody) => void;
   onDelete: (id: string) => void;
 }
 

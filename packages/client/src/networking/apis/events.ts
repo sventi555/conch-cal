@@ -1,21 +1,21 @@
 import { User } from 'firebase/auth';
 import {
-  GetEventsQueryType,
-  GetEventsReturnType,
-  PostEventsBodyType,
-  PostEventsReturnType,
-  PutEventsBodyType,
-  PutEventsReturnType,
+  GetEventsQuery,
+  GetEventsReturn,
+  PostEventsBody,
+  PostEventsReturn,
+  PutEventsBody,
+  PutEventsReturn,
 } from 'lib';
 import config from '../../config';
 
 const BASE_URI = `${config.hosts.api}/events`;
 
 export class EventsAPI {
-  static async getEvents(user: User): Promise<GetEventsReturnType> {
+  static async getEvents(user: User): Promise<GetEventsReturn> {
     const token = await user.getIdToken();
 
-    const query: GetEventsQueryType = { userId: user.uid };
+    const query: GetEventsQuery = { userId: user.uid };
     const queryString = new URLSearchParams(query);
     const res = await fetch(`${BASE_URI}?${queryString}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -26,9 +26,9 @@ export class EventsAPI {
   }
 
   static async postEvent(
-    event: PostEventsBodyType,
+    event: PostEventsBody,
     user: User,
-  ): Promise<PostEventsReturnType> {
+  ): Promise<PostEventsReturn> {
     const token = await user.getIdToken();
 
     const res = await fetch(`${BASE_URI}`, {
@@ -46,9 +46,9 @@ export class EventsAPI {
 
   static async putEvent(
     id: string,
-    event: PutEventsBodyType,
+    event: PutEventsBody,
     user: User,
-  ): Promise<PutEventsReturnType> {
+  ): Promise<PutEventsReturn> {
     const token = await user.getIdToken();
     const res = await fetch(`${BASE_URI}/${id}`, {
       method: 'PUT',
