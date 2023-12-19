@@ -44,4 +44,11 @@ export class EventRepo {
     const doc = await db.doc(`events/${id}`);
     await doc.delete();
   }
+
+  static async canEdit(id: string, userId: string) {
+    const doc = await db.doc(`events/${id}`);
+    const data = (await doc.get()).data();
+
+    return data?.owner === userId;
+  }
 }
