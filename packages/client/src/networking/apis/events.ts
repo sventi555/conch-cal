@@ -1,5 +1,6 @@
 import { User } from 'firebase/auth';
 import {
+  DateRange,
   GetEventsQuery,
   GetEventsReturn,
   PostEventsBody,
@@ -8,7 +9,6 @@ import {
   PutEventsReturn,
 } from 'lib';
 import config from '../../config';
-import { DateRange } from '../../utils/date';
 import { toQueryString } from '../utils/query';
 
 const BASE_URI = `${config.hosts.api}/events`;

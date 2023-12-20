@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { epochDateSchema, idSchema, stringEpochDateSchema } from './shared';
 
 export interface Event {
   id: string;
@@ -8,22 +9,18 @@ export interface Event {
   end: number;
 }
 
-const idSchema = z.object({
-  id: z.string(),
-});
-
 export const getEventsQuerySchema = z.object({
   userId: z.string(),
-  rangeStart: z.string().pipe(z.coerce.number().int().positive()),
-  rangeEnd: z.string().pipe(z.coerce.number().int().positive()),
+  rangeStart: stringEpochDateSchema,
+  rangeEnd: stringEpochDateSchema,
 });
 export type GetEventsQuery = z.infer<typeof getEventsQuerySchema>;
 export type GetEventsReturn = Event[];
 
 export const postEventsBodySchema = z.object({
   name: z.string(),
-  start: z.number().int().positive(),
-  end: z.number().int().positive(),
+  start: epochDateSchema,
+  end: epochDateSchema,
   description: z.string().optional(),
 });
 export type PostEventsBody = z.infer<typeof postEventsBodySchema>;
@@ -32,8 +29,8 @@ export type PostEventsReturn = Event;
 export const putEventsBodySchema = z.object({
   owner: z.string(),
   name: z.string(),
-  start: z.number().int().positive(),
-  end: z.number().int().positive(),
+  start: epochDateSchema,
+  end: epochDateSchema,
   description: z.string().optional(),
 });
 export const putEventsParamSchema = idSchema;
