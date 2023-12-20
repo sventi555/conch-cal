@@ -25,6 +25,7 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "rrule": "^2.8.1",
     "zod": "^3.22.2"
   },
   "devDependencies": {
