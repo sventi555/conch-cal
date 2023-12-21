@@ -27,7 +27,8 @@
     "dotenv": "^16.0.3",
     "firebase-admin": "^11.10.1",
     "hono": "^3.6.3",
-    "lib": "*"
+    "lib": "*",
+    "rrule": "^2.8.1"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",

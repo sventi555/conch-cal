@@ -33,10 +33,7 @@ export const eventRoutes = (app: Hono) => {
         });
       }
 
-      const events = await EventRepo.getAllByUser(userId, [
-        rangeStart,
-        rangeEnd,
-      ]);
+      const events = await EventRepo.getByUser(userId, [rangeStart, rangeEnd]);
 
       return c.json<GetEventsReturn>(events);
     },

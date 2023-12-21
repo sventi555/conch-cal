@@ -1,12 +1,9 @@
 import { DateRange, Event } from 'lib';
 import { db } from '../db/ index';
-import { DBEvent } from '../db/schema';
+import { Event as DBEvent } from '../db/schema';
 
 export class EventRepo {
-  static async getAllByUser(
-    userId: string,
-    range?: DateRange,
-  ): Promise<Event[]> {
+  static async getByUser(userId: string, range?: DateRange): Promise<Event[]> {
     let query = db.collection('events').where('owner', '==', userId);
 
     // Not allowed to compound query with different field inequealities,
