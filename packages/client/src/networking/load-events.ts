@@ -1,4 +1,4 @@
-import { DateRange } from 'lib';
+import { DateRange, inRange, range } from 'lib';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth';
 import { useEventsDispatch } from '../state/events';
@@ -6,14 +6,6 @@ import { MS_PER_DAY } from '../utils/date';
 import { recurrenceInstances } from '../utils/recurrence';
 import { EventsAPI } from './apis/events';
 import { RecurrencesAPI } from './apis/recurrences';
-
-const range = (middle: number, width: number): DateRange => {
-  return [middle - width / 2, middle + width / 2];
-};
-
-const inRange = (n: number, r: DateRange) => {
-  return n >= r[0] || n <= r[1];
-};
 
 export const useLoadEvents = (focusedTime: number) => {
   const { user } = useAuth();
