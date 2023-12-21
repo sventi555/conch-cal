@@ -1,10 +1,13 @@
 import { DateRange, Event } from 'lib';
 import { db } from '../db/ index';
 import { Event as DBEvent } from '../db/schema';
+import { converter } from './utils/converter';
+
+const collection = db.collection('events').withConverter(converter<DBEvent>());
 
 export class EventRepo {
   static async getByUser(userId: string, range?: DateRange): Promise<Event[]> {
-    let query = db.collection('events').where('owner', '==', userId);
+    let query = collection.where('owner', '==', userId);
 
     // Not allowed to compound query with different field inequealities,
     // therefore simply check if the event starts within the range.
@@ -18,32 +21,32 @@ export class EventRepo {
         .where('start', '<', range[1]);
     }
     const data = (await query.get()).docs.map((doc) => {
-      return { id: doc.id, ...(doc.data() as DBEvent) };
+      return { id: doc.id, ...doc.data() };
     });
 
     return data;
   }
 
   static async addOne(event: DBEvent): Promise<Event> {
-    const doc = await db.collection('events').add(event);
+    const doc = await collection.add(event);
 
     return { id: doc.id, ...event };
   }
 
   static async replaceOne(id: string, event: DBEvent): Promise<Event> {
-    const doc = await db.doc(`events/${id}`);
+    const doc = await collection.doc(id);
     await doc.set(event);
 
     return { id, ...event };
   }
 
   static async deleteOne(id: string) {
-    const doc = await db.doc(`events/${id}`);
+    const doc = await collection.doc(id);
     await doc.delete();
   }
 
   static async canEdit(id: string, userId: string) {
-    const doc = await db.doc(`events/${id}`);
+    const doc = await collection.doc(id);
     const data = (await doc.get()).data();
 
     return data?.owner === userId;
