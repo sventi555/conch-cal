@@ -20,7 +20,7 @@
     "dev": "yarn build --watch --preserveWatchOutput",
     "build": "tsc -b tsconfig.cjs.json tsconfig.esm.json",
     "lint": "eslint . && prettier --check .",
-    "test": "jest",
+    "test": "jest  --passWithNoTests",
     "test:watch": "jest --watch",
     "clean": "rimraf dist"
   },
