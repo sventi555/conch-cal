@@ -6,7 +6,7 @@ import { stringEpochDateSchema } from './shared';
 export interface Recurrence {
   id: string;
   groupId: string;
-  event: Event;
+  event: Omit<Event, 'id'>;
   start: number;
   freq: Frequency;
   interval?: number;
@@ -17,8 +17,7 @@ export interface Recurrence {
 
 export const getRecurrencesQuerySchema = z.object({
   userId: z.string(),
-  rangeStart: stringEpochDateSchema,
-  rangeEnd: stringEpochDateSchema,
+  before: stringEpochDateSchema,
 });
 export type GetRecurrencesQuery = z.infer<typeof getRecurrencesQuerySchema>;
 export type GetRecurrencesReturn = Recurrence[];

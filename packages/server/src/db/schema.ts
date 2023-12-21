@@ -11,7 +11,7 @@ export interface Recurrence {
   groupId: string;
   event: Event;
   start: number;
-  freq: keyof typeof Frequency;
+  freq: Frequency;
   interval?: number;
   byweekday?: WeekdayStr[];
   until?: number;
