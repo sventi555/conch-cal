@@ -1,2 +1,2 @@
 export * from './api-schemas';
-export * from './types';
+export * from './utils';
