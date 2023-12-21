@@ -1,12 +1,18 @@
-import { DateRange, Event } from 'lib';
+import { DateRange } from 'lib';
 import { db } from '../db/ index';
-import { Event as DBEvent } from '../db/schema';
+import { Event } from '../db/schema';
 import { converter } from './utils/converter';
+import { WithID } from './utils/types';
 
-const collection = db.collection('events').withConverter(converter<DBEvent>());
+interface EventWithID extends Event, WithID {}
+
+const collection = db.collection('events').withConverter(converter<Event>());
 
 export class EventRepo {
-  static async getByUser(userId: string, range?: DateRange): Promise<Event[]> {
+  static async getByUser(
+    userId: string,
+    range?: DateRange,
+  ): Promise<EventWithID[]> {
     let query = collection.where('owner', '==', userId);
 
     // Not allowed to compound query with different field inequealities,
@@ -27,13 +33,13 @@ export class EventRepo {
     return data;
   }
 
-  static async addOne(event: DBEvent): Promise<Event> {
+  static async addOne(event: Event): Promise<EventWithID> {
     const doc = await collection.add(event);
 
     return { id: doc.id, ...event };
   }
 
-  static async replaceOne(id: string, event: DBEvent): Promise<Event> {
+  static async replaceOne(id: string, event: Event): Promise<EventWithID> {
     const doc = await collection.doc(id);
     await doc.set(event);
 
