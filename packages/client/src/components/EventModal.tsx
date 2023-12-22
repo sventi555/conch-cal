@@ -45,6 +45,7 @@ const EventModalForm: React.FC<EventModalFormProps> = (props) => {
         />
       </div>
       <div>
+        <label>Start:</label>
         <input
           type="date"
           value={startDay}
@@ -68,6 +69,7 @@ const EventModalForm: React.FC<EventModalFormProps> = (props) => {
         />
       </div>
       <div>
+        <label>End:</label>
         <input
           type="date"
           value={endDay}
@@ -89,6 +91,51 @@ const EventModalForm: React.FC<EventModalFormProps> = (props) => {
             })
           }
         />
+      </div>
+      <div>
+        <label>Repeats:</label>
+        <select>
+          <option>None</option>
+          <option>Daily</option>
+          <option>Weekly</option>
+          <option>Monthly</option>
+          <option>Yearly</option>
+        </select>
+      </div>
+      <div>
+        <label>Interval:</label>
+        <input type="number" />
+      </div>
+      <div>
+        <label>By day:</label>
+        <label>S</label>
+        <input type="checkbox" />
+        <label>M</label>
+        <input type="checkbox" />
+        <label>T</label>
+        <input type="checkbox" />
+        <label>W</label>
+        <input type="checkbox" />
+        <label>T</label>
+        <input type="checkbox" />
+        <label>F</label>
+        <input type="checkbox" />
+        <label>S</label>
+        <input type="checkbox" />
+      </div>
+      <div>
+        <label>Never ends:</label>
+        <input type="radio" name="ends" />
+      </div>
+      <div>
+        <label>Until:</label>
+        <input type="radio" name="ends" />
+        <input type="date" min="1999-06-02" />
+      </div>
+      <div>
+        <label>Count:</label>
+        <input type="radio" name="ends" />
+        <input type="number" />
       </div>
       {props.actionButtons}
     </form>
