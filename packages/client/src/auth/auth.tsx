@@ -97,12 +97,7 @@ const useProvideAuth = (): AuthState => {
   };
 };
 
-const AuthContext = createContext<AuthState>({
-  loading: true,
-  login: async () => {},
-  logout: async () => {},
-  signup: async () => {},
-});
+const AuthContext = createContext<AuthState | undefined>(undefined);
 
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({
   children,
@@ -112,5 +107,10 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
 };
 
 export const useAuth = () => {
-  return useContext(AuthContext);
+  const auth = useContext(AuthContext);
+  if (auth === undefined) {
+    throw new Error('Using auth context without a provider');
+  }
+
+  return auth;
 };
