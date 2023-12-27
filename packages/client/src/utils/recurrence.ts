@@ -1,5 +1,6 @@
-import { DateRange, Event, Recurrence } from 'lib';
+import { DateRange, Recurrence } from 'lib';
 import { RRule } from 'rrule';
+import { Event } from '../types';
 
 const toRRule = (recurrence: Recurrence) => {
   return new RRule({

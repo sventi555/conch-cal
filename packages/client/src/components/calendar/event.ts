@@ -1,4 +1,4 @@
-import { Event } from 'lib';
+import { Event } from '../../types';
 import { TWO_PI, dist, lerp } from '../../utils/math';
 import { spiralCoord, timeToAngle } from '../../utils/spiral';
 import { P5Component } from '../p5-component';

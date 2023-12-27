@@ -1,4 +1,3 @@
-import { Event } from 'lib';
 import p5Types from 'p5';
 import { useState } from 'react';
 import Sketch, { SketchProps } from 'react-p5';
@@ -9,6 +8,7 @@ import { angleToTime, closestSpiralAngle } from '../../utils/spiral';
 import { drawEvent } from './event';
 import { drawFocusMarker, drawMarkers } from './markers';
 import { drawSpiral } from './spiral';
+import { Event } from '../../types';
 
 export interface CalendarConfig {
   focusedTime: number;

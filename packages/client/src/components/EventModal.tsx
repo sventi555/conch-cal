@@ -1,10 +1,11 @@
-import { Event, PostEventsBody, PutEventsBody } from 'lib';
+import { PostEventsBody, PutEventsBody } from 'lib';
 import Modal from 'react-modal';
 import { useEventModalContext } from '../state/modal';
 import {
   dateFromDayAndTimeString,
   dayAndTimeStringFromDate,
 } from '../utils/date';
+import { Event } from '../types';
 
 export const EMPTY_EVENT: Event = {
   id: '',
@@ -151,6 +152,7 @@ interface CreateEventModalProps extends EventModalProps {
   onSubmit: (event: PostEventsBody) => void;
 }
 
+// TODO: figure out whether or not we're creating an event or a recurrence
 export const CreateEventModal: React.FC<CreateEventModalProps> = (props) => {
   const { event } = useEventModalContext();
 
@@ -174,6 +176,12 @@ interface ModifyEventModalProps extends EventModalProps {
   onDelete: (id: string) => void;
 }
 
+// TODO: figure out whether we're modifying an event or a recurrence
+// should the modal be submitting the actual api schemas? Or just a simple event.
+// Or just call onSubmit, since we have context for this anyway...
+// I say we just add functions that handle the addition/modification/deletion
+// of any event, and they figure out what case it is, and dispatch accordingly
+// have these be in Home, so just submit with empty arguments in modal (or an event at most)
 export const ModifyEventModal: React.FC<ModifyEventModalProps> = (props) => {
   const { event } = useEventModalContext();
   return (

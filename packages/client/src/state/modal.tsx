@@ -1,6 +1,6 @@
-import { Event } from 'lib';
 import { createContext, useContext, useState } from 'react';
 import { EMPTY_EVENT } from '../components/EventModal';
+import { Event } from '../types';
 
 interface EventModalContextState {
   event: Event;
