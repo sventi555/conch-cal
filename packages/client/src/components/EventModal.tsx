@@ -1,11 +1,10 @@
-import { PostEventsBody, PutEventsBody } from 'lib';
 import Modal from 'react-modal';
 import { useEventModalContext } from '../state/modal';
+import { Event } from '../types';
 import {
   dateFromDayAndTimeString,
   dayAndTimeStringFromDate,
 } from '../utils/date';
-import { Event } from '../types';
 
 export const EMPTY_EVENT: Event = {
   id: '',
@@ -149,7 +148,7 @@ interface EventModalProps {
 }
 
 interface CreateEventModalProps extends EventModalProps {
-  onSubmit: (event: PostEventsBody) => void;
+  onSubmit: (event: Event) => void;
 }
 
 // TODO: figure out whether or not we're creating an event or a recurrence
@@ -172,25 +171,19 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = (props) => {
 };
 
 interface ModifyEventModalProps extends EventModalProps {
-  onSubmit: (id: string, event: PutEventsBody) => void;
-  onDelete: (id: string) => void;
+  onSubmit: (event: Event) => void;
+  onDelete: (event: Event) => void;
 }
 
-// TODO: figure out whether we're modifying an event or a recurrence
-// should the modal be submitting the actual api schemas? Or just a simple event.
-// Or just call onSubmit, since we have context for this anyway...
-// I say we just add functions that handle the addition/modification/deletion
-// of any event, and they figure out what case it is, and dispatch accordingly
-// have these be in Home, so just submit with empty arguments in modal (or an event at most)
 export const ModifyEventModal: React.FC<ModifyEventModalProps> = (props) => {
   const { event } = useEventModalContext();
   return (
     <Modal isOpen={props.isOpen} onRequestClose={() => props.setIsOpen(false)}>
       <EventModalForm
-        onSubmit={() => props.onSubmit(event.id, event)}
+        onSubmit={() => props.onSubmit(event)}
         actionButtons={
           <div>
-            <button type="button" onClick={() => props.onDelete(event.id)}>
+            <button type="button" onClick={() => props.onDelete(event)}>
               Delete
             </button>
             <button type="submit">Submit</button>

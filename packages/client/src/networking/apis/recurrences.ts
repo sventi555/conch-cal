@@ -1,5 +1,10 @@
 import { User } from 'firebase/auth';
-import { GetRecurrencesQuery, GetRecurrencesReturn } from 'lib';
+import {
+  GetRecurrencesQuery,
+  GetRecurrencesReturn,
+  PostRecurrencesBody,
+  PostRecurrencesReturn,
+} from 'lib';
 import config from '../../config';
 import { toQueryString } from '../utils/query';
 
@@ -18,6 +23,25 @@ export class RecurrencesAPI {
     };
     const res = await fetch(`${BASE_URI}?${toQueryString(query)}`, {
       headers: { Authorization: `Bearer ${token}` },
+    });
+    const body = await res.json();
+
+    return body;
+  }
+
+  static async postRecurrence(
+    recurrence: PostRecurrencesBody,
+    user: User,
+  ): Promise<PostRecurrencesReturn> {
+    const token = await user.getIdToken();
+
+    const res = await fetch(`${BASE_URI}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(recurrence),
     });
     const body = await res.json();
 

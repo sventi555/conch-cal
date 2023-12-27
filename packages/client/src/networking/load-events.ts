@@ -24,7 +24,7 @@ export const useLoadEvents = (focusedTime: number) => {
       setLoadedRange(newRange);
 
       EventsAPI.getEvents(user, newRange).then((events) => {
-        RecurrencesAPI.getRecurrences(user, newRange).then((recurrences) => {
+        RecurrencesAPI.getRecurrences(user, newRange[1]).then((recurrences) => {
           const allRecurrenceInstances = recurrences
             .map((recurrence) => recurrenceInstances(recurrence, newRange))
             .flat();

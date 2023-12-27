@@ -1,8 +1,7 @@
-import { WeekdayStr } from 'rrule';
+import { Frequency, WeekdayStr } from 'rrule';
 
-type Frequency = 'Daily' | 'Weekly' | 'Monthly' | 'Yearly';
-
-interface RRule {
+export interface Recurrence {
+  id: string;
   groupId: string;
   freq: Frequency;
   interval: number;
@@ -22,5 +21,5 @@ export interface Event {
   name: string;
   start: number;
   end: number;
-  rrule?: RRule;
+  recurrence?: Recurrence;
 }
