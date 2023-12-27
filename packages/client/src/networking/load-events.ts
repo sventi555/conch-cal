@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../auth';
 import { useEventsDispatch } from '../state/events';
 import { MS_PER_DAY } from '../utils/date';
-import { recurrenceInstances } from '../utils/recurrence';
 import { EventsAPI } from './apis/events';
 import { RecurrencesAPI } from './apis/recurrences';
 
@@ -25,12 +24,14 @@ export const useLoadEvents = (focusedTime: number) => {
 
       EventsAPI.getEvents(user, newRange).then((events) => {
         RecurrencesAPI.getRecurrences(user, newRange[1]).then((recurrences) => {
-          const allRecurrenceInstances = recurrences
-            .map((recurrence) => recurrenceInstances(recurrence, newRange))
-            .flat();
           dispatch({
             type: 'set',
-            events: [...events, ...allRecurrenceInstances],
+            events,
+            recurringEvents: recurrences.map((recurrence) => ({
+              ...recurrence.event,
+              recurrence,
+            })),
+            loadedRange: newRange,
           });
         });
       });

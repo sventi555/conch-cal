@@ -3,23 +3,29 @@ import { Frequency, WeekdayStr } from 'rrule';
 export interface Recurrence {
   id: string;
   groupId: string;
+  start: number;
   freq: Frequency;
-  interval: number;
+  interval?: number;
   byweekday?: WeekdayStr[];
   until?: number;
   count?: number;
 }
 
-/**
- * `id` and `rrule` are mutually exclusive.
- * If the event represents an instance of a recurrence, then `rrule` should be
- * defined. Otherwise, `id` should be defined.
- */
-export interface Event {
-  id?: string;
+interface BaseEvent {
   owner: string;
   name: string;
   start: number;
   end: number;
-  recurrence?: Recurrence;
 }
+
+export interface RecurringEvent extends BaseEvent {
+  id?: undefined;
+  recurrence: Recurrence;
+}
+
+export interface NonRecurringEvent extends BaseEvent {
+  id: string;
+  recurrence?: undefined;
+}
+
+export type Event = RecurringEvent | NonRecurringEvent;

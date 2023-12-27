@@ -1,6 +1,6 @@
-import { DateRange, Recurrence } from 'lib';
+import { DateRange } from 'lib';
 import { RRule } from 'rrule';
-import { Event } from '../types';
+import { Event, Recurrence, RecurringEvent } from '../types';
 
 const toRRule = (recurrence: Recurrence) => {
   return new RRule({
@@ -27,15 +27,14 @@ const moveEventToDay = (event: Event, date: Date): Event => {
   return { ...event, start: newEventStart, end: newEventStart + eventDuration };
 };
 
-export const recurrenceInstances = (
-  recurrence: Recurrence,
+export const eventInstances = (
+  event: RecurringEvent,
   range: DateRange,
-) => {
-  const rrule = toRRule(recurrence);
+): Event[] => {
+  const rrule = toRRule(event.recurrence);
   const dates = rrule.between(new Date(range[0]), new Date(range[1]));
   const instances = dates.map((date) => ({
-    ...moveEventToDay(recurrence.event, date),
-    recurrenceGroupId: recurrence.groupId,
+    ...moveEventToDay(event, date),
   }));
 
   return instances;

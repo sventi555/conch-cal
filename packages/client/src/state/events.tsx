@@ -1,4 +1,4 @@
-import { Event } from 'lib';
+import { DateRange } from 'lib';
 import {
   Dispatch,
   Reducer,
@@ -6,21 +6,25 @@ import {
   useContext,
   useReducer,
 } from 'react';
+import { Event, NonRecurringEvent, RecurringEvent } from '../types';
+import { eventInstances } from '../utils/recurrence';
 
 interface SetEventsAction {
   type: 'set';
-  events: Event[];
+  events: NonRecurringEvent[];
+  recurringEvents: RecurringEvent[];
+  loadedRange: DateRange;
 }
 
 interface AddEventAction {
   type: 'added';
-  event: Event;
+  event: NonRecurringEvent;
 }
 
 interface ModifyEventAction {
   type: 'modified';
   id: string;
-  updatedEvent: Event;
+  updatedEvent: NonRecurringEvent;
 }
 
 interface DeleteEventAction {
@@ -28,16 +32,41 @@ interface DeleteEventAction {
   id: string;
 }
 
+interface AddRecurringEventAction {
+  type: 'added-recurring';
+  event: RecurringEvent;
+  loadedRange: DateRange;
+}
+
+interface ModifyRecurringEventAction {
+  type: 'modified-recurring';
+  id: string;
+  updatedEvent: RecurringEvent;
+  loadedRange: DateRange;
+}
+
+interface DeleteRecurringEventAction {
+  type: 'deleted-recurring';
+  id: string;
+}
+
 type EventsAction =
   | SetEventsAction
   | AddEventAction
   | ModifyEventAction
-  | DeleteEventAction;
+  | DeleteEventAction
+  | AddRecurringEventAction
+  | ModifyRecurringEventAction
+  | DeleteRecurringEventAction;
 
 const eventsReducer: Reducer<Event[], EventsAction> = (events, action) => {
   switch (action.type) {
-    case 'set':
-      return action.events;
+    case 'set': {
+      const instances = action.recurringEvents
+        .map((recurrence) => eventInstances(recurrence, action.loadedRange))
+        .flat();
+      return [...action.events, ...instances];
+    }
     case 'added':
       return [...events, action.event];
     case 'modified':
@@ -46,6 +75,25 @@ const eventsReducer: Reducer<Event[], EventsAction> = (events, action) => {
       );
     case 'deleted':
       return events.filter((event) => event.id !== action.id);
+    case 'added-recurring': {
+      const instances = eventInstances(action.event, action.loadedRange);
+      return [...events, ...instances];
+    }
+    case 'modified-recurring': {
+      const instances = eventInstances(action.updatedEvent, action.loadedRange);
+      return [
+        ...events.filter(
+          (event) =>
+            event.recurrence == null || event.recurrence.id !== action.id,
+        ),
+        ...instances,
+      ];
+    }
+    case 'deleted-recurring':
+      return events.filter(
+        (event) =>
+          event.recurrence == null || event.recurrence.id !== action.id,
+      );
   }
 };
 
