@@ -37,4 +37,6 @@ export const useLoadEvents = (focusedTime: number) => {
       });
     }
   }, [dispatch, user, focusedTime, loadedRange]);
+
+  return loadedRange;
 };

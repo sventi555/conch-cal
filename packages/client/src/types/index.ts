@@ -29,3 +29,6 @@ export interface NonRecurringEvent extends BaseEvent {
 }
 
 export type Event = RecurringEvent | NonRecurringEvent;
+
+export const isRecurring = (event: Event): event is RecurringEvent =>
+  event.recurrence != null;
