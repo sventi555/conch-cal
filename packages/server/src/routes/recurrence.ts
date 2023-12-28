@@ -4,8 +4,12 @@ import { HTTPException } from 'hono/http-exception';
 import {
   GetRecurrencesReturn,
   PostRecurrencesReturn,
+  PutRecurrencesReturn,
+  deleteRecurrencesParamSchema,
   getRecurrencesQuerySchema,
   postRecurrencesBodySchema,
+  putRecurrencesBodySchema,
+  putRecurrencesParamSchema,
 } from 'lib';
 import { v4 as uuid } from 'uuid';
 import { verifyToken } from '../middlewares/auth';
@@ -45,6 +49,47 @@ export const recurrenceRoutes = (app: Hono) => {
       });
 
       return c.json<PostRecurrencesReturn>(res);
+    },
+  );
+
+  app.put(
+    '/recurrences/:id',
+    verifyToken,
+    zValidator('param', putRecurrencesParamSchema),
+    zValidator('json', putRecurrencesBodySchema),
+    async (c) => {
+      const recurrence = c.req.valid('json');
+      const { id } = c.req.valid('param');
+
+      const canEdit = await RecurrenceRepo.canEdit(id, c.var.userId);
+      if (!canEdit) {
+        throw new HTTPException(403);
+      }
+
+      const res = await RecurrenceRepo.replaceOne(id, {
+        ...recurrence,
+        owner: c.var.userId,
+      });
+
+      return c.json<PutRecurrencesReturn>(res);
+    },
+  );
+
+  app.delete(
+    '/recurrences/:id',
+    verifyToken,
+    zValidator('param', deleteRecurrencesParamSchema),
+    async (c) => {
+      const { id } = c.req.valid('param');
+
+      const canEdit = await RecurrenceRepo.canEdit(id, c.var.userId);
+      if (!canEdit) {
+        throw new HTTPException(403);
+      }
+
+      await RecurrenceRepo.deleteOne(id);
+
+      return c.body(null, 204);
     },
   );
 };

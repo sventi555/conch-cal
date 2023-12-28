@@ -21,7 +21,6 @@ export const postEventsBodySchema = z.object({
   name: z.string(),
   start: epochDateSchema,
   end: epochDateSchema,
-  description: z.string().optional(),
 });
 export type PostEventsBody = z.infer<typeof postEventsBodySchema>;
 export type PostEventsReturn = Event;
@@ -31,7 +30,6 @@ export const putEventsBodySchema = z.object({
   name: z.string(),
   start: epochDateSchema,
   end: epochDateSchema,
-  description: z.string().optional(),
 });
 export const putEventsParamSchema = idSchema;
 export type PutEventsParam = z.infer<typeof putEventsParamSchema>;

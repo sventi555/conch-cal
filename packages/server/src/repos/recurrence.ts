@@ -31,4 +31,26 @@ export class RecurrenceRepo {
 
     return { id: doc.id, ...recurrence };
   }
+
+  static async replaceOne(
+    id: string,
+    recurrence: Recurrence,
+  ): Promise<RecurrenceWithID> {
+    const doc = await collection.doc(id);
+    await doc.set(recurrence);
+
+    return { id, ...recurrence };
+  }
+
+  static async deleteOne(id: string) {
+    const doc = await collection.doc(id);
+    await doc.delete();
+  }
+
+  static async canEdit(id: string, userId: string) {
+    const doc = await collection.doc(id);
+    const data = (await doc.get()).data();
+
+    return data?.owner === userId;
+  }
 }
