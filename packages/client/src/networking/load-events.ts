@@ -29,6 +29,7 @@ export const useLoadEvents = (focusedTime: number) => {
             events,
             recurringEvents: recurrences.map((recurrence) => ({
               ...recurrence.event,
+              owner: recurrence.owner,
               recurrence,
             })),
             loadedRange: newRange,

@@ -1,13 +1,19 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { GetRecurrencesReturn, getRecurrencesQuerySchema } from 'lib';
+import {
+  GetRecurrencesReturn,
+  PostRecurrencesReturn,
+  getRecurrencesQuerySchema,
+  postRecurrencesBodySchema,
+} from 'lib';
+import { v4 as uuid } from 'uuid';
 import { verifyToken } from '../middlewares/auth';
 import { RecurrenceRepo } from '../repos/recurrence';
 
-export const eventRoutes = (app: Hono) => {
+export const recurrenceRoutes = (app: Hono) => {
   app.get(
-    '/recurrence',
+    '/recurrences',
     verifyToken,
     zValidator('query', getRecurrencesQuerySchema),
     async (c) => {
@@ -21,6 +27,24 @@ export const eventRoutes = (app: Hono) => {
       const recurrences = await RecurrenceRepo.getByUser(userId, before);
 
       return c.json<GetRecurrencesReturn>(recurrences);
+    },
+  );
+
+  app.post(
+    '/recurrences',
+    verifyToken,
+    zValidator('json', postRecurrencesBodySchema),
+    async (c) => {
+      const recurrence = c.req.valid('json');
+
+      const groupId = uuid();
+      const res = await RecurrenceRepo.addOne({
+        ...recurrence,
+        groupId,
+        owner: c.var.userId,
+      });
+
+      return c.json<PostRecurrencesReturn>(res);
     },
   );
 };

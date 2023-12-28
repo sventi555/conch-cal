@@ -25,4 +25,10 @@ export class RecurrenceRepo {
 
     return data;
   }
+
+  static async addOne(recurrence: Recurrence): Promise<RecurrenceWithID> {
+    const doc = await collection.add(recurrence);
+
+    return { id: doc.id, ...recurrence };
+  }
 }

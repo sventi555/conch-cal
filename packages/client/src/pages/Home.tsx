@@ -94,7 +94,11 @@ export const Home = () => {
             ).then((recurrence) => {
               dispatch({
                 type: 'added-recurring',
-                event: { ...recurrence.event, recurrence },
+                event: {
+                  ...recurrence.event,
+                  owner: recurrence.owner,
+                  recurrence,
+                },
                 loadedRange: loadedRange,
               });
             });

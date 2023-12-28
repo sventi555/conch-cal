@@ -28,12 +28,14 @@
     "firebase-admin": "^11.10.1",
     "hono": "^3.6.3",
     "lib": "*",
-    "rrule": "^2.8.1"
+    "rrule": "^2.8.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",
     "@types/jest": "^29.4.0",
     "@types/node": "^20.8.0",
+    "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.12.0",
     "@typescript-eslint/parser": "^6.12.0",
     "concurrently": "^8.2.1",

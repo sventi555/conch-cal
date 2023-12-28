@@ -1,6 +1,7 @@
 import Modal from 'react-modal';
+import { Frequency } from 'rrule';
 import { useEventModalContext } from '../state/modal';
-import { Event } from '../types';
+import { Event, RecurringEvent } from '../types';
 import {
   dateFromDayAndTimeString,
   dayAndTimeStringFromDate,
@@ -94,12 +95,24 @@ const EventModalForm: React.FC<EventModalFormProps> = (props) => {
       </div>
       <div>
         <label>Repeats:</label>
-        <select>
+        <select
+          onChange={(e) =>
+            setEvent({
+              ...event,
+              recurrence: {
+                start: event.start,
+                // TODO better way of mapping this
+                freq: Frequency[e.target.value as keyof typeof Frequency],
+              },
+              // TODO figure out a cleaner solution for this (in all handlers)
+            } as RecurringEvent)
+          }
+        >
           <option>None</option>
-          <option>Daily</option>
-          <option>Weekly</option>
-          <option>Monthly</option>
-          <option>Yearly</option>
+          <option>DAILY</option>
+          <option>WEEKLY</option>
+          <option>MONTHLY</option>
+          <option>YEARLY</option>
         </select>
       </div>
       <div>

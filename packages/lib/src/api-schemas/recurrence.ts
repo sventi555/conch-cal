@@ -6,7 +6,8 @@ import { epochDateSchema, stringEpochDateSchema } from './shared';
 export interface Recurrence {
   id: string;
   groupId: string;
-  event: Omit<Event, 'id'>;
+  owner: string;
+  event: Omit<Event, 'id' | 'owner'>;
   start: number;
   freq: Frequency;
   interval?: number;
@@ -26,7 +27,7 @@ export const postRecurrencesBodySchema = z.object({
   event: postEventsBodySchema,
   start: epochDateSchema,
   freq: z.nativeEnum(Frequency),
-  interval: z.number().int().positive().optional(),
+  interval: z.number().int().min(1).optional(),
   byweekday: z
     .array(z.enum(['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']))
     .optional(),

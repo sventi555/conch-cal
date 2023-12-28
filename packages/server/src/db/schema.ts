@@ -9,7 +9,8 @@ export interface Event {
 
 export interface Recurrence {
   groupId: string;
-  event: Event;
+  owner: string;
+  event: Omit<Event, 'owner'>;
   start: number;
   freq: Frequency;
   interval?: number;

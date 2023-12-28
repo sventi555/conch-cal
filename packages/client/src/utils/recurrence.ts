@@ -6,7 +6,7 @@ const toRRule = (recurrence: Recurrence) => {
   return new RRule({
     dtstart: new Date(recurrence.start),
     freq: recurrence.freq,
-    interval: recurrence.interval,
+    interval: recurrence.interval ?? 1,
     byweekday: recurrence.byweekday,
     until: recurrence.until ? new Date(recurrence.until) : undefined,
     count: recurrence.count,
