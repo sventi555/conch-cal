@@ -88,17 +88,10 @@ export const Home = () => {
         setIsOpen={setIsCreateEventModalOpen}
         onSubmit={(event) => {
           if (isRecurring(event)) {
-            RecurrencesAPI.postRecurrence(
-              { ...event.recurrence, event },
-              user,
-            ).then((recurrence) => {
+            RecurrencesAPI.postRecurrence(event, user).then((recurrence) => {
               dispatch({
                 type: 'added-recurring',
-                event: {
-                  ...recurrence.event,
-                  owner: recurrence.owner,
-                  recurrence,
-                },
+                event: recurrence,
                 loadedRange: loadedRange,
               });
             });

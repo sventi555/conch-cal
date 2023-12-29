@@ -9,6 +9,7 @@ import {
   PutEventsReturn,
 } from 'lib';
 import config from '../../config';
+import { NonRecurringEvent } from '../../types';
 import { toQueryString } from '../utils/query';
 
 const BASE_URI = `${config.hosts.api}/events`;
@@ -17,7 +18,7 @@ export class EventsAPI {
   static async getEvents(
     user: User,
     range: DateRange,
-  ): Promise<GetEventsReturn> {
+  ): Promise<NonRecurringEvent[]> {
     const token = await user.getIdToken();
 
     const query: GetEventsQuery = {
@@ -28,47 +29,50 @@ export class EventsAPI {
     const res = await fetch(`${BASE_URI}?${toQueryString(query)}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    const body = await res.json();
+    const fetchedEvents: GetEventsReturn = await res.json();
 
-    return body;
+    return fetchedEvents;
   }
 
   static async postEvent(
-    event: PostEventsBody,
+    event: Omit<NonRecurringEvent, 'id'>,
     user: User,
-  ): Promise<PostEventsReturn> {
+  ): Promise<NonRecurringEvent> {
     const token = await user.getIdToken();
 
+    const body: PostEventsBody = event;
     const res = await fetch(`${BASE_URI}`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(event),
+      body: JSON.stringify(body),
     });
-    const body = await res.json();
+    const createdEvent: PostEventsReturn = await res.json();
 
-    return body;
+    return createdEvent;
   }
 
   static async putEvent(
     id: string,
-    event: PutEventsBody,
+    event: NonRecurringEvent,
     user: User,
-  ): Promise<PutEventsReturn> {
+  ): Promise<NonRecurringEvent> {
     const token = await user.getIdToken();
+
+    const body: PutEventsBody = event;
     const res = await fetch(`${BASE_URI}/${id}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(event),
+      body: JSON.stringify(body),
     });
-    const body = await res.json();
+    const updatedEvent: PutEventsReturn = await res.json();
 
-    return body;
+    return updatedEvent;
   }
 
   static async deleteEvent(id: string, user: User) {

@@ -6,8 +6,10 @@ import {
   PostRecurrencesReturn,
   PutRecurrencesBody,
   PutRecurrencesReturn,
+  Recurrence,
 } from 'lib';
 import config from '../../config';
+import { RecurringEvent } from '../../types';
 import { toQueryString } from '../utils/query';
 
 const BASE_URI = `${config.hosts.api}/recurrences`;
@@ -16,7 +18,7 @@ export class RecurrencesAPI {
   static async getRecurrences(
     user: User,
     before: number,
-  ): Promise<GetRecurrencesReturn> {
+  ): Promise<RecurringEvent[]> {
     const token = await user.getIdToken();
 
     const query: GetRecurrencesQuery = {
@@ -26,49 +28,50 @@ export class RecurrencesAPI {
     const res = await fetch(`${BASE_URI}?${toQueryString(query)}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    const body = await res.json();
+    const fetchedRecurrences: GetRecurrencesReturn = await res.json();
 
-    return body;
+    return fetchedRecurrences.map((recurrence) => toRecurringEvent(recurrence));
   }
 
   static async postRecurrence(
-    recurrence: PostRecurrencesBody,
+    recurrence: Omit<RecurringEvent, 'id'>,
     user: User,
-  ): Promise<PostRecurrencesReturn> {
+  ): Promise<RecurringEvent> {
     const token = await user.getIdToken();
 
+    const body: PostRecurrencesBody = fromRecurringEvent(recurrence);
     const res = await fetch(`${BASE_URI}`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(recurrence),
+      body: JSON.stringify(body),
     });
-    const body = await res.json();
+    const createdRecurrence: PostRecurrencesReturn = await res.json();
 
-    return body;
+    return toRecurringEvent(createdRecurrence);
   }
 
   static async putRecurrence(
     id: string,
-    recurrence: PutRecurrencesBody,
+    recurrence: RecurringEvent,
     user: User,
-  ): Promise<PutRecurrencesReturn> {
+  ): Promise<RecurringEvent> {
     const token = await user.getIdToken();
 
+    const body: PutRecurrencesBody = fromRecurringEvent(recurrence);
     const res = await fetch(`${BASE_URI}/${id}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(recurrence),
+      body: JSON.stringify(body),
     });
+    const updatedRecurrence: PutRecurrencesReturn = await res.json();
 
-    const body = await res.json();
-
-    return body;
+    return toRecurringEvent(updatedRecurrence);
   }
 
   static async deleteRecurrence(id: string, user: User) {
@@ -79,3 +82,15 @@ export class RecurrencesAPI {
     });
   }
 }
+
+const toRecurringEvent = (recurrence: Recurrence): RecurringEvent => ({
+  ...recurrence.event,
+  owner: recurrence.owner,
+  recurrence,
+});
+
+const fromRecurringEvent = (event: RecurringEvent): Recurrence => ({
+  ...event.recurrence,
+  owner: event.owner,
+  event,
+});
