@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../auth';
-import { CreateEventModal, ModifyEventModal } from '../components/EventModal';
+import {
+  CreateEventModal,
+  EMPTY_EVENT,
+  ModifyEventModal,
+} from '../components/EventModal';
 import { Calendar } from '../components/calendar/Calendar';
 import { MiniCal } from '../components/mini-cal';
 import { EventsAPI } from '../networking/apis/events';
@@ -67,9 +71,8 @@ export const Home = () => {
           onClickTime={(time) => {
             const snappedTime = roundTo15Min(time);
             setEvent({
-              id: '',
+              ...EMPTY_EVENT,
               owner: user.uid,
-              name: '',
               start: snappedTime,
               end: snappedTime + MS_PER_HOUR,
             });
