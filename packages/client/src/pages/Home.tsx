@@ -1,3 +1,5 @@
+import { User } from 'firebase/auth';
+import { DateRange } from 'lib';
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../auth';
@@ -11,9 +13,9 @@ import { MiniCal } from '../components/mini-cal';
 import { EventsAPI } from '../networking/apis/events';
 import { RecurrencesAPI } from '../networking/apis/recurrences';
 import { useLoadEvents } from '../networking/load-events';
-import { useEvents, useEventsDispatch } from '../state/events';
+import { EventsDispatch, useEvents, useEventsDispatch } from '../state/events';
 import { useEventModalContext } from '../state/modal';
-import { isRecurring } from '../types';
+import { Event, isRecurring } from '../types';
 import { MS_PER_HOUR, roundTo15Min } from '../utils/date';
 
 export const Home = () => {
@@ -76,12 +78,10 @@ export const Home = () => {
               start: snappedTime,
               end: snappedTime + MS_PER_HOUR,
             });
-
             setIsCreateEventModalOpen(true);
           }}
           onClickEvent={(event) => {
             setEvent(event);
-
             setIsModifyEventModalOpen(true);
           }}
         />
@@ -90,19 +90,7 @@ export const Home = () => {
         isOpen={isCreateEventModalOpen}
         setIsOpen={setIsCreateEventModalOpen}
         onSubmit={(event) => {
-          if (isRecurring(event)) {
-            RecurrencesAPI.postRecurrence(event, user).then((recurrence) => {
-              dispatch({
-                type: 'added-recurring',
-                event: recurrence,
-                loadedRange: loadedRange,
-              });
-            });
-          } else {
-            EventsAPI.postEvent(event, user).then((event) => {
-              dispatch({ type: 'added', event });
-            });
-          }
+          handleAddEvent(event, user, loadedRange, dispatch);
           setIsCreateEventModalOpen(false);
         }}
       />
@@ -110,30 +98,76 @@ export const Home = () => {
         isOpen={isModifyEventModalOpen}
         setIsOpen={setIsModifyEventModalOpen}
         onSubmit={(event) => {
-          if (isRecurring(event)) {
-            // TODO
-            return;
-          } else {
-            const id = event.id;
-            EventsAPI.putEvent(id, event, user).then((event) =>
-              dispatch({ type: 'modified', id, updatedEvent: event }),
-            );
-          }
+          handleModifyEvent(event, user, loadedRange, dispatch);
           setIsModifyEventModalOpen(false);
         }}
         onDelete={(event) => {
-          if (isRecurring(event)) {
-            // TODO
-            return;
-          } else {
-            const id = event.id;
-            EventsAPI.deleteEvent(id, user).then(() => {
-              dispatch({ type: 'deleted', id });
-            });
-          }
+          handleDeleteEvent(event, user, dispatch);
           setIsModifyEventModalOpen(false);
         }}
       />
     </>
   );
+};
+
+const handleAddEvent = (
+  event: Event,
+  user: User,
+  loadedRange: DateRange,
+  dispatch: EventsDispatch,
+) => {
+  if (isRecurring(event)) {
+    RecurrencesAPI.postRecurrence(event, user).then((recurrence) => {
+      dispatch({
+        type: 'added-recurring',
+        event: recurrence,
+        loadedRange: loadedRange,
+      });
+    });
+  } else {
+    EventsAPI.postEvent(event, user).then((event) => {
+      dispatch({ type: 'added', event });
+    });
+  }
+};
+
+const handleModifyEvent = (
+  event: Event,
+  user: User,
+  loadedRange: DateRange,
+  dispatch: EventsDispatch,
+) => {
+  if (isRecurring(event)) {
+    RecurrencesAPI.putRecurrence(event.recurrence.id, event, user).then(
+      (recurrence) => {
+        dispatch({
+          type: 'modified-recurring',
+          id: event.recurrence.id,
+          updatedEvent: recurrence,
+          loadedRange: loadedRange,
+        });
+      },
+    );
+  } else {
+    const id = event.id;
+    EventsAPI.putEvent(id, event, user).then((event) =>
+      dispatch({ type: 'modified', id, updatedEvent: event }),
+    );
+  }
+};
+
+const handleDeleteEvent = (
+  event: Event,
+  user: User,
+  dispatch: EventsDispatch,
+) => {
+  if (isRecurring(event)) {
+    // TODO
+    return;
+  } else {
+    const id = event.id;
+    EventsAPI.deleteEvent(id, user).then(() => {
+      dispatch({ type: 'deleted', id });
+    });
+  }
 };
