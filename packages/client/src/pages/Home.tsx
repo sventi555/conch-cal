@@ -162,8 +162,9 @@ const handleDeleteEvent = (
   dispatch: EventsDispatch,
 ) => {
   if (isRecurring(event)) {
-    // TODO
-    return;
+    RecurrencesAPI.deleteRecurrence(event.recurrence.id, user).then(() =>
+      dispatch({ type: 'deleted-recurring', id: event.recurrence.id }),
+    );
   } else {
     const id = event.id;
     EventsAPI.deleteEvent(id, user).then(() => {
