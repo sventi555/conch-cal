@@ -1,10 +1,20 @@
 import { createContext, useContext, useState } from 'react';
-import { EMPTY_EVENT } from '../components/EventModal';
-import { Event } from '../types';
+import { BaseEvent, Recurrence } from '../types';
+
+export interface ModalEventInfo extends BaseEvent {
+  recurrence?: Omit<Recurrence, 'id' | 'groupId'>;
+}
+
+export const EMPTY_MODAL_EVENT: ModalEventInfo = {
+  owner: '',
+  name: '',
+  start: 0,
+  end: 0,
+};
 
 interface EventModalContextState {
-  event: Event;
-  setEvent: (event: Event) => void;
+  event: ModalEventInfo;
+  setEvent: (event: ModalEventInfo) => void;
 }
 
 const EventModalContext = createContext<EventModalContextState | undefined>(
@@ -23,7 +33,7 @@ export const useEventModalContext = () => {
 export const EventModalProvider: React.FC<React.PropsWithChildren> = (
   props,
 ) => {
-  const [event, setEvent] = useState(EMPTY_EVENT);
+  const [event, setEvent] = useState(EMPTY_MODAL_EVENT);
 
   return (
     <EventModalContext.Provider value={{ event, setEvent }}>

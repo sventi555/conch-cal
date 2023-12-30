@@ -7,14 +7,6 @@ import {
   dayAndTimeStringFromDate,
 } from '../utils/date';
 
-export const EMPTY_EVENT: Event = {
-  id: '',
-  owner: '',
-  name: '',
-  start: 0,
-  end: 0,
-};
-
 interface EventModalFormProps {
   autoFocusNameInput?: boolean;
   onSubmit: () => void;

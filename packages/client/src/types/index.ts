@@ -11,7 +11,7 @@ export interface Recurrence {
   count?: number;
 }
 
-interface BaseEvent {
+export interface BaseEvent {
   owner: string;
   name: string;
   start: number;
