@@ -1,8 +1,6 @@
 import { Frequency, WeekdayStr } from 'rrule';
 
 export interface Recurrence {
-  id: string;
-  groupId: string;
   start: number;
   freq: Frequency;
   interval?: number;
@@ -11,24 +9,35 @@ export interface Recurrence {
   count?: number;
 }
 
-export interface BaseEvent {
+interface BaseEventInfo {
   owner: string;
   name: string;
   start: number;
   end: number;
 }
 
-export interface RecurringEvent extends BaseEvent {
-  id?: undefined;
+export interface RecurringEventInfo extends BaseEventInfo {
   recurrence: Recurrence;
 }
 
-export interface NonRecurringEvent extends BaseEvent {
+export interface RecurringEvent extends RecurringEventInfo {
   id: string;
+  groupId: string;
+}
+
+export interface NonRecurringEventInfo extends BaseEventInfo {
   recurrence?: undefined;
 }
 
+export interface NonRecurringEvent extends NonRecurringEventInfo {
+  id: string;
+}
+
+export type EventInfo = RecurringEventInfo | NonRecurringEventInfo;
 export type Event = RecurringEvent | NonRecurringEvent;
 
-export const isRecurring = (event: Event): event is RecurringEvent =>
-  event.recurrence != null;
+export const isRecurring = (
+  eventInfo: EventInfo,
+): eventInfo is RecurringEventInfo => eventInfo.recurrence != null;
+
+// export const isRecurringInfo = (eventInfo: EventInfo): eventInfo is RecurringEventInfo => eventInfo.recurrence

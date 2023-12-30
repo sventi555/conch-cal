@@ -9,7 +9,7 @@ import {
   PutEventsReturn,
 } from 'lib';
 import config from '../../config';
-import { NonRecurringEvent } from '../../types';
+import { NonRecurringEvent, NonRecurringEventInfo } from '../../types';
 import { toQueryString } from '../utils/query';
 
 const BASE_URI = `${config.hosts.api}/events`;
@@ -35,7 +35,7 @@ export class EventsAPI {
   }
 
   static async postEvent(
-    event: Omit<NonRecurringEvent, 'id'>,
+    event: NonRecurringEventInfo,
     user: User,
   ): Promise<NonRecurringEvent> {
     const token = await user.getIdToken();

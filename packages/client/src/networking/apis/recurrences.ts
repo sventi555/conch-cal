@@ -9,7 +9,7 @@ import {
   Recurrence,
 } from 'lib';
 import config from '../../config';
-import { RecurringEvent } from '../../types';
+import { RecurringEvent, RecurringEventInfo } from '../../types';
 import { toQueryString } from '../utils/query';
 
 const BASE_URI = `${config.hosts.api}/recurrences`;
@@ -34,12 +34,12 @@ export class RecurrencesAPI {
   }
 
   static async postRecurrence(
-    recurrence: Omit<RecurringEvent, 'id'>,
+    recurrence: RecurringEventInfo,
     user: User,
   ): Promise<RecurringEvent> {
     const token = await user.getIdToken();
 
-    const body: PostRecurrencesBody = fromRecurringEvent(recurrence);
+    const body: PostRecurrencesBody = postBodyFromInfo(recurrence);
     const res = await fetch(`${BASE_URI}`, {
       method: 'POST',
       headers: {
@@ -83,14 +83,22 @@ export class RecurrencesAPI {
   }
 }
 
+const postBodyFromInfo = (
+  eventInfo: RecurringEventInfo,
+): PostRecurrencesBody => ({ ...eventInfo.recurrence, event: eventInfo });
+
 const toRecurringEvent = (recurrence: Recurrence): RecurringEvent => ({
   ...recurrence.event,
+  id: recurrence.id,
+  groupId: recurrence.groupId,
   owner: recurrence.owner,
   recurrence,
 });
 
 const fromRecurringEvent = (event: RecurringEvent): Recurrence => ({
   ...event.recurrence,
+  id: event.id,
+  groupId: event.groupId,
   owner: event.owner,
   event,
 });

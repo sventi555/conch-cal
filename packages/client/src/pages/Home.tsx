@@ -3,11 +3,7 @@ import { DateRange } from 'lib';
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../auth';
-import {
-  CreateEventModal,
-  EMPTY_EVENT,
-  ModifyEventModal,
-} from '../components/EventModal';
+import { CreateEventModal, ModifyEventModal } from '../components/EventModal';
 import { Calendar } from '../components/calendar/Calendar';
 import { MiniCal } from '../components/mini-cal';
 import { EventsAPI } from '../networking/apis/events';
@@ -15,7 +11,7 @@ import { RecurrencesAPI } from '../networking/apis/recurrences';
 import { useLoadEvents } from '../networking/load-events';
 import { EventsDispatch, useEvents, useEventsDispatch } from '../state/events';
 import { useEventModalContext } from '../state/modal';
-import { Event, isRecurring } from '../types';
+import { Event, EventInfo, isRecurring } from '../types';
 import { MS_PER_HOUR, roundTo15Min } from '../utils/date';
 
 export const Home = () => {
@@ -24,7 +20,7 @@ export const Home = () => {
   const events = useEvents();
   const dispatch = useEventsDispatch();
 
-  const { setEvent } = useEventModalContext();
+  const { setSelectedEvent, setEventInfo } = useEventModalContext();
   const [isCreateEventModalOpen, setIsCreateEventModalOpen] = useState(false);
   const [isModifyEventModalOpen, setIsModifyEventModalOpen] = useState(false);
 
@@ -72,8 +68,9 @@ export const Home = () => {
           events={events}
           onClickTime={(time) => {
             const snappedTime = roundTo15Min(time);
-            setEvent({
-              ...EMPTY_EVENT,
+            setSelectedEvent(null);
+            setEventInfo({
+              name: '',
               owner: user.uid,
               start: snappedTime,
               end: snappedTime + MS_PER_HOUR,
@@ -81,7 +78,8 @@ export const Home = () => {
             setIsCreateEventModalOpen(true);
           }}
           onClickEvent={(event) => {
-            setEvent(event);
+            setSelectedEvent(event);
+            setEventInfo(event);
             setIsModifyEventModalOpen(true);
           }}
         />
@@ -89,8 +87,8 @@ export const Home = () => {
       <CreateEventModal
         isOpen={isCreateEventModalOpen}
         setIsOpen={setIsCreateEventModalOpen}
-        onSubmit={(event) => {
-          handleAddEvent(event, user, loadedRange, dispatch);
+        onSubmit={(eventInfo) => {
+          handleAddEvent(eventInfo, user, loadedRange, dispatch);
           setIsCreateEventModalOpen(false);
         }}
       />
@@ -111,13 +109,13 @@ export const Home = () => {
 };
 
 const handleAddEvent = (
-  event: Event,
+  eventInfo: EventInfo,
   user: User,
   loadedRange: DateRange,
   dispatch: EventsDispatch,
 ) => {
-  if (isRecurring(event)) {
-    RecurrencesAPI.postRecurrence(event, user).then((recurrence) => {
+  if (isRecurring(eventInfo)) {
+    RecurrencesAPI.postRecurrence(eventInfo, user).then((recurrence) => {
       dispatch({
         type: 'added-recurring',
         event: recurrence,
@@ -125,7 +123,7 @@ const handleAddEvent = (
       });
     });
   } else {
-    EventsAPI.postEvent(event, user).then((event) => {
+    EventsAPI.postEvent(eventInfo, user).then((event) => {
       dispatch({ type: 'added', event });
     });
   }
@@ -138,16 +136,14 @@ const handleModifyEvent = (
   dispatch: EventsDispatch,
 ) => {
   if (isRecurring(event)) {
-    RecurrencesAPI.putRecurrence(event.recurrence.id, event, user).then(
-      (recurrence) => {
-        dispatch({
-          type: 'modified-recurring',
-          id: event.recurrence.id,
-          updatedEvent: recurrence,
-          loadedRange: loadedRange,
-        });
-      },
-    );
+    RecurrencesAPI.putRecurrence(event.id, event, user).then((recurrence) => {
+      dispatch({
+        type: 'modified-recurring',
+        id: event.id,
+        updatedEvent: recurrence,
+        loadedRange: loadedRange,
+      });
+    });
   } else {
     const id = event.id;
     EventsAPI.putEvent(id, event, user).then((event) =>
@@ -162,8 +158,8 @@ const handleDeleteEvent = (
   dispatch: EventsDispatch,
 ) => {
   if (isRecurring(event)) {
-    RecurrencesAPI.deleteRecurrence(event.recurrence.id, user).then(() =>
-      dispatch({ type: 'deleted-recurring', id: event.recurrence.id }),
+    RecurrencesAPI.deleteRecurrence(event.id, user).then(() =>
+      dispatch({ type: 'deleted-recurring', id: event.id }),
     );
   } else {
     const id = event.id;
