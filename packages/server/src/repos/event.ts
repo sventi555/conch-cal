@@ -9,6 +9,17 @@ interface EventWithID extends Event, WithID {}
 const collection = db.collection('events').withConverter(converter<Event>());
 
 export class EventRepo {
+  static async getOne(id: string): Promise<EventWithID | undefined> {
+    const doc = await collection.doc(id);
+    const data = (await doc.get()).data();
+
+    if (data == null) {
+      return undefined;
+    }
+
+    return { ...data, id };
+  }
+
   static async getByUser(
     userId: string,
     range?: DateRange,
@@ -49,12 +60,5 @@ export class EventRepo {
   static async deleteOne(id: string) {
     const doc = await collection.doc(id);
     await doc.delete();
-  }
-
-  static async canEdit(id: string, userId: string) {
-    const doc = await collection.doc(id);
-    const data = (await doc.get()).data();
-
-    return data?.owner === userId;
   }
 }

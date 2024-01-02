@@ -13,7 +13,8 @@ import {
 } from 'lib';
 import { v4 as uuid } from 'uuid';
 import { verifyToken } from '../middlewares/auth';
-import { RecurrenceRepo } from '../repos/recurrence';
+import { RecurrenceRepo } from '../repos';
+import { canEdit } from '../repos/utils/perms';
 
 export const recurrenceRoutes = (app: Hono) => {
   app.get(
@@ -61,13 +62,18 @@ export const recurrenceRoutes = (app: Hono) => {
       const recurrence = c.req.valid('json');
       const { id } = c.req.valid('param');
 
-      const canEdit = await RecurrenceRepo.canEdit(id, c.var.userId);
-      if (!canEdit) {
+      const existing = await RecurrenceRepo.getOne(id);
+      if (existing == null) {
+        throw new HTTPException(404);
+      }
+
+      if (!canEdit(existing, c.var.userId)) {
         throw new HTTPException(403);
       }
 
       const res = await RecurrenceRepo.replaceOne(id, {
         ...recurrence,
+        groupId: existing.groupId,
         owner: c.var.userId,
       });
 
@@ -82,8 +88,12 @@ export const recurrenceRoutes = (app: Hono) => {
     async (c) => {
       const { id } = c.req.valid('param');
 
-      const canEdit = await RecurrenceRepo.canEdit(id, c.var.userId);
-      if (!canEdit) {
+      const existing = await RecurrenceRepo.getOne(id);
+      if (existing == null) {
+        return c.body(null, 204);
+      }
+
+      if (!canEdit(existing, c.var.userId)) {
         throw new HTTPException(403);
       }
 

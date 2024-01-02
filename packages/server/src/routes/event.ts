@@ -13,6 +13,7 @@ import {
 } from 'lib';
 import { verifyToken } from '../middlewares/auth';
 import { EventRepo } from '../repos';
+import { canEdit } from '../repos/utils/perms';
 
 export const eventRoutes = (app: Hono) => {
   app.get(
@@ -60,8 +61,12 @@ export const eventRoutes = (app: Hono) => {
       const event = c.req.valid('json');
       const { id } = c.req.valid('param');
 
-      const canEdit = await EventRepo.canEdit(id, c.var.userId);
-      if (!canEdit) {
+      const existing = await EventRepo.getOne(id);
+      if (existing == null) {
+        throw new HTTPException(404);
+      }
+
+      if (!canEdit(existing, c.var.userId)) {
         throw new HTTPException(403);
       }
 
@@ -81,8 +86,12 @@ export const eventRoutes = (app: Hono) => {
     async (c) => {
       const { id } = c.req.valid('param');
 
-      const canEdit = await EventRepo.canEdit(id, c.var.userId);
-      if (!canEdit) {
+      const existing = await EventRepo.getOne(id);
+      if (existing == null) {
+        return c.body(null, 204);
+      }
+
+      if (!canEdit(existing, c.var.userId)) {
         throw new HTTPException(403);
       }
 

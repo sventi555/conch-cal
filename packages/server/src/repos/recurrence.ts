@@ -10,6 +10,17 @@ const collection = db
   .withConverter(converter<Recurrence>());
 
 export class RecurrenceRepo {
+  static async getOne(id: string): Promise<RecurrenceWithID | undefined> {
+    const doc = await collection.doc(id);
+    const data = (await doc.get()).data();
+
+    if (data == null) {
+      return undefined;
+    }
+
+    return { ...data, id };
+  }
+
   static async getByUser(
     userId: string,
     startingBefore?: number,
@@ -45,12 +56,5 @@ export class RecurrenceRepo {
   static async deleteOne(id: string) {
     const doc = await collection.doc(id);
     await doc.delete();
-  }
-
-  static async canEdit(id: string, userId: string) {
-    const doc = await collection.doc(id);
-    const data = (await doc.get()).data();
-
-    return data?.owner === userId;
   }
 }
