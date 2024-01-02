@@ -97,7 +97,7 @@ export const Home = () => {
         setIsOpen={setIsModifyEventModalOpen}
         onSubmit={(selectedEvent, updatedInfo) => {
           handleModifyEvent(
-            selectedEvent.id,
+            selectedEvent,
             updatedInfo,
             user,
             loadedRange,
@@ -136,24 +136,26 @@ const handleAddEvent = (
 };
 
 const handleModifyEvent = (
-  id: string,
+  event: Event,
   updatedInfo: EventInfo,
   user: User,
   loadedRange: DateRange,
   dispatch: EventsDispatch,
 ) => {
   if (isRecurring(updatedInfo)) {
-    RecurrencesAPI.putRecurrence(id, updatedInfo, user).then((recurrence) => {
-      dispatch({
-        type: 'modified-recurring',
-        id,
-        updatedEvent: recurrence,
-        loadedRange: loadedRange,
-      });
-    });
+    RecurrencesAPI.putRecurrence(event.id, updatedInfo, user).then(
+      (recurrence) => {
+        dispatch({
+          type: 'modified-recurring',
+          id: event.id,
+          updatedEvent: recurrence,
+          loadedRange: loadedRange,
+        });
+      },
+    );
   } else {
-    EventsAPI.putEvent(id, updatedInfo, user).then((event) =>
-      dispatch({ type: 'modified', id, updatedEvent: event }),
+    EventsAPI.putEvent(event.id, updatedInfo, user).then((event) =>
+      dispatch({ type: 'modified', id: event.id, updatedEvent: event }),
     );
   }
 };
