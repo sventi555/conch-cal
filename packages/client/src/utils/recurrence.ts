@@ -3,7 +3,6 @@ import { RRule } from 'rrule';
 import { Event, Recurrence, RecurringEvent } from '../types';
 
 const toRRule = (recurrence: Recurrence) => {
-  console.log('recurrence', recurrence);
   return new RRule({
     dtstart: new Date(recurrence.start),
     freq: recurrence.freq,
@@ -32,7 +31,6 @@ export const eventInstances = (
   event: RecurringEvent,
   range: DateRange,
 ): Event[] => {
-  console.log('event', event);
   const rrule = toRRule(event.recurrence);
   const dates = rrule.between(new Date(range[0]), new Date(range[1]));
   const instances = dates.map((date) => ({

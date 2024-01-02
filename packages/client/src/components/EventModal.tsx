@@ -1,7 +1,7 @@
 import Modal from 'react-modal';
-import { Frequency } from 'rrule';
+import { Frequency, WeekdayStr } from 'rrule';
 import { useEventModalContext } from '../state/modal';
-import { Event, EventInfo } from '../types';
+import { Event, EventInfo, Recurrence, isRecurring } from '../types';
 import {
   dateFromDayAndTimeString,
   dayAndTimeStringFromDate,
@@ -12,6 +12,37 @@ interface EventModalFormProps {
   onSubmit: () => void;
   actionButtons?: React.ReactNode;
 }
+
+const defaultRecurrence = (start: number): Recurrence => ({
+  start,
+  freq: Frequency.WEEKLY,
+});
+
+const onChangeWeekday = (
+  eventInfo: EventInfo,
+  setEventInfo: (eventInfo: EventInfo) => void,
+  weekdayStr: WeekdayStr,
+  enabled: boolean,
+) => {
+  if (!isRecurring(eventInfo)) {
+    throw new Error('cannot update weekday without recurrence');
+  }
+
+  const weekdaysSet = new Set<WeekdayStr>(eventInfo.recurrence.byweekday || []);
+  if (enabled) {
+    weekdaysSet.add(weekdayStr);
+  } else {
+    weekdaysSet.delete(weekdayStr);
+  }
+
+  setEventInfo({
+    ...eventInfo,
+    recurrence: {
+      ...eventInfo.recurrence,
+      byweekday: Array.from(weekdaysSet),
+    },
+  });
+};
 
 const FREQ_MAP = {
   none: undefined,
@@ -107,14 +138,18 @@ const EventModalForm: React.FC<EventModalFormProps> = (props) => {
                 ...eventInfo,
                 recurrence: undefined,
               });
-            } else {
-              // TODO better way of getting defaults for recurrence. maybe we have DEFAULT_RECURRENCE?
+            } else if (isRecurring(eventInfo)) {
               setEventInfo({
                 ...eventInfo,
                 recurrence: {
-                  start: eventInfo.start,
+                  ...eventInfo.recurrence,
                   freq,
                 },
+              });
+            } else {
+              setEventInfo({
+                ...eventInfo,
+                recurrence: defaultRecurrence(eventInfo.start),
               });
             }
           }}
@@ -128,28 +163,99 @@ const EventModalForm: React.FC<EventModalFormProps> = (props) => {
       </div>
       <div>
         <label>Interval:</label>
-        <input type="number" />
+        <input
+          type="number"
+          onChange={(e) => {
+            if (!isRecurring(eventInfo)) {
+              throw new Error('cannot update interval without recurrence');
+            }
+
+            const interval = parseInt(e.target.value);
+            setEventInfo({
+              ...eventInfo,
+              recurrence: {
+                ...eventInfo.recurrence,
+                interval,
+              },
+            });
+          }}
+        />
       </div>
       <div>
         <label>By day:</label>
         <label>S</label>
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          onChange={(e) => {
+            onChangeWeekday(eventInfo, setEventInfo, 'SU', e.target.checked);
+          }}
+        />
         <label>M</label>
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          onChange={(e) => {
+            onChangeWeekday(eventInfo, setEventInfo, 'MO', e.target.checked);
+          }}
+        />
         <label>T</label>
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          onChange={(e) => {
+            onChangeWeekday(eventInfo, setEventInfo, 'TU', e.target.checked);
+          }}
+        />
         <label>W</label>
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          onChange={(e) => {
+            onChangeWeekday(eventInfo, setEventInfo, 'WE', e.target.checked);
+          }}
+        />
         <label>T</label>
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          onChange={(e) => {
+            onChangeWeekday(eventInfo, setEventInfo, 'TH', e.target.checked);
+          }}
+        />
         <label>F</label>
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          onChange={(e) => {
+            onChangeWeekday(eventInfo, setEventInfo, 'FR', e.target.checked);
+          }}
+        />
         <label>S</label>
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          onChange={(e) => {
+            onChangeWeekday(eventInfo, setEventInfo, 'SA', e.target.checked);
+          }}
+        />
       </div>
       <div>
         <label>Never ends:</label>
-        <input type="radio" name="ends" />
+        <input
+          type="radio"
+          name="ends"
+          onChange={(e) => {
+            if (!isRecurring(eventInfo)) {
+              throw new Error('cannot update end condition without recurrence');
+            }
+
+            const checked = e.target.value;
+            if (checked) {
+              setEventInfo({
+                ...eventInfo,
+                recurrence: {
+                  ...eventInfo.recurrence,
+                  until: undefined,
+                  count: undefined,
+                },
+              });
+            }
+          }}
+        />
       </div>
       <div>
         <label>Until:</label>
