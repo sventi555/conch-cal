@@ -23,12 +23,37 @@ interface RecurrenceProps {
   onChangeRecurrence: (recurrence: Recurrence | undefined) => void;
 }
 
+type FreqString = keyof typeof Frequency | 'NONE';
+
+const fromFreqString = (freqString: FreqString): Frequency | undefined => {
+  if (freqString === 'NONE') {
+    return undefined;
+  }
+
+  return Frequency[freqString];
+};
+
+const toFreqString = (frequency: Frequency | undefined): FreqString => {
+  switch (frequency) {
+    case Frequency.DAILY:
+      return 'DAILY';
+    case Frequency.WEEKLY:
+      return 'WEEKLY';
+    case Frequency.MONTHLY:
+      return 'MONTHLY';
+    case Frequency.YEARLY:
+      return 'YEARLY';
+    default:
+      return 'NONE';
+  }
+};
+
 export const RecurrenceForm: React.FC<RecurrenceProps> = (props) => {
   const recurrence = props.recurrence;
 
   return (
     <div>
-      <Dropdown<keyof typeof Frequency | 'NONE'>
+      <Dropdown<FreqString>
         label="Repeats"
         options={[
           { label: 'None', val: 'NONE' },
@@ -37,23 +62,20 @@ export const RecurrenceForm: React.FC<RecurrenceProps> = (props) => {
           { label: 'Monthly', val: 'MONTHLY' },
           { label: 'Yearly', val: 'YEARLY' },
         ]}
-        selected={
-          recurrence?.freq
-            ? (Frequency[recurrence.freq] as keyof typeof Frequency)
-            : 'NONE'
-        }
-        onChange={(freq) => {
-          if (freq == 'NONE') {
+        selected={toFreqString(recurrence?.freq)}
+        onChange={(freqString) => {
+          const freq = fromFreqString(freqString);
+          if (freq == null) {
             props.onChangeRecurrence(undefined);
           } else if (recurrence == null) {
             props.onChangeRecurrence({
               ...defaultRecurrence(props.eventStart),
-              freq: Frequency[freq],
+              freq,
             });
           } else {
             props.onChangeRecurrence({
               ...recurrence,
-              freq: Frequency[freq],
+              freq,
             });
           }
         }}

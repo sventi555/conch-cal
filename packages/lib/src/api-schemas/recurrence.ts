@@ -31,12 +31,13 @@ export const postRecurrencesBodySchema = z.object({
   byweekday: z
     .array(z.enum(['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']))
     .optional(),
+  until: epochDateSchema.optional(),
+  count: z.number().int().min(1).optional(),
 });
 export type PostRecurrencesBody = z.infer<typeof postRecurrencesBodySchema>;
 export type PostRecurrencesReturn = Recurrence;
 
 export const putRecurrencesBodySchema = z.object({
-  groupId: z.string(),
   owner: z.string(),
   event: postEventsBodySchema,
   start: epochDateSchema,
@@ -45,6 +46,8 @@ export const putRecurrencesBodySchema = z.object({
   byweekday: z
     .array(z.enum(['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']))
     .optional(),
+  until: epochDateSchema.optional(),
+  count: z.number().int().min(1).optional(),
 });
 export const putRecurrencesParamSchema = idSchema;
 export type PutRecurrencesParam = z.infer<typeof putRecurrencesParamSchema>;

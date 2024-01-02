@@ -56,7 +56,7 @@ export class EventsAPI {
 
   static async putEvent(
     id: string,
-    event: NonRecurringEvent,
+    event: NonRecurringEventInfo,
     user: User,
   ): Promise<NonRecurringEvent> {
     const token = await user.getIdToken();

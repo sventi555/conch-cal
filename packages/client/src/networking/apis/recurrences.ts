@@ -55,12 +55,12 @@ export class RecurrencesAPI {
 
   static async putRecurrence(
     id: string,
-    recurrence: RecurringEvent,
+    recurrence: RecurringEventInfo,
     user: User,
   ): Promise<RecurringEvent> {
     const token = await user.getIdToken();
 
-    const body: PutRecurrencesBody = fromRecurringEvent(recurrence);
+    const body: PutRecurrencesBody = putBodyFromInfo(recurrence);
     const res = await fetch(`${BASE_URI}/${id}`, {
       method: 'PUT',
       headers: {
@@ -87,18 +87,18 @@ const postBodyFromInfo = (
   eventInfo: RecurringEventInfo,
 ): PostRecurrencesBody => ({ ...eventInfo.recurrence, event: eventInfo });
 
+const putBodyFromInfo = (
+  eventInfo: RecurringEventInfo,
+): PutRecurrencesBody => ({
+  ...eventInfo.recurrence,
+  owner: eventInfo.owner,
+  event: eventInfo,
+});
+
 const toRecurringEvent = (recurrence: Recurrence): RecurringEvent => ({
   ...recurrence.event,
   id: recurrence.id,
   groupId: recurrence.groupId,
   owner: recurrence.owner,
   recurrence,
-});
-
-const fromRecurringEvent = (event: RecurringEvent): Recurrence => ({
-  ...event.recurrence,
-  id: event.id,
-  groupId: event.groupId,
-  owner: event.owner,
-  event,
 });
