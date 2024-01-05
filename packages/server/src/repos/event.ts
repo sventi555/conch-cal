@@ -1,12 +1,9 @@
 import { Transaction } from '@google-cloud/firestore';
 import { DateRange } from 'lib';
 import { db } from '../db/ index';
-import { Event } from '../db/schema';
+import { Event, EventInfo } from '../db/schema';
 import { converter } from './utils/converter';
 import { useTransaction } from './utils/transaction';
-import { WithID } from './utils/types';
-
-interface EventWithID extends Event, WithID {}
 
 const collection = db.collection('events').withConverter(converter<Event>());
 
@@ -14,7 +11,7 @@ export class EventRepo {
   static async getOne(
     id: string,
     transaction?: Transaction,
-  ): Promise<EventWithID | undefined> {
+  ): Promise<Event | undefined> {
     return await useTransaction(transaction, async (transaction) => {
       const doc = await collection.doc(id);
       const data = (await transaction.get(doc)).data();
@@ -23,7 +20,7 @@ export class EventRepo {
         return undefined;
       }
 
-      return { ...data, id };
+      return data;
     });
   }
 
@@ -31,7 +28,7 @@ export class EventRepo {
     userId: string,
     range?: DateRange,
     transaction?: Transaction,
-  ): Promise<EventWithID[]> {
+  ): Promise<Event[]> {
     return await useTransaction(transaction, async (transaction) => {
       let query = collection.where('owner', '==', userId);
 
@@ -46,36 +43,36 @@ export class EventRepo {
           .where('start', '>=', range[0])
           .where('start', '<', range[1]);
       }
-      const data = (await transaction.get(query)).docs.map((doc) => {
-        return { id: doc.id, ...doc.data() };
-      });
+      const data = (await transaction.get(query)).docs.map((doc) => doc.data());
 
       return data;
     });
   }
 
   static async addOne(
-    event: Event,
+    event: EventInfo,
     transaction?: Transaction,
-  ): Promise<EventWithID> {
+  ): Promise<Event> {
     return await useTransaction(transaction, async (transaction) => {
       const doc = collection.doc();
-      await transaction.create(doc, event);
+      const data = { id: doc.id, ...event };
+      await transaction.create(doc, data);
 
-      return { id: doc.id, ...event };
+      return data;
     });
   }
 
   static async replaceOne(
     id: string,
-    event: Event,
+    event: EventInfo,
     transaction?: Transaction,
-  ): Promise<EventWithID> {
+  ): Promise<Event> {
     return await useTransaction(transaction, async (transaction) => {
       const doc = await collection.doc(id);
-      await transaction.update(doc, event);
+      const data = { id, ...event };
+      await transaction.update(doc, data);
 
-      return { id, ...event };
+      return data;
     });
   }
 

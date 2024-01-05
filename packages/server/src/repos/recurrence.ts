@@ -1,11 +1,9 @@
 import { Transaction } from '@google-cloud/firestore';
+import { v4 as uuid } from 'uuid';
 import { db } from '../db/ index';
-import { Recurrence } from '../db/schema';
+import { Recurrence, RecurrenceInfo } from '../db/schema';
 import { converter } from './utils/converter';
 import { useTransaction } from './utils/transaction';
-import { WithID } from './utils/types';
-
-interface RecurrenceWithID extends Recurrence, WithID {}
 
 const collection = db
   .collection('recurrences')
@@ -15,7 +13,7 @@ export class RecurrenceRepo {
   static async getOne(
     id: string,
     transaction?: Transaction,
-  ): Promise<RecurrenceWithID | undefined> {
+  ): Promise<Recurrence | undefined> {
     return await useTransaction(transaction, async (transaction) => {
       const doc = await collection.doc(id);
       const data = (await transaction.get(doc)).data();
@@ -24,7 +22,7 @@ export class RecurrenceRepo {
         return undefined;
       }
 
-      return { ...data, id };
+      return data;
     });
   }
 
@@ -32,43 +30,48 @@ export class RecurrenceRepo {
     userId: string,
     startingBefore?: number,
     transaction?: Transaction,
-  ): Promise<RecurrenceWithID[]> {
+  ): Promise<Recurrence[]> {
     return await useTransaction(transaction, async (transaction) => {
       let query = collection.where('owner', '==', userId);
 
       if (startingBefore != null) {
         query = query.where('start', '<', startingBefore);
       }
-      const data = (await transaction.get(query)).docs.map((doc) => {
-        return { id: doc.id, ...doc.data() };
-      });
+      const data = (await transaction.get(query)).docs.map((doc) => doc.data());
 
       return data;
     });
   }
 
   static async addOne(
-    recurrence: Recurrence,
+    recurrence: RecurrenceInfo,
     transaction?: Transaction,
-  ): Promise<RecurrenceWithID> {
+  ): Promise<Recurrence> {
     return await useTransaction(transaction, async (transaction) => {
       const doc = await collection.doc();
-      await transaction.create(doc, recurrence);
+      const groupId = uuid();
+      const data = { id: doc.id, groupId, ...recurrence };
+      await transaction.create(doc, data);
 
-      return { id: doc.id, ...recurrence };
+      return data;
     });
   }
 
   static async replaceOne(
     id: string,
-    recurrence: Recurrence,
+    recurrence: RecurrenceInfo,
     transaction?: Transaction,
-  ): Promise<RecurrenceWithID> {
+  ): Promise<Recurrence> {
     return await useTransaction(transaction, async (transaction) => {
       const doc = await collection.doc(id);
-      await transaction.update(doc, recurrence);
+      const data = (await transaction.get(doc)).data();
+      if (data == null) {
+        throw new Error('recurrence does not exist');
+      }
+      const updatedData = { id, groupId: data.groupId, ...recurrence };
+      await transaction.update(doc, updatedData);
 
-      return { id, ...recurrence };
+      return updatedData;
     });
   }
 
