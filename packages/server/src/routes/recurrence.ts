@@ -11,7 +11,6 @@ import {
   putRecurrencesBodySchema,
   putRecurrencesParamSchema,
 } from 'lib';
-import { v4 as uuid } from 'uuid';
 import { verifyToken } from '../middlewares/auth';
 import { RecurrenceRepo } from '../repos';
 import { canEdit } from '../repos/utils/perms';
@@ -42,10 +41,8 @@ export const recurrenceRoutes = (app: Hono) => {
     async (c) => {
       const recurrence = c.req.valid('json');
 
-      const groupId = uuid();
       const res = await RecurrenceRepo.addOne({
         ...recurrence,
-        groupId,
         owner: c.var.userId,
       });
 
@@ -73,7 +70,6 @@ export const recurrenceRoutes = (app: Hono) => {
 
       const res = await RecurrenceRepo.replaceOne(id, {
         ...recurrence,
-        groupId: existing.groupId,
         owner: c.var.userId,
       });
 

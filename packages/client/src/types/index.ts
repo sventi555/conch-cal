@@ -28,7 +28,6 @@ export type EventInfo = RecurringEventInfo | NonRecurringEventInfo;
 
 export interface RecurringEvent extends RecurringEventInfo {
   id: string;
-  groupId: string;
 }
 
 export interface NonRecurringEvent extends NonRecurringEventInfo {

@@ -24,7 +24,6 @@ export interface RecurrenceInfo {
 
 export interface Recurrence extends RecurrenceInfo {
   id: string;
-  groupId: string;
 }
 
 export interface DB {

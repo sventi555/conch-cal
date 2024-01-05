@@ -98,7 +98,6 @@ const putBodyFromInfo = (
 const toRecurringEvent = (recurrence: Recurrence): RecurringEvent => ({
   ...recurrence.event,
   id: recurrence.id,
-  groupId: recurrence.groupId,
   owner: recurrence.owner,
   recurrence,
 });

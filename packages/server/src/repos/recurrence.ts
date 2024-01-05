@@ -1,5 +1,4 @@
 import { Transaction } from '@google-cloud/firestore';
-import { v4 as uuid } from 'uuid';
 import { db } from '../db/ index';
 import { Recurrence, RecurrenceInfo } from '../db/schema';
 import { converter } from './utils/converter';
@@ -49,8 +48,7 @@ export class RecurrenceRepo {
   ): Promise<Recurrence> {
     return await useTransaction(transaction, async (transaction) => {
       const doc = await collection.doc();
-      const groupId = uuid();
-      const data = { id: doc.id, groupId, ...recurrence };
+      const data = { id: doc.id, ...recurrence };
       await transaction.create(doc, data);
 
       return data;
@@ -68,7 +66,7 @@ export class RecurrenceRepo {
       if (data == null) {
         throw new Error('recurrence does not exist');
       }
-      const updatedData = { id, groupId: data.groupId, ...recurrence };
+      const updatedData = { id, ...recurrence };
       await transaction.update(doc, updatedData);
 
       return updatedData;

@@ -5,7 +5,6 @@ import { epochDateSchema, idSchema, stringEpochDateSchema } from './shared';
 
 export interface Recurrence {
   id: string;
-  groupId: string;
   owner: string;
   event: Omit<Event, 'id' | 'owner'>;
   start: number;
