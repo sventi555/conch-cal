@@ -62,14 +62,16 @@ export class RecurrenceRepo {
   ): Promise<Recurrence> {
     return await useTransaction(transaction, async (transaction) => {
       const doc = await collection.doc(id);
-      const data = (await transaction.get(doc)).data();
-      if (data == null) {
+
+      const existing = (await transaction.get(doc)).data();
+      if (existing == null) {
         throw new Error('recurrence does not exist');
       }
-      const updatedData = { id, ...recurrence };
-      await transaction.update(doc, updatedData);
 
-      return updatedData;
+      const data = { id, ...recurrence };
+      await transaction.set(doc, data);
+
+      return data;
     });
   }
 

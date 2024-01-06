@@ -69,8 +69,14 @@ export class EventRepo {
   ): Promise<Event> {
     return await useTransaction(transaction, async (transaction) => {
       const doc = await collection.doc(id);
+
+      const existing = (await transaction.get(doc)).data();
+      if (existing == null) {
+        throw new Error('event does not exist');
+      }
+
       const data = { id, ...event };
-      await transaction.update(doc, data);
+      await transaction.set(doc, data);
 
       return data;
     });
