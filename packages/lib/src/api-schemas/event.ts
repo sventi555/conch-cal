@@ -17,20 +17,17 @@ export const getEventsQuerySchema = z.object({
 export type GetEventsQuery = z.infer<typeof getEventsQuerySchema>;
 export type GetEventsReturn = Event[];
 
-export const postEventsBodySchema = z.object({
+const eventInfoSchema = z.object({
   name: z.string(),
   start: epochDateSchema,
   end: epochDateSchema,
 });
+
+export const postEventsBodySchema = eventInfoSchema;
 export type PostEventsBody = z.infer<typeof postEventsBodySchema>;
 export type PostEventsReturn = Event;
 
-export const putEventsBodySchema = z.object({
-  owner: z.string(),
-  name: z.string(),
-  start: epochDateSchema,
-  end: epochDateSchema,
-});
+export const putEventsBodySchema = eventInfoSchema;
 export const putEventsParamSchema = idSchema;
 export type PutEventsParam = z.infer<typeof putEventsParamSchema>;
 export type PutEventsBody = z.infer<typeof putEventsBodySchema>;
