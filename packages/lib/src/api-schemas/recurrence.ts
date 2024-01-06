@@ -22,8 +22,7 @@ export const getRecurrencesQuerySchema = z.object({
 export type GetRecurrencesQuery = z.infer<typeof getRecurrencesQuerySchema>;
 export type GetRecurrencesReturn = Recurrence[];
 
-const recurrenceInfoSchema = z.object({
-  event: postEventsBodySchema,
+const recurrenceTimeInfoSchema = z.object({
   start: epochDateSchema,
   freq: z.nativeEnum(Frequency),
   interval: z.number().int().min(1).optional(),
@@ -34,9 +33,23 @@ const recurrenceInfoSchema = z.object({
   count: z.number().int().min(1).optional(),
 });
 
+const recurrenceInfoSchema = recurrenceTimeInfoSchema.extend({
+  event: postEventsBodySchema,
+});
+
 export const postRecurrencesBodySchema = recurrenceInfoSchema;
 export type PostRecurrencesBody = z.infer<typeof postRecurrencesBodySchema>;
 export type PostRecurrencesReturn = Recurrence;
+
+export const postRecurrencesFromEventBodySchema = recurrenceTimeInfoSchema;
+export const postRecurrencesFromEventParamSchema = idSchema;
+export type PostRecurrencesFromEventParam = z.infer<
+  typeof postRecurrencesFromEventParamSchema
+>;
+export type PostRecurrencesFromEventBody = z.infer<
+  typeof postRecurrencesFromEventBodySchema
+>;
+export type PostRecurrencesFromEventReturn = Recurrence;
 
 export const putRecurrencesBodySchema = recurrenceInfoSchema;
 export const putRecurrencesParamSchema = idSchema;

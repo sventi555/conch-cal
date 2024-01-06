@@ -3,16 +3,20 @@ import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import {
   GetRecurrencesReturn,
+  PostRecurrencesFromEventReturn,
   PostRecurrencesReturn,
   PutRecurrencesReturn,
   deleteRecurrencesParamSchema,
   getRecurrencesQuerySchema,
   postRecurrencesBodySchema,
+  postRecurrencesFromEventBodySchema,
+  postRecurrencesFromEventParamSchema,
   putRecurrencesBodySchema,
   putRecurrencesParamSchema,
 } from 'lib';
 import { verifyToken } from '../middlewares/auth';
 import { RecurrenceRepo } from '../repos';
+import { moveEventToRecurrence } from '../repos/utils/exchange-recurrence';
 import { canEdit } from '../repos/utils/perms';
 
 export const recurrenceRoutes = (app: Hono) => {
@@ -47,6 +51,21 @@ export const recurrenceRoutes = (app: Hono) => {
       });
 
       return c.json<PostRecurrencesReturn>(res);
+    },
+  );
+
+  app.post(
+    '/recurrences/from/event/:id',
+    verifyToken,
+    zValidator('param', postRecurrencesFromEventParamSchema),
+    zValidator('json', postRecurrencesFromEventBodySchema),
+    async (c) => {
+      const eventId = c.req.param('id');
+      const recurrenceData = c.req.valid('json');
+
+      const res = await moveEventToRecurrence(eventId, recurrenceData);
+
+      return c.json<PostRecurrencesFromEventReturn>(res);
     },
   );
 
