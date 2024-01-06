@@ -39,7 +39,7 @@ export class RecurrencesAPI {
   ): Promise<RecurringEvent> {
     const token = await user.getIdToken();
 
-    const body: PostRecurrencesBody = postBodyFromInfo(recurrence);
+    const body: PostRecurrencesBody = getPostBody(recurrence);
     const res = await fetch(`${BASE_URI}`, {
       method: 'POST',
       headers: {
@@ -60,7 +60,7 @@ export class RecurrencesAPI {
   ): Promise<RecurringEvent> {
     const token = await user.getIdToken();
 
-    const body: PutRecurrencesBody = putBodyFromInfo(recurrence);
+    const body: PutRecurrencesBody = getPutBody(recurrence);
     const res = await fetch(`${BASE_URI}/${id}`, {
       method: 'PUT',
       headers: {
@@ -83,15 +83,13 @@ export class RecurrencesAPI {
   }
 }
 
-const postBodyFromInfo = (
-  eventInfo: RecurringEventInfo,
-): PostRecurrencesBody => ({ ...eventInfo.recurrence, event: eventInfo });
-
-const putBodyFromInfo = (
-  eventInfo: RecurringEventInfo,
-): PutRecurrencesBody => ({
+const getPostBody = (eventInfo: RecurringEventInfo): PostRecurrencesBody => ({
   ...eventInfo.recurrence,
-  owner: eventInfo.owner,
+  event: eventInfo,
+});
+
+const getPutBody = (eventInfo: RecurringEventInfo): PutRecurrencesBody => ({
+  ...eventInfo.recurrence,
   event: eventInfo,
 });
 

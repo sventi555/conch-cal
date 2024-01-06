@@ -27,12 +27,6 @@ export const postEventsBodySchema = eventInfoSchema;
 export type PostEventsBody = z.infer<typeof postEventsBodySchema>;
 export type PostEventsReturn = Event;
 
-export const postEventsFromRecurrenceParamSchema = idSchema;
-export type PostEventsFromRecurrenceParam = z.infer<
-  typeof postEventsFromRecurrenceParamSchema
->;
-export type PostEventsFromRecurrenceReturn = Event;
-
 export const putEventsBodySchema = eventInfoSchema;
 export const putEventsParamSchema = idSchema;
 export type PutEventsParam = z.infer<typeof putEventsParamSchema>;

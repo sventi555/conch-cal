@@ -41,16 +41,6 @@ export const postRecurrencesBodySchema = recurrenceInfoSchema;
 export type PostRecurrencesBody = z.infer<typeof postRecurrencesBodySchema>;
 export type PostRecurrencesReturn = Recurrence;
 
-export const postRecurrencesFromEventBodySchema = recurrenceTimeInfoSchema;
-export const postRecurrencesFromEventParamSchema = idSchema;
-export type PostRecurrencesFromEventParam = z.infer<
-  typeof postRecurrencesFromEventParamSchema
->;
-export type PostRecurrencesFromEventBody = z.infer<
-  typeof postRecurrencesFromEventBodySchema
->;
-export type PostRecurrencesFromEventReturn = Recurrence;
-
 export const putRecurrencesBodySchema = recurrenceInfoSchema;
 export const putRecurrencesParamSchema = idSchema;
 export type PutRecurrencesParam = z.infer<typeof putRecurrencesParamSchema>;
