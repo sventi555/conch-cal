@@ -141,14 +141,41 @@ const handleModifyEvent = (
 ) => {
   EventsAPI.putEvent(event.id, updatedInfo, user).then((updatedEvent) => {
     if (isRecurring(updatedEvent)) {
-      dispatch({
-        type: 'modified-recurring',
-        id: event.id,
-        updatedEvent,
-        loadedRange: loadedRange,
-      });
+      if (isRecurring(event)) {
+        // modify recurrence
+        dispatch({
+          type: 'modified-recurring',
+          id: event.id,
+          updatedEvent,
+          loadedRange,
+        });
+      } else {
+        // convert event to recurrence
+        dispatch({
+          type: 'deleted',
+          id: event.id,
+        });
+        dispatch({
+          type: 'added-recurring',
+          event: updatedEvent,
+          loadedRange,
+        });
+      }
     } else {
-      dispatch({ type: 'modified', id: event.id, updatedEvent });
+      if (isRecurring(event)) {
+        // convert recurrence to event
+        dispatch({
+          type: 'deleted-recurring',
+          id: event.id,
+        });
+        dispatch({
+          type: 'added',
+          event: updatedEvent,
+        });
+      } else {
+        // modify event
+        dispatch({ type: 'modified', id: event.id, updatedEvent });
+      }
     }
   });
 };
