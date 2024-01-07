@@ -7,7 +7,6 @@ import { Calendar } from '../components/calendar/Calendar';
 import { CreateEventModal, ModifyEventModal } from '../components/event-modal';
 import { MiniCal } from '../components/mini-cal';
 import { EventsAPI } from '../networking/apis/events';
-import { RecurrencesAPI } from '../networking/apis/recurrences';
 import { useLoadEvents } from '../networking/load-events';
 import { EventsDispatch, useEvents, useEventsDispatch } from '../state/events';
 import { useEventModalContext } from '../state/modal';
@@ -120,19 +119,17 @@ const handleAddEvent = (
   loadedRange: DateRange,
   dispatch: EventsDispatch,
 ) => {
-  if (isRecurring(eventInfo)) {
-    RecurrencesAPI.postRecurrence(eventInfo, user).then((recurrence) => {
+  EventsAPI.postEvent(eventInfo, user).then((event) => {
+    if (isRecurring(event)) {
       dispatch({
         type: 'added-recurring',
-        event: recurrence,
+        event,
         loadedRange: loadedRange,
       });
-    });
-  } else {
-    EventsAPI.postEvent(eventInfo, user).then((event) => {
+    } else {
       dispatch({ type: 'added', event });
-    });
-  }
+    }
+  });
 };
 
 const handleModifyEvent = (
@@ -142,22 +139,18 @@ const handleModifyEvent = (
   loadedRange: DateRange,
   dispatch: EventsDispatch,
 ) => {
-  if (isRecurring(updatedInfo)) {
-    RecurrencesAPI.putRecurrence(event.id, updatedInfo, user).then(
-      (recurrence) => {
-        dispatch({
-          type: 'modified-recurring',
-          id: event.id,
-          updatedEvent: recurrence,
-          loadedRange: loadedRange,
-        });
-      },
-    );
-  } else {
-    EventsAPI.putEvent(event.id, updatedInfo, user).then((event) =>
-      dispatch({ type: 'modified', id: event.id, updatedEvent: event }),
-    );
-  }
+  EventsAPI.putEvent(event.id, updatedInfo, user).then((updatedEvent) => {
+    if (isRecurring(updatedEvent)) {
+      dispatch({
+        type: 'modified-recurring',
+        id: event.id,
+        updatedEvent,
+        loadedRange: loadedRange,
+      });
+    } else {
+      dispatch({ type: 'modified', id: event.id, updatedEvent });
+    }
+  });
 };
 
 const handleDeleteEvent = (
@@ -165,14 +158,11 @@ const handleDeleteEvent = (
   user: User,
   dispatch: EventsDispatch,
 ) => {
-  if (isRecurring(event)) {
-    RecurrencesAPI.deleteRecurrence(event.id, user).then(() =>
-      dispatch({ type: 'deleted-recurring', id: event.id }),
-    );
-  } else {
-    const id = event.id;
-    EventsAPI.deleteEvent(id, user).then(() => {
-      dispatch({ type: 'deleted', id });
-    });
-  }
+  EventsAPI.deleteEvent(event.id, user).then(() => {
+    if (isRecurring(event)) {
+      dispatch({ type: 'deleted-recurring', id: event.id });
+    } else {
+      dispatch({ type: 'deleted', id: event.id });
+    }
+  });
 };

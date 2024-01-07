@@ -1,3 +1,4 @@
+import { Frequency, WeekdayStr } from 'rrule';
 import { z } from 'zod';
 import { epochDateSchema, idSchema, stringEpochDateSchema } from './shared';
 
@@ -7,6 +8,14 @@ export interface Event {
   name: string;
   start: number;
   end: number;
+  recurrence?: {
+    start: number;
+    freq: Frequency;
+    interval?: number;
+    byweekday?: WeekdayStr[];
+    until?: number;
+    count?: number;
+  };
 }
 
 export const getEventsQuerySchema = z.object({
@@ -21,7 +30,20 @@ const eventInfoSchema = z.object({
   name: z.string(),
   start: epochDateSchema,
   end: epochDateSchema,
+  recurrence: z
+    .object({
+      start: epochDateSchema,
+      freq: z.nativeEnum(Frequency),
+      interval: z.number().int().min(1).optional(),
+      byweekday: z
+        .array(z.enum(['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']))
+        .optional(),
+      until: epochDateSchema.optional(),
+      count: z.number().int().min(1).optional(),
+    })
+    .optional(),
 });
+export type EventInfo = z.infer<typeof eventInfoSchema>;
 
 export const postEventsBodySchema = eventInfoSchema;
 export type PostEventsBody = z.infer<typeof postEventsBodySchema>;

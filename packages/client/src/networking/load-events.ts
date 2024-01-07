@@ -2,9 +2,9 @@ import { DateRange, inRange, range } from 'lib';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth';
 import { useEventsDispatch } from '../state/events';
+import { NonRecurringEvent, RecurringEvent } from '../types';
 import { MS_PER_DAY } from '../utils/date';
 import { EventsAPI } from './apis/events';
-import { RecurrencesAPI } from './apis/recurrences';
 
 export const useLoadEvents = (focusedTime: number) => {
   const { user } = useAuth();
@@ -23,13 +23,26 @@ export const useLoadEvents = (focusedTime: number) => {
       setLoadedRange(newRange);
 
       EventsAPI.getEvents(user, newRange).then((events) => {
-        RecurrencesAPI.getRecurrences(user, newRange[1]).then((recurrences) => {
-          dispatch({
-            type: 'set',
-            events,
-            recurringEvents: recurrences,
-            loadedRange: newRange,
-          });
+        const [nonRecurringEvents, recurringEvents] = events.reduce<
+          [NonRecurringEvent[], RecurringEvent[]]
+        >(
+          ([nonRecurring, recurring], event) => {
+            if (event.recurrence == null) {
+              nonRecurring.push(event);
+            } else {
+              recurring.push(event);
+            }
+
+            return [nonRecurring, recurring];
+          },
+          [[], []],
+        );
+
+        dispatch({
+          type: 'set',
+          events: nonRecurringEvents,
+          recurringEvents: recurringEvents,
+          loadedRange: newRange,
         });
       });
     }

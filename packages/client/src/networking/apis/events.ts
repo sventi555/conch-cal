@@ -9,16 +9,13 @@ import {
   PutEventsReturn,
 } from 'lib';
 import config from '../../config';
-import { NonRecurringEvent, NonRecurringEventInfo } from '../../types';
+import { Event, EventInfo } from '../../types';
 import { toQueryString } from '../utils/query';
 
 const BASE_URI = `${config.hosts.api}/events`;
 
 export class EventsAPI {
-  static async getEvents(
-    user: User,
-    range: DateRange,
-  ): Promise<NonRecurringEvent[]> {
+  static async getEvents(user: User, range: DateRange): Promise<Event[]> {
     const token = await user.getIdToken();
 
     const query: GetEventsQuery = {
@@ -34,10 +31,7 @@ export class EventsAPI {
     return fetchedEvents;
   }
 
-  static async postEvent(
-    event: NonRecurringEventInfo,
-    user: User,
-  ): Promise<NonRecurringEvent> {
+  static async postEvent(event: EventInfo, user: User): Promise<Event> {
     const token = await user.getIdToken();
 
     const body: PostEventsBody = event;
@@ -56,9 +50,9 @@ export class EventsAPI {
 
   static async putEvent(
     id: string,
-    event: NonRecurringEventInfo,
+    event: EventInfo,
     user: User,
-  ): Promise<NonRecurringEvent> {
+  ): Promise<Event> {
     const token = await user.getIdToken();
 
     const body: PutEventsBody = event;

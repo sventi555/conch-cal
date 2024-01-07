@@ -6,6 +6,7 @@ interface DropdownProps<T extends string> {
 }
 
 export const Dropdown = <T extends string>(props: DropdownProps<T>) => {
+  console.log(props.selected);
   return (
     <div>
       <label>{props.label}:</label>
@@ -13,6 +14,7 @@ export const Dropdown = <T extends string>(props: DropdownProps<T>) => {
         onChange={(e) => {
           props.onChange(e.target.value as T);
         }}
+        value={props.selected}
       >
         {props.options.map((option) => (
           <option key={option.label} value={option.val}>

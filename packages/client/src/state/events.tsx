@@ -83,16 +83,14 @@ const eventsReducer: Reducer<Event[], EventsAction> = (events, action) => {
       const instances = eventInstances(action.updatedEvent, action.loadedRange);
       return [
         ...events.filter(
-          (event) =>
-            event.recurrence == null || event.recurrence.id !== action.id,
+          (event) => event.recurrence == null || event.id !== action.id,
         ),
         ...instances,
       ];
     }
     case 'deleted-recurring':
       return events.filter(
-        (event) =>
-          event.recurrence == null || event.recurrence.id !== action.id,
+        (event) => event.recurrence == null || event.id !== action.id,
       );
   }
 };

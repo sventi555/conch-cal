@@ -39,5 +39,3 @@ export type Event = RecurringEvent | NonRecurringEvent;
 export const isRecurring = (
   eventInfo: EventInfo,
 ): eventInfo is RecurringEventInfo => eventInfo.recurrence != null;
-
-// export const isRecurringInfo = (eventInfo: EventInfo): eventInfo is RecurringEventInfo => eventInfo.recurrence

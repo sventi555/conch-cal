@@ -1,10 +1,10 @@
 import { EventRepo, RecurrenceRepo } from '..';
 import { db } from '../../db/ index';
-import { Event, Recurrence, RecurrenceInfo } from '../../db/schema';
+import { Event, EventInfo, Recurrence, RecurrenceInfo } from '../../db/schema';
 
 export const moveEventToRecurrence = async (
   eventId: string,
-  recurrenceData: Omit<RecurrenceInfo, 'owner' | 'event'>,
+  recurrenceInfo: RecurrenceInfo,
 ): Promise<Recurrence> => {
   return await db.runTransaction(async (transaction) => {
     const event = await EventRepo.getOne(eventId, transaction);
@@ -14,10 +14,7 @@ export const moveEventToRecurrence = async (
 
     await EventRepo.deleteOne(eventId, transaction);
 
-    const recurrence = await RecurrenceRepo.addOne(
-      { ...recurrenceData, event, owner: event.owner },
-      transaction,
-    );
+    const recurrence = await RecurrenceRepo.addOne(recurrenceInfo, transaction);
 
     return recurrence;
   });
@@ -25,6 +22,7 @@ export const moveEventToRecurrence = async (
 
 export const moveRecurrenceToEvent = async (
   recurrenceId: string,
+  eventInfo: EventInfo,
 ): Promise<Event> => {
   return await db.runTransaction(async (transaction) => {
     const recurrence = await RecurrenceRepo.getOne(recurrenceId, transaction);
@@ -34,10 +32,7 @@ export const moveRecurrenceToEvent = async (
 
     await RecurrenceRepo.deleteOne(recurrenceId, transaction);
 
-    const event = await EventRepo.addOne(
-      { ...recurrence.event, owner: recurrence.owner },
-      transaction,
-    );
+    const event = await EventRepo.addOne(eventInfo, transaction);
 
     return event;
   });

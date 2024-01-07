@@ -2,6 +2,8 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import {
+  Event,
+  EventInfo,
   GetEventsReturn,
   PostEventsReturn,
   PutEventsReturn,
@@ -11,8 +13,13 @@ import {
   putEventsBodySchema,
   putEventsParamSchema,
 } from 'lib';
+import { Recurrence as DBRecurrence, RecurrenceInfo } from '../db/schema';
 import { verifyToken } from '../middlewares/auth';
-import { EventRepo } from '../repos';
+import { EventRepo, RecurrenceRepo } from '../repos';
+import {
+  moveEventToRecurrence,
+  moveRecurrenceToEvent,
+} from '../repos/utils/exchange-recurrence';
 import { canEdit } from '../repos/utils/perms';
 
 export const eventRoutes = (app: Hono) => {
@@ -35,8 +42,12 @@ export const eventRoutes = (app: Hono) => {
       }
 
       const events = await EventRepo.getByUser(userId, [rangeStart, rangeEnd]);
+      // TODO: weed out the recurrences that have an end condition before rangeStart
+      const recurrences = (
+        await RecurrenceRepo.getByUser(userId, rangeEnd)
+      ).map((recurrence) => toLibEvent(recurrence));
 
-      return c.json<GetEventsReturn>(events);
+      return c.json<GetEventsReturn>([...events, ...recurrences]);
     },
   );
 
@@ -46,12 +57,22 @@ export const eventRoutes = (app: Hono) => {
     zValidator('json', postEventsBodySchema),
     async (c) => {
       const event = c.req.valid('json');
-      const res = await EventRepo.addOne({ ...event, owner: c.var.userId });
+
+      let res: PostEventsReturn;
+      if (event.recurrence == null) {
+        res = await EventRepo.addOne({ ...event, owner: c.var.userId });
+      } else {
+        const recurrence = await RecurrenceRepo.addOne(
+          fromLibEventInfo({ ...event, owner: c.var.userId }),
+        );
+        res = toLibEvent(recurrence);
+      }
 
       return c.json<PostEventsReturn>(res);
     },
   );
 
+  // TODO: clean this the heck up
   app.put(
     '/events/:id',
     verifyToken,
@@ -61,7 +82,14 @@ export const eventRoutes = (app: Hono) => {
       const event = c.req.valid('json');
       const { id } = c.req.valid('param');
 
-      const existing = await EventRepo.getOne(id);
+      const existingEvent = await EventRepo.getOne(id);
+      const existingRecurrence = await RecurrenceRepo.getOne(id);
+
+      if (existingEvent != null && existingRecurrence != null) {
+        throw new HTTPException(500);
+      }
+
+      const existing = existingEvent ?? existingRecurrence;
       if (existing == null) {
         throw new HTTPException(404);
       }
@@ -70,10 +98,42 @@ export const eventRoutes = (app: Hono) => {
         throw new HTTPException(403);
       }
 
-      const res = await EventRepo.replaceOne(id, {
-        ...event,
-        owner: c.var.userId,
-      });
+      let res: PutEventsReturn;
+      if (event.recurrence == null) {
+        // target is event
+        if (existingEvent) {
+          // replacing existing event
+          res = await EventRepo.replaceOne(id, {
+            ...event,
+            owner: c.var.userId,
+          });
+        } else {
+          // moving recurrence to event
+          res = await moveRecurrenceToEvent(id, {
+            ...event,
+            owner: c.var.userId,
+          });
+        }
+      } else {
+        // target is recurrence
+        if (existingEvent) {
+          // move event to recurrence
+          res = toLibEvent(
+            await moveEventToRecurrence(
+              id,
+              fromLibEventInfo({ ...event, owner: c.var.userId }),
+            ),
+          );
+        } else {
+          // replace existing recurrence
+          res = toLibEvent(
+            await RecurrenceRepo.replaceOne(
+              id,
+              fromLibEventInfo({ ...event, owner: c.var.userId }),
+            ),
+          );
+        }
+      }
 
       return c.json<PutEventsReturn>(res);
     },
@@ -86,7 +146,14 @@ export const eventRoutes = (app: Hono) => {
     async (c) => {
       const { id } = c.req.valid('param');
 
-      const existing = await EventRepo.getOne(id);
+      const existingEvent = await EventRepo.getOne(id);
+      const existingRecurrence = await RecurrenceRepo.getOne(id);
+
+      if (existingEvent != null && existingRecurrence != null) {
+        throw new HTTPException(500);
+      }
+
+      const existing = existingEvent || existingRecurrence;
       if (existing == null) {
         return c.body(null, 204);
       }
@@ -95,9 +162,36 @@ export const eventRoutes = (app: Hono) => {
         throw new HTTPException(403);
       }
 
-      await EventRepo.deleteOne(id);
+      if (existingEvent != null) {
+        await EventRepo.deleteOne(id);
+      } else if (existingRecurrence != null) {
+        await RecurrenceRepo.deleteOne(id);
+      }
 
       return c.body(null, 204);
     },
   );
+};
+
+// TODO better way to extract exactly the correct fields
+const toLibEvent = (recurrence: DBRecurrence): Event => {
+  return {
+    id: recurrence.id,
+    owner: recurrence.owner,
+    ...recurrence.event,
+  };
+};
+
+const fromLibEventInfo = (
+  event: EventInfo & { owner: string },
+): RecurrenceInfo => {
+  if (event.recurrence == null) {
+    throw new Error('cannot convert to recurrence');
+  }
+
+  return {
+    ...event.recurrence,
+    owner: event.owner,
+    event,
+  };
 };
