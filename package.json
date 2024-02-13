@@ -3,18 +3,15 @@
   "private": true,
   "version": "0.0.0",
   "license": "MIT",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
     "test": "turbo test",
     "clean": "turbo clean",
-    "client": "yarn workspace client",
-    "lib": "yarn workspace lib",
-    "server": "yarn workspace server",
+    "client": "pnpm --filter client",
+    "lib": "pnpm --filter lib",
+    "server": "pnpm --filter server",
     "postinstall": "husky install"
   },
   "devDependencies": {
@@ -24,8 +21,8 @@
     "lint-staged": "^13.1.0",
     "turbo": "^1.10.16"
   },
-  "volta": {
-    "node": "20.8.0",
-    "yarn": "1.22.19"
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=8"
   }
 }

@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "firebase": "^10.3.0",
-    "lib": "*",
+    "lib": "workspace:*",
     "react": "^18.2.0",
     "react-calendar": "^4.6.1",
     "react-dom": "^18.2.0",
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
+    "@types/p5": "1.7.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/react-modal": "^3.16.3",
@@ -45,7 +46,8 @@
     "vite": "^4.4.5",
     "vitest": "^0.34.6"
   },
-  "volta": {
-    "extends": "../../package.json"
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=8"
   }
 }
