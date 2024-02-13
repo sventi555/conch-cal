@@ -17,7 +17,7 @@
     "package.json"
   ],
   "scripts": {
-    "dev": "yarn build --watch --preserveWatchOutput",
+    "dev": "pnpm build --watch --preserveWatchOutput",
     "build": "tsc -b tsconfig.cjs.json tsconfig.esm.json",
     "lint": "eslint . && prettier --check .",
     "test": "jest  --passWithNoTests",
@@ -41,7 +41,8 @@
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"
   },
-  "volta": {
-    "extends": "../../package.json"
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=8"
   }
 }
