@@ -1,15 +1,15 @@
 import { TWO_PI } from '../../utils/math';
-import { spiralCoord } from '../../utils/spiral';
+import { DEFAULT_SAMPLES, spiralCoord } from '../../utils/spiral';
 import { P5Component } from '../p5-component';
 
 interface SpiralProps {
-  rotations: number;
+  stopAngle: number;
   samplesPerRotation?: number;
 }
 
 export const drawSpiral: P5Component<SpiralProps> = (
   p5,
-  { rotations, samplesPerRotation = 360 },
+  { stopAngle, samplesPerRotation = DEFAULT_SAMPLES },
 ) => {
   const sampleRate = TWO_PI / samplesPerRotation;
 
@@ -17,7 +17,7 @@ export const drawSpiral: P5Component<SpiralProps> = (
   p5.noFill();
 
   p5.beginShape();
-  for (let theta = -TWO_PI; theta <= TWO_PI * rotations; theta += sampleRate) {
+  for (let theta = -TWO_PI; theta <= stopAngle; theta += sampleRate) {
     const coord = spiralCoord(theta);
     p5.vertex(coord.x, coord.y);
   }

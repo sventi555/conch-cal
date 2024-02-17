@@ -1,18 +1,22 @@
 import p5Types from 'p5';
 import { useState } from 'react';
 import Sketch, { SketchProps } from 'react-p5';
+import { Event } from '../../types';
 import { MS_PER_HOUR } from '../../utils/date';
 import { canvasToCart, cartToPolar, clamp } from '../../utils/math';
 import { eventInCanvas } from '../../utils/p5';
-import { angleToTime, closestSpiralAngle } from '../../utils/spiral';
+import {
+  angleToTime,
+  closestSpiralAngle,
+  rightmostAngle,
+} from '../../utils/spiral';
 import { drawEvent } from './event';
-import { drawFocusMarker, drawMarkers } from './markers';
+import { drawMarkers } from './markers';
 import { drawSpiral } from './spiral';
-import { Event } from '../../types';
 
 export interface CalendarConfig {
   focusedTime: number;
-  rotationsToFocus: number;
+  angleToFocus: number;
   rotationsPerDay: number;
 }
 
@@ -31,11 +35,11 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   const height = 600;
 
   const rotationsToFocus = 5;
-  const totalRotations = rotationsToFocus + 1;
+  const angleToFocus = rightmostAngle(rotationsToFocus);
 
   const config = {
     focusedTime: props.focusedTime,
-    rotationsToFocus,
+    angleToFocus,
     rotationsPerDay: zoom,
   };
 
@@ -109,8 +113,7 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
         config,
       });
     });
-    drawSpiral(p5, { rotations: totalRotations });
-    drawFocusMarker(p5, { rotationsToFocus });
+    drawSpiral(p5, { stopAngle: angleToFocus });
   };
 
   return (

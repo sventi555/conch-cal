@@ -1,6 +1,6 @@
 import { Point, TWO_PI } from '../../utils/math';
 import { RGBA } from '../../utils/p5';
-import { spiralCoord } from '../../utils/spiral';
+import { DEFAULT_SAMPLES, spiralCoord } from '../../utils/spiral';
 import { P5Component } from '../p5-component';
 import { CalendarConfig } from './Calendar';
 
@@ -14,7 +14,7 @@ interface BlockProps {
 
 export const drawBlock: P5Component<BlockProps> = (
   p5,
-  { startAngle, endAngle, color, samplesPerRotation = 360 },
+  { startAngle, endAngle, color, samplesPerRotation = DEFAULT_SAMPLES },
 ) => {
   const sampleRate = TWO_PI / samplesPerRotation;
 
