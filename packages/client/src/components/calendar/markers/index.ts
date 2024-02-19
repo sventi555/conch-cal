@@ -1,59 +1,41 @@
-import { MS_PER_DAY, MS_PER_HOUR, isMidnight } from '../../../utils/date';
-import { TWO_PI, polarToCart } from '../../../utils/math';
-import { spiralRadius } from '../../../utils/spiral';
+import { MS_PER_15_MIN, MS_PER_DAY } from '../../../utils/date';
+import { TWO_PI } from '../../../utils/math';
 import { P5Component } from '../../p5-component';
 import { CalendarConfig } from '../Calendar';
-import { drawDayBlock, drawDayMarker } from './day';
-import { drawHourMarker } from './hour';
+import {
+  drawDayMarker,
+  drawHalfHourMarker,
+  drawHourMarker,
+  drawQuarterHourMarker,
+} from './time';
 
 interface MarkersProps {
   config: CalendarConfig;
 }
 
 export const drawMarkers: P5Component<MarkersProps> = (p5, { config }) => {
-  const { focusedTime, rotationsToFocus, rotationsPerDay } = config;
-  const lastHour = focusedTime - (focusedTime % MS_PER_HOUR);
+  const { focusedTime, angleToFocus, rotationsPerDay } = config;
+  const lastTick = focusedTime - (focusedTime % MS_PER_15_MIN);
   const centerTime =
-    focusedTime + (rotationsToFocus / rotationsPerDay) * MS_PER_DAY;
-
-  // tack on a couple days worth of markers before the focus time.
-  // adjust based on the canvas size and the size of the spiral
-  const numPaddingRotations = 2;
-  const hoursBeforeFocus = (numPaddingRotations * 24) / rotationsPerDay;
+    focusedTime + (angleToFocus / TWO_PI / rotationsPerDay) * MS_PER_DAY;
 
   const markerTimes: number[] = [];
-  for (
-    let time = lastHour - hoursBeforeFocus * MS_PER_HOUR;
-    time < centerTime;
-    time += MS_PER_HOUR
-  ) {
+  for (let time = lastTick; time < centerTime; time += MS_PER_15_MIN) {
     markerTimes.push(time);
   }
 
   markerTimes.forEach((time) => {
-    if (isMidnight(time)) {
-      drawDayBlock(p5, { time, config });
-    }
-    drawHourMarker(p5, { time, config });
-    if (isMidnight(time)) {
+    const date = new Date(time);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    if (hours === 0 && minutes === 0) {
       drawDayMarker(p5, { time, config });
+    } else if (minutes === 0) {
+      drawHourMarker(p5, { time, config });
+    } else if (minutes % 30 === 0) {
+      drawHalfHourMarker(p5, { time, config });
+    } else if (rotationsPerDay > 1 && minutes % 15 === 0) {
+      drawQuarterHourMarker(p5, { time, config });
     }
   });
-};
-
-interface FocusMarkerProps {
-  rotationsToFocus: number;
-}
-
-export const drawFocusMarker: P5Component<FocusMarkerProps> = (
-  p5,
-  { rotationsToFocus },
-) => {
-  const focusOuterPoint = polarToCart(
-    spiralRadius(rotationsToFocus * TWO_PI + TWO_PI),
-    0,
-  );
-
-  p5.stroke(255, 0, 0);
-  p5.line(0, 0, focusOuterPoint.x, focusOuterPoint.y);
 };

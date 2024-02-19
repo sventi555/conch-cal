@@ -29,12 +29,17 @@ interface CalendarProps {
 }
 
 export const Calendar: React.FC<CalendarProps> = (props) => {
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(2);
 
-  const width = 600;
-  const height = 600;
+  const width = 800;
+  const height = 800;
 
-  const rotationsToFocus = 5;
+  const canvasTrans = {
+    x: width / 2 - 40,
+    y: height / 2 - 40,
+  };
+
+  const rotationsToFocus = 4;
   const angleToFocus = rightmostAngle(rotationsToFocus);
 
   const config = {
@@ -66,7 +71,11 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
     if (!eventInCanvas(event)) return;
 
     const { r, theta } = cartToPolar(
-      canvasToCart({ x: p5.mouseX, y: p5.mouseY }, p5.width, p5.height),
+      canvasToCart(
+        { x: p5.mouseX, y: p5.mouseY },
+        canvasTrans.x,
+        canvasTrans.y,
+      ),
     );
     const spiralAngle = closestSpiralAngle(theta, r);
     const time = angleToTime(spiralAngle, config);
@@ -85,13 +94,13 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   const updateZoom = (p5: p5Types) => {
     let updatedVal: number;
     if (p5.key === '=') {
-      updatedVal = zoom * 2;
+      updatedVal = zoom + 1;
     } else if (p5.key === '-') {
-      updatedVal = zoom / 2;
+      updatedVal = zoom - 1;
     } else {
       return;
     }
-    setZoom(clamp(updatedVal, 0.5, 4));
+    setZoom(clamp(updatedVal, 1, 3));
   };
 
   const setup: SketchProps['setup'] = (p5, canvasParentRef) => {
@@ -101,7 +110,7 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   const draw: SketchProps['draw'] = (p5) => {
     p5.background(255);
 
-    p5.translate(p5.width / 2, p5.height / 2);
+    p5.translate(canvasTrans.x, canvasTrans.y);
     p5.scale(1, -1);
 
     drawMarkers(p5, {

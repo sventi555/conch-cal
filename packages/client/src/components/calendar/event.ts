@@ -46,6 +46,7 @@ const drawEventLabel: P5Component<EventLabelProps> = (
   p5.noStroke();
   p5.fill(255);
   p5.textSize(dist(innerPoint, outerPoint) / 8);
+  p5.textAlign(p5.LEFT, p5.CENTER);
 
   p5.push();
   p5.translate(textCoords.x, textCoords.y);

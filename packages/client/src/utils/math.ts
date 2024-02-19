@@ -7,10 +7,10 @@ export interface Point {
 
 export const canvasToCart = (
   p: Point,
-  canvasWidth: number,
-  canvasHeight: number,
+  canvasXTrans: number,
+  canvasYTrans: number,
 ) => {
-  return { x: p.x - canvasWidth / 2, y: -(p.y - canvasHeight / 2) };
+  return { x: p.x - canvasXTrans, y: -(p.y - canvasYTrans) };
 };
 
 export const radToDeg = (theta: number) => {
