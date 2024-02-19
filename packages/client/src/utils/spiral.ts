@@ -5,7 +5,7 @@ import { TWO_PI, polarToCart } from './math';
 export const DEFAULT_SAMPLES = 1500;
 
 export const SPIRAL_PARAMS = {
-  a: 34,
+  a: 33,
   k: 0.1,
 };
 

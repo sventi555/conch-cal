@@ -17,7 +17,7 @@ export const drawEvent: P5Component<EventProps> = (p5, { event, config }) => {
   drawBlock(p5, {
     startAngle,
     endAngle,
-    color: [0, 0, 255],
+    color: [0, 0, 255, 180],
     config,
   });
 
@@ -39,8 +39,8 @@ const drawEventLabel: P5Component<EventLabelProps> = (
   const innerPoint = spiralCoord(textAngle - TWO_PI);
 
   const textCoords = {
-    x: lerp(innerPoint.x, outerPoint.x, 0.05),
-    y: lerp(innerPoint.y, outerPoint.y, 0.05),
+    x: lerp(innerPoint.x, outerPoint.x, 0.25 + 0.05),
+    y: lerp(innerPoint.y, outerPoint.y, 0.25 + 0.05),
   };
 
   p5.noStroke();

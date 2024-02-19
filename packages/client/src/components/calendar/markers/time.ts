@@ -44,7 +44,7 @@ export const drawHourMarker: P5Component<HourMarkerProps> = (
   { time, config },
 ) => {
   const text = getHourText(time);
-  drawMarkerLine(p5, { lineFraction: 0.25, time, config });
+  drawMarkerLine(p5, { lineFraction: 0.24, time, config });
   drawMarkerText(p5, { text: text.num, subText: text.m, time, config });
 };
 
@@ -88,7 +88,7 @@ const drawMarkerText: P5Component<MarkerTextProps> = (
 
   p5.noStroke();
   p5.fill(0);
-  p5.textSize(lineLen / 8);
+  p5.textSize(lineLen / 10);
   p5.textAlign(p5.LEFT, p5.BOTTOM);
 
   const textWidth = p5.textWidth(text);
