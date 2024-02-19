@@ -127,7 +127,7 @@ const drawMarkerLine: P5Component<MarkerLineProps> = (
     y: lerp(inner.y, outer.y, lineFraction),
   };
 
-  p5.stroke(220);
+  p5.stroke(240);
   p5.line(inner.x, inner.y, outer.x, outer.y);
 
   p5.stroke(0);
