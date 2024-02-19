@@ -33,19 +33,19 @@ const drawEventLabel: P5Component<EventLabelProps> = (
   p5,
   { name, startAngle },
 ) => {
-  const textAngle = startAngle - 0.08;
+  const textAngle = startAngle - 0.06;
 
   const outerPoint = spiralCoord(textAngle);
   const innerPoint = spiralCoord(textAngle - TWO_PI);
 
   const textCoords = {
-    x: lerp(innerPoint.x, outerPoint.x, 0.25 + 0.05),
-    y: lerp(innerPoint.y, outerPoint.y, 0.25 + 0.05),
+    x: lerp(innerPoint.x, outerPoint.x, 0.25 + 0.04),
+    y: lerp(innerPoint.y, outerPoint.y, 0.25 + 0.04),
   };
 
   p5.noStroke();
   p5.fill(255);
-  p5.textSize(dist(innerPoint, outerPoint) / 8);
+  p5.textSize(dist(innerPoint, outerPoint) / 9);
   p5.textAlign(p5.LEFT, p5.CENTER);
 
   p5.push();
