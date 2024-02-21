@@ -3,6 +3,17 @@ import { P5Component } from '../../p5-component';
 import { CalendarConfig } from '../Calendar';
 import { lineMarkerCoords } from './utils';
 
+const timeMarkerWidths = {
+  quarter: 0.1,
+  half: 0.15,
+  hour: 0.25,
+  day: 1,
+};
+
+// exclude day from this since we really just want to know where the usable
+// space is for drawing events
+export const maxMarkerWidth = timeMarkerWidths.hour;
+
 interface QuarterHourMarkerProps {
   time: number;
   config: CalendarConfig;
@@ -12,7 +23,7 @@ export const drawQuarterHourMarker: P5Component<QuarterHourMarkerProps> = (
   p5,
   { time, config },
 ) => {
-  drawMarkerLine(p5, { lineFraction: 0.1, time, config });
+  drawMarkerLine(p5, { lineFraction: timeMarkerWidths.quarter, time, config });
 };
 
 interface HalfHourMarkerProps {
@@ -24,7 +35,7 @@ export const drawHalfHourMarker: P5Component<HalfHourMarkerProps> = (
   p5,
   { time, config },
 ) => {
-  drawMarkerLine(p5, { lineFraction: 0.15, time, config });
+  drawMarkerLine(p5, { lineFraction: timeMarkerWidths.half, time, config });
 };
 
 const getHourText = (time: number) => {
@@ -44,7 +55,7 @@ export const drawHourMarker: P5Component<HourMarkerProps> = (
   { time, config },
 ) => {
   const text = getHourText(time);
-  drawMarkerLine(p5, { lineFraction: 0.24, time, config });
+  drawMarkerLine(p5, { lineFraction: timeMarkerWidths.hour, time, config });
   drawMarkerText(p5, { text: text.num, subText: text.m, time, config });
 };
 
@@ -66,7 +77,7 @@ export const drawDayMarker: P5Component<DayMarkerProps> = (
   { time, config },
 ) => {
   const text = getDayText(time);
-  drawMarkerLine(p5, { lineFraction: 1, time, config });
+  drawMarkerLine(p5, { lineFraction: timeMarkerWidths.day, time, config });
   drawMarkerText(p5, { text, time, config });
 };
 

@@ -4,6 +4,9 @@ import { spiralCoord, timeToAngle } from '../../utils/spiral';
 import { P5Component } from '../p5-component';
 import { CalendarConfig } from './Calendar';
 import { drawBlock } from './block';
+import { maxMarkerWidth } from './markers/time';
+
+const eventHorzOffset = maxMarkerWidth + 0.01;
 
 interface EventProps {
   event: Event;
@@ -16,9 +19,6 @@ export const drawEvent: P5Component<EventProps> = (p5, { event, config }) => {
   const endAngle = timeToAngle(event.end, config);
 
   const columns = { total: 1, num: 1 };
-  // TODO stop duplicating this constant
-  const timeMarkerEndFrac = 0.24;
-  const paddingFrac = timeMarkerEndFrac + 0.02;
   drawBlock(p5, {
     startAngle,
     endAngle,
@@ -26,8 +26,10 @@ export const drawEvent: P5Component<EventProps> = (p5, { event, config }) => {
     config,
     crossSection: {
       start:
-        paddingFrac + (1 - paddingFrac) * ((columns.num - 1) / columns.total),
-      end: paddingFrac + (1 - paddingFrac) * (columns.num / columns.total),
+        eventHorzOffset +
+        (1 - eventHorzOffset) * ((columns.num - 1) / columns.total),
+      end:
+        eventHorzOffset + (1 - eventHorzOffset) * (columns.num / columns.total),
     },
   });
 
@@ -48,9 +50,10 @@ const drawEventLabel: P5Component<EventLabelProps> = (
   const outerPoint = spiralCoord(textAngle);
   const innerPoint = spiralCoord(textAngle - TWO_PI);
 
+  const textPadding = 0.04;
   const textCoords = {
-    x: lerp(innerPoint.x, outerPoint.x, 0.26 + 0.04),
-    y: lerp(innerPoint.y, outerPoint.y, 0.26 + 0.04),
+    x: lerp(innerPoint.x, outerPoint.x, eventHorzOffset + textPadding),
+    y: lerp(innerPoint.y, outerPoint.y, eventHorzOffset + textPadding),
   };
 
   p5.noStroke();
