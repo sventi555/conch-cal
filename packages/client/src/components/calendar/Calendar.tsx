@@ -10,6 +10,7 @@ import {
   closestSpiralAngle,
   rightmostAngle,
 } from '../../utils/spiral';
+import { drawWatchFaceBorder } from './WatchFace';
 import { drawEvent } from './event';
 import { drawMarkers } from './markers';
 import { drawSpiral } from './spiral';
@@ -40,7 +41,7 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   };
 
   const rotationsToFocus = 4;
-  const angleToFocus = rightmostAngle(rotationsToFocus);
+  const angleToFocus = rightmostAngle(rotationsToFocus) - 0.01;
 
   const config = {
     focusedTime: props.focusedTime,
@@ -122,6 +123,7 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
         config,
       });
     });
+    drawWatchFaceBorder(p5, { config });
     drawSpiral(p5, { stopAngle: angleToFocus });
   };
 

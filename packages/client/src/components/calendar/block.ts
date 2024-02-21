@@ -1,4 +1,4 @@
-import { Point, TWO_PI, lerp } from '../../utils/math';
+import { TWO_PI, lerp } from '../../utils/math';
 import { RGBA } from '../../utils/p5';
 import { DEFAULT_SAMPLES, spiralCoord } from '../../utils/spiral';
 import { P5Component } from '../p5-component';
@@ -9,12 +9,22 @@ interface BlockProps {
   endAngle: number;
   color: RGBA;
   config: CalendarConfig;
+  crossSection?: {
+    start: number;
+    end: number;
+  };
   samplesPerRotation?: number;
 }
 
 export const drawBlock: P5Component<BlockProps> = (
   p5,
-  { startAngle, endAngle, color, samplesPerRotation = DEFAULT_SAMPLES },
+  {
+    startAngle,
+    endAngle,
+    color,
+    crossSection = { start: 0, end: 1 },
+    samplesPerRotation = DEFAULT_SAMPLES,
+  },
 ) => {
   const sampleRate = TWO_PI / samplesPerRotation;
 
@@ -23,35 +33,27 @@ export const drawBlock: P5Component<BlockProps> = (
 
   p5.beginShape();
 
-  let coord: Point;
   // outer arc
   for (let theta = startAngle; theta >= endAngle; theta -= sampleRate) {
-    coord = spiralCoord(theta);
-    p5.vertex(coord.x, coord.y);
+    const innerCoord = spiralCoord(theta - TWO_PI);
+    const outerCoord = spiralCoord(theta);
+    const shiftedOuter = {
+      x: lerp(innerCoord.x, outerCoord.x, crossSection.end),
+      y: lerp(innerCoord.y, outerCoord.y, crossSection.end),
+    };
+    p5.vertex(shiftedOuter.x, shiftedOuter.y);
   }
-  // make sure we hit the very edge (hide sampling errors)
-  coord = spiralCoord(endAngle);
-  p5.vertex(coord.x, coord.y);
 
   // inner arc
   for (let theta = endAngle; theta <= startAngle; theta += sampleRate) {
-    coord = spiralCoord(theta - TWO_PI);
-
+    const innerCoord = spiralCoord(theta - TWO_PI);
     const outerCoord = spiralCoord(theta);
     const shiftedInner = {
-      x: lerp(coord.x, outerCoord.x, 0.25),
-      y: lerp(coord.y, outerCoord.y, 0.25),
+      x: lerp(innerCoord.x, outerCoord.x, crossSection.start),
+      y: lerp(innerCoord.y, outerCoord.y, crossSection.start),
     };
     p5.vertex(shiftedInner.x, shiftedInner.y);
   }
-  // make sure we hit the very edge (hide sampling errors)
-  coord = spiralCoord(startAngle - TWO_PI);
-  const outerCoord = spiralCoord(startAngle);
-  const shiftedInner = {
-    x: lerp(coord.x, outerCoord.x, 0.25),
-    y: lerp(coord.y, outerCoord.y, 0.25),
-  };
-  p5.vertex(shiftedInner.x, shiftedInner.y);
 
   p5.endShape();
 };

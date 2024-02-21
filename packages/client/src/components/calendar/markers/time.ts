@@ -88,7 +88,7 @@ const drawMarkerText: P5Component<MarkerTextProps> = (
 
   p5.noStroke();
   p5.fill(0);
-  p5.textSize(lineLen / 10);
+  p5.textSize(lineLen / 9);
   p5.textAlign(p5.LEFT, p5.BOTTOM);
 
   const textWidth = p5.textWidth(text);
@@ -102,8 +102,8 @@ const drawMarkerText: P5Component<MarkerTextProps> = (
   p5.text(text, 0, 0);
 
   if (subText) {
-    p5.textSize(lineLen / 14);
-    p5.translate(textWidth, -1);
+    p5.textSize(lineLen / 16);
+    p5.translate(textWidth + 1, -1);
     p5.text(subText, 0, 0);
   }
 
@@ -127,6 +127,7 @@ const drawMarkerLine: P5Component<MarkerLineProps> = (
     y: lerp(inner.y, outer.y, lineFraction),
   };
 
+  p5.strokeWeight(1);
   p5.stroke(240);
   p5.line(inner.x, inner.y, outer.x, outer.y);
 

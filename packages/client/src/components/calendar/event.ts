@@ -14,11 +14,21 @@ interface EventProps {
 export const drawEvent: P5Component<EventProps> = (p5, { event, config }) => {
   const startAngle = timeToAngle(event.start, config);
   const endAngle = timeToAngle(event.end, config);
+
+  const columns = { total: 1, num: 1 };
+  // TODO stop duplicating this constant
+  const timeMarkerEndFrac = 0.24;
+  const paddingFrac = timeMarkerEndFrac + 0.02;
   drawBlock(p5, {
     startAngle,
     endAngle,
-    color: [0, 0, 255, 180],
+    color: [0, 100, 255, 180],
     config,
+    crossSection: {
+      start:
+        paddingFrac + (1 - paddingFrac) * ((columns.num - 1) / columns.total),
+      end: paddingFrac + (1 - paddingFrac) * (columns.num / columns.total),
+    },
   });
 
   drawEventLabel(p5, { name: event.name, startAngle });
@@ -39,8 +49,8 @@ const drawEventLabel: P5Component<EventLabelProps> = (
   const innerPoint = spiralCoord(textAngle - TWO_PI);
 
   const textCoords = {
-    x: lerp(innerPoint.x, outerPoint.x, 0.25 + 0.04),
-    y: lerp(innerPoint.y, outerPoint.y, 0.25 + 0.04),
+    x: lerp(innerPoint.x, outerPoint.x, 0.26 + 0.04),
+    y: lerp(innerPoint.y, outerPoint.y, 0.26 + 0.04),
   };
 
   p5.noStroke();

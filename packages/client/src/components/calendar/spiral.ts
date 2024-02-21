@@ -14,6 +14,7 @@ export const drawSpiral: P5Component<SpiralProps> = (
   const sampleRate = TWO_PI / samplesPerRotation;
 
   p5.stroke(0);
+  p5.strokeWeight(1.4);
   p5.noFill();
 
   p5.beginShape();
