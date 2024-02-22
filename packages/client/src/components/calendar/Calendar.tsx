@@ -3,13 +3,9 @@ import { useState } from 'react';
 import Sketch, { SketchProps } from 'react-p5';
 import { Event } from '../../types';
 import { MS_PER_HOUR } from '../../utils/date';
-import { canvasToCart, cartToPolar, clamp } from '../../utils/math';
+import { TWO_PI, canvasToCart, cartToPolar, clamp } from '../../utils/math';
 import { eventInCanvas } from '../../utils/p5';
-import {
-  angleToTime,
-  closestSpiralAngle,
-  rightmostAngle,
-} from '../../utils/spiral';
+import { angleToTime, closestSpiralAngle } from '../../utils/spiral';
 import { drawWatchFaceBorder } from './WatchFace';
 import { drawEvent } from './event';
 import { drawMarkers } from './markers';
@@ -41,7 +37,7 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   };
 
   const rotationsToFocus = 4;
-  const angleToFocus = rightmostAngle(rotationsToFocus) - 0.01;
+  const angleToFocus = rotationsToFocus * TWO_PI;
 
   const config = {
     focusedTime: props.focusedTime,

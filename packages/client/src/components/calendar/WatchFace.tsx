@@ -20,23 +20,21 @@ export const drawWatchFaceBorder: P5Component<WatchFaceProps> = (
     color: [255, 255, 255],
     config,
     startAngle: angle + 2 * TWO_PI,
-    endAngle: angle + 0.09,
+    endAngle: angle,
   });
 
-  const width = 191.6;
   const height = 100;
+  const lowerWidth = 190;
+  const upperWidth = 202;
+
   p5.stroke(0);
   p5.strokeWeight(1.4);
-  p5.fill(255);
-  p5.rectMode(p5.CORNERS);
-  p5.rect(
-    outerCoord.x - width,
-    outerCoord.y + height,
-    outerCoord.x,
-    outerCoord.y,
-    4,
-    4,
-    0,
-    0,
-  );
+
+  p5.beginShape();
+  p5.vertex(outerCoord.x - lowerWidth, outerCoord.y);
+  p5.vertex(outerCoord.x, outerCoord.y);
+  p5.vertex(outerCoord.x, outerCoord.y + height);
+  // TODO maybe put border radius between these two
+  p5.vertex(outerCoord.x - upperWidth, outerCoord.y + height);
+  p5.endShape();
 };
