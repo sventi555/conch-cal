@@ -2,6 +2,7 @@ import { MS_PER_15_MIN, MS_PER_DAY } from '../../../utils/date';
 import { TWO_PI } from '../../../utils/math';
 import { P5Component } from '../../p5-component';
 import { CalendarConfig } from '../Calendar';
+import { drawBlock } from '../block';
 import {
   drawDayMarker,
   drawHalfHourMarker,
@@ -37,5 +38,18 @@ export const drawMarkers: P5Component<MarkersProps> = (p5, { config }) => {
     } else if (rotationsPerDay > 1 && minutes % 15 === 0) {
       drawQuarterHourMarker(p5, { time, config });
     }
+  });
+};
+
+interface OuterMaskProps {
+  config: CalendarConfig;
+}
+
+export const drawOuterMask: P5Component<OuterMaskProps> = (p5, { config }) => {
+  drawBlock(p5, {
+    color: [255, 255, 255],
+    config,
+    startAngle: config.angleToFocus + 2 * TWO_PI,
+    endAngle: config.angleToFocus,
   });
 };

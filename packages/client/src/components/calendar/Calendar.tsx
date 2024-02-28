@@ -8,7 +8,7 @@ import { eventInCanvas } from '../../utils/p5';
 import { angleToTime, closestSpiralAngle } from '../../utils/spiral';
 import { drawWatchFaceBorder } from './WatchFace';
 import { drawEvent } from './event';
-import { drawMarkers } from './markers';
+import { drawMarkers, drawOuterMask } from './markers';
 import { drawSpiral } from './spiral';
 
 export interface CalendarConfig {
@@ -119,6 +119,7 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
         config,
       });
     });
+    drawOuterMask(p5, { config });
     drawWatchFaceBorder(p5, { config });
     drawSpiral(p5, { stopAngle: angleToFocus });
   };
