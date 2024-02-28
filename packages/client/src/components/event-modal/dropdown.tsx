@@ -6,7 +6,6 @@ interface DropdownProps<T extends string> {
 }
 
 export const Dropdown = <T extends string>(props: DropdownProps<T>) => {
-  console.log(props.selected);
   return (
     <div>
       <label>{props.label}:</label>
