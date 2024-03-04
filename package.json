@@ -11,7 +11,7 @@
     "clean": "turbo clean",
     "client": "pnpm --filter client",
     "lib": "pnpm --filter lib",
-    "server": "pnpm --filter server",
+    "api": "pnpm --filter server",
     "postinstall": "husky install"
   },
   "devDependencies": {
