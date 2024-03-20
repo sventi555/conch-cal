@@ -6,10 +6,10 @@ import { MS_PER_HOUR } from '../../utils/date';
 import { TWO_PI, canvasToCart, cartToPolar, clamp } from '../../utils/math';
 import { eventInCanvas } from '../../utils/p5';
 import { angleToTime, closestSpiralAngle } from '../../utils/spiral';
-import { drawWatchFaceBorder } from './WatchFace';
 import { drawEvent } from './event';
 import { drawMarkers, drawOuterMask } from './markers';
 import { drawSpiral } from './spiral';
+import { drawWatchFaceBorder } from './watch-face';
 
 export interface CalendarConfig {
   focusedTime: number;
