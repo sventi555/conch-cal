@@ -49,3 +49,26 @@ export const drawWatchFaceBorder: P5Component<WatchFaceProps> = (
 
   p5.endShape();
 };
+
+interface WatchFaceProps {
+  config: CalendarConfig;
+}
+
+export const WatchFace: React.FC<WatchFaceProps> = ({ config }) => {
+  const time = new Date(config.focusedTime);
+  const dateString = time.toLocaleDateString(undefined, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+  const timeString = time.toLocaleTimeString(undefined, {
+    hour: 'numeric',
+    minute: 'numeric',
+  });
+  return (
+    <div>
+      <div>{dateString}</div>
+      <div>{timeString}</div>
+    </div>
+  );
+};

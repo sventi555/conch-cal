@@ -5,13 +5,10 @@ export interface Point {
   y: number;
 }
 
-export const canvasToCart = (
-  p: Point,
-  canvasXTrans: number,
-  canvasYTrans: number,
-) => {
-  return { x: p.x - canvasXTrans, y: -(p.y - canvasYTrans) };
-};
+export interface Translation {
+  x: number;
+  y: number;
+}
 
 export const radToDeg = (theta: number) => {
   return (theta / TWO_PI) * 360;

@@ -1,15 +1,23 @@
 import p5Types from 'p5';
-import { useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import Sketch, { SketchProps } from 'react-p5';
 import { Event } from '../../types';
 import { MS_PER_HOUR } from '../../utils/date';
-import { TWO_PI, canvasToCart, cartToPolar, clamp } from '../../utils/math';
-import { eventInCanvas } from '../../utils/p5';
+import { TWO_PI, cartToPolar, clamp, dist } from '../../utils/math';
+import {
+  CANVAS_HEIGHT,
+  CANVAS_TRANS,
+  CANVAS_WIDTH,
+  canvasToCart,
+  cartToCanvas,
+  eventInCanvas,
+} from '../../utils/p5';
 import { angleToTime, closestSpiralAngle } from '../../utils/spiral';
+import { WATCH_HEIGHT, WatchFace, drawWatchFaceBorder } from './WatchFace';
 import { drawEvent } from './event';
 import { drawMarkers, drawOuterMask } from './markers';
+import { lineMarkerCoords } from './markers/utils';
 import { drawSpiral } from './spiral';
-import { drawWatchFaceBorder } from './watch-face';
 
 export interface CalendarConfig {
   focusedTime: number;
@@ -27,14 +35,6 @@ interface CalendarProps {
 
 export const Calendar: React.FC<CalendarProps> = (props) => {
   const [zoom, setZoom] = useState(2);
-
-  const width = 800;
-  const height = 800;
-
-  const canvasTrans = {
-    x: width / 2 - 40,
-    y: height / 2 - 40,
-  };
 
   const rotationsToFocus = 4;
   const angleToFocus = rotationsToFocus * TWO_PI;
@@ -68,11 +68,7 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
     if (!eventInCanvas(event)) return;
 
     const { r, theta } = cartToPolar(
-      canvasToCart(
-        { x: p5.mouseX, y: p5.mouseY },
-        canvasTrans.x,
-        canvasTrans.y,
-      ),
+      canvasToCart({ x: p5.mouseX, y: p5.mouseY }),
     );
     const spiralAngle = closestSpiralAngle(theta, r);
     const time = angleToTime(spiralAngle, config);
@@ -101,13 +97,13 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   };
 
   const setup: SketchProps['setup'] = (p5, canvasParentRef) => {
-    p5.createCanvas(width, height).parent(canvasParentRef);
+    p5.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT).parent(canvasParentRef);
   };
 
   const draw: SketchProps['draw'] = (p5) => {
     p5.background(255);
 
-    p5.translate(canvasTrans.x, canvasTrans.y);
+    p5.translate(CANVAS_TRANS.x, CANVAS_TRANS.y);
     p5.scale(1, -1);
 
     drawMarkers(p5, {
@@ -125,12 +121,45 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   };
 
   return (
-    <Sketch
-      keyPressed={keyPressed}
-      mouseWheel={mouseWheel}
-      mouseClicked={mouseClicked}
-      setup={setup}
-      draw={draw}
-    />
+    <div className="relative">
+      <Sketch
+        keyPressed={keyPressed}
+        mouseWheel={mouseWheel}
+        mouseClicked={mouseClicked}
+        setup={setup}
+        draw={draw}
+      />
+      <WatchFaceWrapper config={config}>
+        <WatchFace config={config} />
+      </WatchFaceWrapper>
+    </div>
+  );
+};
+
+interface WatchFaceWrapperProps {
+  config: CalendarConfig;
+}
+
+const WatchFaceWrapper: React.FC<PropsWithChildren<WatchFaceWrapperProps>> = ({
+  config,
+  children,
+}) => {
+  const { inner, outer } = lineMarkerCoords(config.focusedTime, config);
+  const lineLen = dist(inner, outer);
+  const bottomLeft = cartToCanvas(inner);
+  const padding = 8;
+
+  return (
+    <div
+      className="absolute"
+      style={{
+        width: lineLen - padding * 2,
+        height: WATCH_HEIGHT - padding * 2,
+        bottom: CANVAS_HEIGHT - bottomLeft.y + padding,
+        left: bottomLeft.x + padding,
+      }}
+    >
+      {children}
+    </div>
   );
 };
