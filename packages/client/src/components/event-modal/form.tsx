@@ -1,4 +1,4 @@
-import { useEventModalContext } from '../../state/modal';
+import { useEventModalContext } from '../../state/Modal';
 import {
   dateFromDayAndTimeString,
   dayAndTimeStringFromDate,

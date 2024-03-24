@@ -1,7 +1,7 @@
 import { DateRange, inRange, range } from 'lib';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth';
-import { useEventsDispatch } from '../state/events';
+import { useEventsDispatch } from '../state/Events';
 import { NonRecurringEvent, RecurringEvent } from '../types';
 import { MS_PER_DAY } from '../utils/date';
 import { EventsAPI } from './apis/events';

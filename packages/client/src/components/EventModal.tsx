@@ -1,6 +1,6 @@
 import Modal from 'react-modal';
 import { Frequency, WeekdayStr } from 'rrule';
-import { useEventModalContext } from '../state/modal';
+import { useEventModalContext } from '../state/Modal';
 import { Event, EventInfo, Recurrence, isRecurring } from '../types';
 import {
   dateFromDayAndTimeString,

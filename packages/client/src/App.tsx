@@ -2,8 +2,8 @@ import { Route, Routes } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
-import { EventsProvider } from './state/events';
-import { EventModalProvider } from './state/modal';
+import { EventsProvider } from './state/Events';
+import { EventModalProvider } from './state/Modal';
 
 export const App: React.FC = () => {
   return (

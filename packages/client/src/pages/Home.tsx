@@ -1,6 +1,6 @@
 import { User } from 'firebase/auth';
 import { DateRange } from 'lib';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../auth';
 import { Calendar } from '../components/calendar/Calendar';
@@ -8,8 +8,8 @@ import { CreateEventModal, ModifyEventModal } from '../components/event-modal';
 import { MiniCal } from '../components/mini-cal';
 import { EventsAPI } from '../networking/apis/events';
 import { useLoadEvents } from '../networking/load-events';
-import { EventsDispatch, useEvents, useEventsDispatch } from '../state/events';
-import { useEventModalContext } from '../state/modal';
+import { EventsDispatch, useEvents, useEventsDispatch } from '../state/Events';
+import { useEventModalContext } from '../state/Modal';
 import { Event, EventInfo, isRecurring } from '../types';
 import { MS_PER_HOUR, roundTo15Min } from '../utils/date';
 
@@ -28,6 +28,8 @@ export const Home = () => {
 
   const [focusedTime, setFocusedTime] = useState(Date.now());
   const loadedRange = useLoadEvents(focusedTime);
+
+  useEffect(() => {});
 
   if (!user) {
     return <Navigate to="/login" />;

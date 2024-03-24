@@ -1,5 +1,5 @@
 import Modal from 'react-modal';
-import { useEventModalContext } from '../../state/modal';
+import { useEventModalContext } from '../../state/Modal';
 import { Event, EventInfo } from '../../types';
 import { EventModalForm } from './form';
 
