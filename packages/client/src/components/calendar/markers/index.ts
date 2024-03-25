@@ -1,7 +1,7 @@
+import { CalendarConfig } from '../../../state/calendar';
 import { MS_PER_15_MIN, MS_PER_DAY } from '../../../utils/date';
 import { TWO_PI } from '../../../utils/math';
 import { P5Component } from '../../p5-component';
-import { CalendarConfig } from '../Calendar';
 import { drawBlock } from '../block';
 import {
   drawDayMarker,
@@ -48,7 +48,6 @@ interface OuterMaskProps {
 export const drawOuterMask: P5Component<OuterMaskProps> = (p5, { config }) => {
   drawBlock(p5, {
     color: [255, 255, 255],
-    config,
     startAngle: config.angleToFocus + 2 * TWO_PI,
     endAngle: config.angleToFocus,
   });

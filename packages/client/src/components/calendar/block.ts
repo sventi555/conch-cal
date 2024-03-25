@@ -2,13 +2,11 @@ import { TWO_PI, lerp } from '../../utils/math';
 import { RGBA } from '../../utils/p5';
 import { DEFAULT_SAMPLES, spiralCoord } from '../../utils/spiral';
 import { P5Component } from '../p5-component';
-import { CalendarConfig } from './Calendar';
 
 interface BlockProps {
   startAngle: number;
   endAngle: number;
   color: RGBA;
-  config: CalendarConfig;
   crossSection?: {
     start: number;
     end: number;

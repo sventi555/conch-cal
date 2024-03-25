@@ -1,8 +1,8 @@
+import { CalendarConfig } from '../../state/calendar';
 import { Event } from '../../types';
 import { TWO_PI, dist, lerp } from '../../utils/math';
 import { spiralCoord, timeToAngle } from '../../utils/spiral';
 import { P5Component } from '../p5-component';
-import { CalendarConfig } from './Calendar';
 import { drawBlock } from './block';
 import { maxMarkerWidth } from './markers/time';
 
@@ -23,7 +23,6 @@ export const drawEvent: P5Component<EventProps> = (p5, { event, config }) => {
     startAngle,
     endAngle,
     color: [0, 100, 255, 180],
-    config,
     crossSection: {
       start:
         eventHorzOffset +

@@ -9,6 +9,8 @@ import {
 import { Event, NonRecurringEvent, RecurringEvent } from '../types';
 import { eventInstances } from '../utils/recurrence';
 
+type EventsState = Event[];
+
 interface SetEventsAction {
   type: 'set';
   events: NonRecurringEvent[];
@@ -59,7 +61,7 @@ type EventsAction =
   | ModifyRecurringEventAction
   | DeleteRecurringEventAction;
 
-const eventsReducer: Reducer<Event[], EventsAction> = (events, action) => {
+const eventsReducer: Reducer<EventsState, EventsAction> = (events, action) => {
   switch (action.type) {
     case 'set': {
       const instances = action.recurringEvents
@@ -95,10 +97,9 @@ const eventsReducer: Reducer<Event[], EventsAction> = (events, action) => {
   }
 };
 
-type EventsContextState = Event[];
 export type EventsDispatch = Dispatch<EventsAction>;
 
-const EventsContext = createContext<EventsContextState | undefined>(undefined);
+const EventsContext = createContext<EventsState | undefined>(undefined);
 const EventsDispatchContext = createContext<EventsDispatch | undefined>(
   undefined,
 );
