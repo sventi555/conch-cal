@@ -1,10 +1,14 @@
 import p5Types from 'p5';
-import { PropsWithChildren, useState } from 'react';
+import { PropsWithChildren } from 'react';
 import Sketch, { SketchProps } from 'react-p5';
-import { CalendarConfig } from '../../state/Calendar';
+import {
+  CalendarConfig,
+  useCalendar,
+  useCalendarDispatch,
+} from '../../state/Calendar';
 import { Event } from '../../types';
 import { MS_PER_HOUR } from '../../utils/date';
-import { TWO_PI, cartToPolar, clamp, dist } from '../../utils/math';
+import { cartToPolar, clamp, dist } from '../../utils/math';
 import {
   CANVAS_HEIGHT,
   CANVAS_TRANS,
@@ -29,16 +33,8 @@ interface CalendarProps {
 }
 
 export const Calendar: React.FC<CalendarProps> = (props) => {
-  const [zoom, setZoom] = useState(2);
-
-  const rotationsToFocus = 4;
-  const angleToFocus = rotationsToFocus * TWO_PI;
-
-  const config = {
-    focusedTime: props.focusedTime,
-    angleToFocus,
-    rotationsPerDay: zoom,
-  };
+  const { config } = useCalendar();
+  const dispatch = useCalendarDispatch();
 
   const mouseWheel: SketchProps['mouseWheel'] = (p5, event) => {
     if (!eventInCanvas(event)) return;
@@ -47,7 +43,7 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   };
 
   const updateFocus = (event: WheelEvent) => {
-    const scrollIncrement = MS_PER_HOUR / zoom;
+    const scrollIncrement = MS_PER_HOUR / config.rotationsPerDay;
     if (event.deltaY > 0) {
       props.setFocusedTime(props.focusedTime + scrollIncrement);
     } else {
@@ -82,13 +78,13 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   const updateZoom = (p5: p5Types) => {
     let updatedVal: number;
     if (p5.key === '=') {
-      updatedVal = zoom + 1;
+      updatedVal = config.rotationsPerDay + 1;
     } else if (p5.key === '-') {
-      updatedVal = zoom - 1;
+      updatedVal = config.rotationsPerDay - 1;
     } else {
       return;
     }
-    setZoom(clamp(updatedVal, 1, 3));
+    dispatch({ type: 'set-zoom', rotationsPerDay: clamp(updatedVal, 1, 3) });
   };
 
   const setup: SketchProps['setup'] = (p5, canvasParentRef) => {
@@ -112,7 +108,7 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
     });
     drawOuterMask(p5, { config });
     drawWatchFaceBorder(p5, { config });
-    drawSpiral(p5, { stopAngle: angleToFocus });
+    drawSpiral(p5, { stopAngle: config.angleToFocus });
   };
 
   return (
