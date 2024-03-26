@@ -53,7 +53,7 @@ const calendarReducer: Reducer<CalendarState, CalendarAction> = (
   }
 };
 
-export type CalendarDispatch = Dispatch<CalendarAction>;
+type CalendarDispatch = Dispatch<CalendarAction>;
 
 const CalendarContext = createContext<CalendarState | undefined>(undefined);
 const CalendarDispatchContext = createContext<CalendarDispatch | undefined>(

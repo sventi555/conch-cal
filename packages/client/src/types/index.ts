@@ -16,11 +16,11 @@ interface BaseEventInfo {
   end: number;
 }
 
-export interface RecurringEventInfo extends BaseEventInfo {
+interface RecurringEventInfo extends BaseEventInfo {
   recurrence: Recurrence;
 }
 
-export interface NonRecurringEventInfo extends BaseEventInfo {
+interface NonRecurringEventInfo extends BaseEventInfo {
   recurrence?: undefined;
 }
 

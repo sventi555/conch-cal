@@ -5,11 +5,6 @@ export interface Point {
   y: number;
 }
 
-export interface Translation {
-  x: number;
-  y: number;
-}
-
 export const polarToCart = (r: number, theta: number): Point => {
   return { x: r * Math.cos(theta), y: r * Math.sin(theta) };
 };
