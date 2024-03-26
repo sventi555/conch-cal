@@ -1,4 +1,4 @@
-import { CalendarConfig } from '../../state/calendar';
+import { CalendarConfig } from '../../state/Calendar';
 import { Event } from '../../types';
 import { TWO_PI, dist, lerp } from '../../utils/math';
 import { spiralCoord, timeToAngle } from '../../utils/spiral';

@@ -10,10 +10,6 @@ export interface Translation {
   y: number;
 }
 
-export const radToDeg = (theta: number) => {
-  return (theta / TWO_PI) * 360;
-};
-
 export const polarToCart = (r: number, theta: number): Point => {
   return { x: r * Math.cos(theta), y: r * Math.sin(theta) };
 };

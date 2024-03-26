@@ -1,7 +1,7 @@
 import p5Types from 'p5';
 import { PropsWithChildren, useState } from 'react';
 import Sketch, { SketchProps } from 'react-p5';
-import { CalendarConfig } from '../../state/calendar';
+import { CalendarConfig } from '../../state/Calendar';
 import { Event } from '../../types';
 import { MS_PER_HOUR } from '../../utils/date';
 import { TWO_PI, cartToPolar, clamp, dist } from '../../utils/math';

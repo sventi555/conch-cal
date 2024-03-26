@@ -1,6 +1,6 @@
+import { CalendarConfig } from '../../../state/Calendar';
 import { dist, lerp } from '../../../utils/math';
 import { P5Component } from '../../p5-component';
-import { CalendarConfig } from '../Calendar';
 import { lineMarkerCoords } from './utils';
 
 const timeMarkerWidths = {

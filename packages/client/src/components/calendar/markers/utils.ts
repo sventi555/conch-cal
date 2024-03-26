@@ -1,6 +1,6 @@
+import { CalendarConfig } from '../../../state/Calendar';
 import { TWO_PI } from '../../../utils/math';
 import { spiralCoord, timeToAngle } from '../../../utils/spiral';
-import { CalendarConfig } from '../Calendar';
 
 export const lineMarkerCoords = (time: number, config: CalendarConfig) => {
   const theta = timeToAngle(time, config);

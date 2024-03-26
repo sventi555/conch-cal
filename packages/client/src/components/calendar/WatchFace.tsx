@@ -1,7 +1,7 @@
+import { CalendarConfig } from '../../state/Calendar';
 import { TWO_PI } from '../../utils/math';
 import { DEFAULT_SAMPLES, spiralCoord } from '../../utils/spiral';
 import { P5Component } from '../p5-component';
-import { CalendarConfig } from './Calendar';
 import { lineMarkerCoords } from './markers/utils';
 
 export const WATCH_HEIGHT = 100;

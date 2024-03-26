@@ -1,10 +1,10 @@
-import { CalendarConfig } from '../components/calendar/Calendar';
+import { CalendarConfig } from '../state/Calendar';
 import { MS_PER_DAY } from './date';
 import { TWO_PI, polarToCart } from './math';
 
 export const DEFAULT_SAMPLES = 1500;
 
-export const SPIRAL_PARAMS = {
+const SPIRAL_PARAMS = {
   a: 33,
   k: 0.1,
 };
@@ -13,7 +13,7 @@ export const spiralCoord = (theta: number) => {
   return polarToCart(spiralRadius(theta), theta);
 };
 
-export const spiralRadius = (theta: number) => {
+const spiralRadius = (theta: number) => {
   const { a, k } = SPIRAL_PARAMS;
   return a * Math.pow(Math.E, k * theta);
 };

@@ -1,4 +1,4 @@
-import { CalendarConfig } from '../../../state/calendar';
+import { CalendarConfig } from '../../../state/Calendar';
 import { MS_PER_15_MIN, MS_PER_DAY } from '../../../utils/date';
 import { TWO_PI } from '../../../utils/math';
 import { P5Component } from '../../p5-component';
