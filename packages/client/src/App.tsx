@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
+import { CalendarProvider } from './state/Calendar';
 import { EventsProvider } from './state/Events';
 import { EventModalProvider } from './state/Modal';
 
@@ -15,7 +16,9 @@ export const App: React.FC = () => {
         element={
           <EventsProvider>
             <EventModalProvider>
-              <Home />
+              <CalendarProvider>
+                <Home />
+              </CalendarProvider>
             </EventModalProvider>
           </EventsProvider>
         }

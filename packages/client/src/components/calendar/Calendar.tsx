@@ -1,11 +1,12 @@
 import p5Types from 'p5';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 import Sketch, { SketchProps } from 'react-p5';
 import {
   CalendarConfig,
   useCalendar,
   useCalendarDispatch,
 } from '../../state/Calendar';
+import { useEvents } from '../../state/Events';
 import { Event } from '../../types';
 import { MS_PER_HOUR } from '../../utils/date';
 import { cartToPolar, clamp, dist } from '../../utils/math';
@@ -25,16 +26,24 @@ import { lineMarkerCoords } from './markers/utils';
 import { drawSpiral } from './spiral';
 
 interface CalendarProps {
-  events: Event[];
-  focusedTime: number;
-  setFocusedTime: (time: number) => void;
   onClickTime: (time: number) => void;
   onClickEvent: (event: Event) => void;
 }
 
 export const Calendar: React.FC<CalendarProps> = (props) => {
-  const { config } = useCalendar();
+  const events = useEvents();
+  const { config, isLive } = useCalendar();
   const dispatch = useCalendarDispatch();
+
+  useEffect(() => {
+    if (isLive) {
+      const updateTimeHandler = setInterval(
+        () => dispatch({ type: 'update-live-time' }),
+        1000,
+      );
+      return () => clearInterval(updateTimeHandler);
+    }
+  }, [isLive, dispatch]);
 
   const mouseWheel: SketchProps['mouseWheel'] = (p5, event) => {
     if (!eventInCanvas(event)) return;
@@ -45,9 +54,15 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   const updateFocus = (event: WheelEvent) => {
     const scrollIncrement = MS_PER_HOUR / config.rotationsPerDay;
     if (event.deltaY > 0) {
-      props.setFocusedTime(props.focusedTime + scrollIncrement);
+      dispatch({
+        type: 'set-focus',
+        time: config.focusedTime + scrollIncrement,
+      });
     } else {
-      props.setFocusedTime(props.focusedTime - scrollIncrement);
+      dispatch({
+        type: 'set-focus',
+        time: config.focusedTime - scrollIncrement,
+      });
     }
   };
 
@@ -64,7 +79,7 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
     const spiralAngle = closestSpiralAngle(theta, r);
     const time = angleToTime(spiralAngle, config);
 
-    const clickedEvent = props.events.find(
+    const clickedEvent = events.find(
       (event) => time >= event.start && time <= event.end,
     );
 
@@ -100,7 +115,7 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
     drawMarkers(p5, {
       config,
     });
-    props.events.forEach((event) => {
+    events.forEach((event) => {
       drawEvent(p5, {
         event,
         config,

@@ -1,35 +1,35 @@
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
+import { useCalendar, useCalendarDispatch } from '../../state/Calendar';
 import './index.scss';
 
-interface MiniCalProps {
-  followFocusedTime: boolean;
-  setFollowFocusedTime: (follow: boolean) => void;
-  focusedTime: number;
-  setFocusedTime: (time: number) => void;
-}
-
-export const MiniCal: React.FC<MiniCalProps> = (props) => {
-  const [activeDate, setActiveDate] = useState(new Date(props.focusedTime));
+export const MiniCal: React.FC = () => {
+  const {
+    config: { focusedTime },
+    isLive,
+  } = useCalendar();
+  const calendarDispatch = useCalendarDispatch();
+  const [activeDate, setActiveDate] = useState(new Date(focusedTime));
+  const [followFocusedTime, setFollowFocusedTime] = useState(true);
 
   useEffect(() => {
-    if (props.followFocusedTime) {
-      setActiveDate(new Date(props.focusedTime));
+    if (isLive || followFocusedTime) {
+      setActiveDate(new Date(focusedTime));
     }
-  }, [props.followFocusedTime, props.focusedTime]);
+  }, [isLive, followFocusedTime, focusedTime]);
 
   return (
     <Calendar
       activeStartDate={activeDate}
-      value={new Date(props.focusedTime)}
+      value={new Date(focusedTime)}
       minDetail="decade"
       formatShortWeekday={(locale, date) =>
         date.toLocaleDateString(undefined, { weekday: 'narrow' })
       }
       calendarType="gregory"
       onClickDay={(val) => {
-        props.setFollowFocusedTime(true);
-        props.setFocusedTime(val.getTime());
+        setFollowFocusedTime(true);
+        calendarDispatch({ type: 'set-focus', time: val.getTime() });
       }}
       onActiveStartDateChange={({ action, activeStartDate }) => {
         // only run this for menu nav
@@ -39,7 +39,7 @@ export const MiniCal: React.FC<MiniCalProps> = (props) => {
           throw new Error('no start date for requested view');
         }
 
-        props.setFollowFocusedTime(false);
+        setFollowFocusedTime(false);
         setActiveDate(activeStartDate);
       }}
     />

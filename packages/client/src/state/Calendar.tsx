@@ -29,12 +29,20 @@ interface LockToLiveAction {
   type: 'lock-to-live';
 }
 
+interface UpdateLiveTime {
+  type: 'update-live-time';
+}
+
 interface SetZoomAction {
   type: 'set-zoom';
   rotationsPerDay: number;
 }
 
-type CalendarAction = SetFocusAction | LockToLiveAction | SetZoomAction;
+type CalendarAction =
+  | SetFocusAction
+  | LockToLiveAction
+  | UpdateLiveTime
+  | SetZoomAction;
 
 const calendarReducer: Reducer<CalendarState, CalendarAction> = (
   calendarState,
@@ -42,13 +50,36 @@ const calendarReducer: Reducer<CalendarState, CalendarAction> = (
 ) => {
   switch (action.type) {
     case 'set-focus': {
-      return { ...calendarState, focusedTime: action.time, isLive: false };
+      return {
+        ...calendarState,
+        config: { ...calendarState.config, focusedTime: action.time },
+        isLive: false,
+      };
     }
     case 'lock-to-live': {
-      return { ...calendarState, focusedTime: Date.now(), isLive: true };
+      return {
+        ...calendarState,
+        config: { ...calendarState.config, focusedTime: Date.now() },
+        isLive: true,
+      };
+    }
+    case 'update-live-time': {
+      return {
+        ...calendarState,
+        config: {
+          ...calendarState.config,
+          focusedTime: Date.now(),
+        },
+      };
     }
     case 'set-zoom': {
-      return { ...calendarState, rotationsPerDay: action.rotationsPerDay };
+      return {
+        ...calendarState,
+        config: {
+          ...calendarState.config,
+          rotationsPerDay: action.rotationsPerDay,
+        },
+      };
     }
   }
 };

@@ -8,7 +8,8 @@ import { CreateEventModal, ModifyEventModal } from '../components/event-modal';
 import { MiniCal } from '../components/mini-cal';
 import { EventsAPI } from '../networking/apis/events';
 import { useLoadEvents } from '../networking/load-events';
-import { EventsDispatch, useEvents, useEventsDispatch } from '../state/Events';
+import { useCalendarDispatch } from '../state/Calendar';
+import { EventsDispatch, useEventsDispatch } from '../state/Events';
 import { useEventModalContext } from '../state/Modal';
 import { Event, EventInfo, isRecurring } from '../types';
 import { MS_PER_HOUR, roundTo15Min } from '../utils/date';
@@ -16,18 +17,14 @@ import { MS_PER_HOUR, roundTo15Min } from '../utils/date';
 export const Home = () => {
   const { user, logout } = useAuth();
 
-  const events = useEvents();
-  const dispatch = useEventsDispatch();
+  const eventsDispatch = useEventsDispatch();
+  const calendarDispatch = useCalendarDispatch();
 
   const { setSelectedEvent, setEventInfo } = useEventModalContext();
   const [isCreateEventModalOpen, setIsCreateEventModalOpen] = useState(false);
   const [isModifyEventModalOpen, setIsModifyEventModalOpen] = useState(false);
 
-  const [miniCalFollowFocusedTime, setMiniCalFollowFocusedTime] =
-    useState(true);
-
-  const [focusedTime, setFocusedTime] = useState(Date.now());
-  const loadedRange = useLoadEvents(focusedTime);
+  const loadedRange = useLoadEvents();
 
   useEffect(() => {});
 
@@ -48,25 +45,16 @@ export const Home = () => {
       </div>
       <div className="flex">
         <div>
-          <MiniCal
-            followFocusedTime={miniCalFollowFocusedTime}
-            setFollowFocusedTime={setMiniCalFollowFocusedTime}
-            focusedTime={focusedTime}
-            setFocusedTime={setFocusedTime}
-          />
+          <MiniCal />
           <button
             onClick={() => {
-              setMiniCalFollowFocusedTime(true);
-              setFocusedTime(Date.now());
+              calendarDispatch({ type: 'lock-to-live' });
             }}
           >
             NOW
           </button>
         </div>
         <Calendar
-          focusedTime={focusedTime}
-          setFocusedTime={setFocusedTime}
-          events={events}
           onClickTime={(time) => {
             const snappedTime = roundTo15Min(time);
             setSelectedEvent(null);
@@ -89,7 +77,7 @@ export const Home = () => {
         isOpen={isCreateEventModalOpen}
         setIsOpen={setIsCreateEventModalOpen}
         onSubmit={(eventInfo) => {
-          handleAddEvent(eventInfo, user, loadedRange, dispatch);
+          handleAddEvent(eventInfo, user, loadedRange, eventsDispatch);
           setIsCreateEventModalOpen(false);
         }}
       />
@@ -102,12 +90,12 @@ export const Home = () => {
             updatedInfo,
             user,
             loadedRange,
-            dispatch,
+            eventsDispatch,
           );
           setIsModifyEventModalOpen(false);
         }}
         onDelete={(event) => {
-          handleDeleteEvent(event, user, dispatch);
+          handleDeleteEvent(event, user, eventsDispatch);
           setIsModifyEventModalOpen(false);
         }}
       />

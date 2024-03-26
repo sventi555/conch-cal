@@ -1,14 +1,16 @@
 import { DateRange, inRange, range } from 'lib';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth';
+import { useCalendar } from '../state/Calendar';
 import { useEventsDispatch } from '../state/Events';
 import { NonRecurringEvent, RecurringEvent } from '../types';
 import { MS_PER_DAY } from '../utils/date';
 import { EventsAPI } from './apis/events';
 
-export const useLoadEvents = (focusedTime: number) => {
+export const useLoadEvents = () => {
   const { user } = useAuth();
   const dispatch = useEventsDispatch();
+  const { focusedTime } = useCalendar().config;
 
   const [loadedRange, setLoadedRange] = useState<DateRange | null>(null);
 
