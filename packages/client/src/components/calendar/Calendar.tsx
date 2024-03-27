@@ -32,7 +32,8 @@ interface CalendarProps {
 
 export const Calendar: React.FC<CalendarProps> = (props) => {
   const events = useEvents();
-  const { config, isLive } = useCalendar();
+  const { focusedTime, rotationsPerDay, angleToFocus, isLive } = useCalendar();
+  const config = { focusedTime, rotationsPerDay, angleToFocus };
   const dispatch = useCalendarDispatch();
 
   useEffect(() => {
@@ -52,16 +53,16 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   };
 
   const updateFocus = (event: WheelEvent) => {
-    const scrollIncrement = MS_PER_HOUR / config.rotationsPerDay;
+    const scrollIncrement = MS_PER_HOUR / rotationsPerDay;
     if (event.deltaY > 0) {
       dispatch({
         type: 'set-focus',
-        time: config.focusedTime + scrollIncrement,
+        time: focusedTime + scrollIncrement,
       });
     } else {
       dispatch({
         type: 'set-focus',
-        time: config.focusedTime - scrollIncrement,
+        time: focusedTime - scrollIncrement,
       });
     }
   };
@@ -93,9 +94,9 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
   const updateZoom = (p5: p5Types) => {
     let updatedVal: number;
     if (p5.key === '=') {
-      updatedVal = config.rotationsPerDay + 1;
+      updatedVal = rotationsPerDay + 1;
     } else if (p5.key === '-') {
-      updatedVal = config.rotationsPerDay - 1;
+      updatedVal = rotationsPerDay - 1;
     } else {
       return;
     }
@@ -123,7 +124,7 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
     });
     drawOuterMask(p5, { config });
     drawWatchFaceBorder(p5, { config });
-    drawSpiral(p5, { stopAngle: config.angleToFocus });
+    drawSpiral(p5, { stopAngle: angleToFocus });
   };
 
   return (

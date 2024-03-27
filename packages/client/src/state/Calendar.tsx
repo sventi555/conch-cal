@@ -1,5 +1,3 @@
-// need to control state for focused time,
-
 import {
   Dispatch,
   Reducer,
@@ -15,8 +13,7 @@ export interface CalendarConfig {
   rotationsPerDay: number;
 }
 
-interface CalendarState {
-  config: CalendarConfig;
+interface CalendarState extends CalendarConfig {
   isLive: boolean;
 }
 
@@ -52,33 +49,27 @@ const calendarReducer: Reducer<CalendarState, CalendarAction> = (
     case 'set-focus': {
       return {
         ...calendarState,
-        config: { ...calendarState.config, focusedTime: action.time },
+        focusedTime: action.time,
         isLive: false,
       };
     }
     case 'lock-to-live': {
       return {
         ...calendarState,
-        config: { ...calendarState.config, focusedTime: Date.now() },
+        focusedTime: Date.now(),
         isLive: true,
       };
     }
     case 'update-live-time': {
       return {
         ...calendarState,
-        config: {
-          ...calendarState.config,
-          focusedTime: Date.now(),
-        },
+        focusedTime: Date.now(),
       };
     }
     case 'set-zoom': {
       return {
         ...calendarState,
-        config: {
-          ...calendarState.config,
-          rotationsPerDay: action.rotationsPerDay,
-        },
+        rotationsPerDay: action.rotationsPerDay,
       };
     }
   }
@@ -95,11 +86,9 @@ export const CalendarProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   const initialState: CalendarState = {
-    config: {
-      focusedTime: Date.now(),
-      angleToFocus: 4 * TWO_PI,
-      rotationsPerDay: 2,
-    },
+    focusedTime: Date.now(),
+    angleToFocus: 4 * TWO_PI,
+    rotationsPerDay: 2,
     isLive: true,
   };
   const [calendarState, dispatch] = useReducer(calendarReducer, initialState);

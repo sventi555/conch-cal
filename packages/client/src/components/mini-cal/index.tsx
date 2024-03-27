@@ -4,10 +4,7 @@ import { useCalendar, useCalendarDispatch } from '../../state/Calendar';
 import './index.scss';
 
 export const MiniCal: React.FC = () => {
-  const {
-    config: { focusedTime },
-    isLive,
-  } = useCalendar();
+  const { focusedTime, isLive } = useCalendar();
   const calendarDispatch = useCalendarDispatch();
   const [activeDate, setActiveDate] = useState(new Date(focusedTime));
   const [followFocusedTime, setFollowFocusedTime] = useState(true);

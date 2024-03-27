@@ -10,7 +10,7 @@ import { EventsAPI } from './apis/events';
 export const useLoadEvents = () => {
   const { user } = useAuth();
   const dispatch = useEventsDispatch();
-  const { focusedTime } = useCalendar().config;
+  const { focusedTime } = useCalendar();
 
   const [loadedRange, setLoadedRange] = useState<DateRange | null>(null);
 
