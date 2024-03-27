@@ -123,8 +123,8 @@ export const Calendar: React.FC<CalendarProps> = (props) => {
       });
     });
     drawOuterMask(p5, { config });
-    drawWatchFaceBorder(p5, { config });
     drawSpiral(p5, { stopAngle: angleToFocus });
+    drawWatchFaceBorder(p5, { config, isLive });
   };
 
   return (

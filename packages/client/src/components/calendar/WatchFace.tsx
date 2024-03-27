@@ -6,19 +6,20 @@ import { lineMarkerCoords } from './markers/utils';
 
 export const WATCH_HEIGHT = 100;
 
-interface WatchFaceProps {
+interface WatchFaceBorderProps {
   config: CalendarConfig;
+  isLive: boolean;
   samplesPerRotation?: number;
 }
 
-export const drawWatchFaceBorder: P5Component<WatchFaceProps> = (
+export const drawWatchFaceBorder: P5Component<WatchFaceBorderProps> = (
   p5,
-  { config, samplesPerRotation = DEFAULT_SAMPLES },
+  { config, isLive, samplesPerRotation = DEFAULT_SAMPLES },
 ) => {
   const sampleRate = TWO_PI / samplesPerRotation;
   const { inner, outer } = lineMarkerCoords(config.focusedTime, config);
 
-  p5.stroke(0);
+  p5.stroke(isLive ? [255, 0, 0] : [0, 0, 0]);
   p5.strokeWeight(1.4);
   p5.noFill();
 
